@@ -33,32 +33,17 @@ const sendVerificationEmail =
 
       html: `
 
-        <div
-          style="
-            font-family:sans-serif;
-            padding:20px;
-          "
-        >
+        <div style="font-family:sans-serif;padding:20px;">
 
-          <h2>
-            Verify Your Email
-          </h2>
+          <h2>Verify Your Email</h2>
 
-          <p>
-            Your OTP:
-          </p>
+          <p>Your OTP:</p>
 
-          <h1
-            style="
-              color:#2563eb;
-            "
-          >
+          <h1 style="color:#2563eb;">
             ${otp}
           </h1>
 
-          <p>
-            OTP valid for 5 minutes.
-          </p>
+          <p>OTP valid for 5 minutes.</p>
 
         </div>
 
@@ -66,57 +51,28 @@ const sendVerificationEmail =
 
     };
 
-try {
+    try {
 
-  const info =
-    await transporter.sendMail(
-      mailOptions
-    );
+      const info =
+        await transporter.sendMail(
+          mailOptions
+        );
 
-  console.log(
-    "EMAIL SENT:",
-    info.response
-  );
+      console.log(
+        "EMAIL SENT:",
+        info.response
+      );
 
-} catch (error) {
+    } catch (error) {
 
-  console.log(
-    "EMAIL ERROR:",
-    error
-  );
+      console.log(
+        "EMAIL ERROR:",
+        error
+      );
 
-  throw error;
-}
+      throw error;
+    }
   };
 
-const mailOptions = {
-  from: `"PrepTrack 🚀" <${process.env.EMAIL_USER}>`,
-  to: email,
-  subject: "PrepTrack Email Verification",
-  html: `...`
-};
-
-try {
-
-  const info =
-    await transporter.sendMail(
-      mailOptions
-    );
-
-  console.log(
-    "EMAIL SENT:",
-    info.response
-  );
-
-} catch (error) {
-
-  console.log(
-    "EMAIL ERROR:",
-    error
-  );
-
-  throw error;
-}
-
 module.exports =
-  sendVerificationEmail;
+  sendVerificationEmail; 
