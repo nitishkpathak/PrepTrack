@@ -180,7 +180,7 @@ const handleForgotChange =
         const response =
           await axios.post(
 
-            "http://localhost:5000/api/password/send-otp",
+            `${import.meta.env.VITE_API_URL}/api/password/send-otp`,
 
             {
 
@@ -240,7 +240,7 @@ const handleForgotChange =
         const response =
           await axios.post(
 
-            "http://localhost:5000/api/password/reset-password",
+            `${import.meta.env.VITE_API_URL}/api/password/reset-password`,
 
             {
 

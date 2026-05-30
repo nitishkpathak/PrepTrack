@@ -105,13 +105,11 @@ function Register() {
       setShowOTPModal(true);
 
     } catch (error) {
-
-      console.log(error);
-
+      console.log(error.response?.data);
       alert(
+        error.response?.data?.message ||
         "Something went wrong"
       );
-
     }
   };
 
@@ -127,7 +125,7 @@ const handleVerifyOTP =
       const response =
         await axios.post(
 
-          "http://localhost:5000/api/auth/verify-email",
+          `${import.meta.env.VITE_API_URL}/api/auth/verify-email`,
 
           {
 
@@ -170,7 +168,7 @@ const handleResendOTP =
       const response =
         await axios.post(
 
-          "http://localhost:5000/api/auth/resend-otp",
+          `${import.meta.env.VITE_API_URL}/api/auth/resend-otp`,
 
           {
 

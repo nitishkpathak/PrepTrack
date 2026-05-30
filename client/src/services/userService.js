@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API =
-  "http://localhost:5000/api/user";
+  `${import.meta.env.VITE_API_URL}/api/user`;
 
 // UPDATE PROFILE
 export const updateProfile =

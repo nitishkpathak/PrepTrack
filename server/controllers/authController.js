@@ -31,20 +31,23 @@ const registerUser =
 
       // Check Existing User
       const existingUser =
-        await User.findOne({
-          email,
-        });
+        await User.findOne({ email });
 
       if (existingUser) {
 
-        return res
-          .status(400)
-          .json({
+        if (!existingUser.isVerified) {
 
-            message:
-              "User already exists",
-
+          await User.deleteOne({
+            _id: existingUser._id,
           });
+
+        } else {
+
+          return res.status(400).json({
+            message: "User already exists",
+          });
+
+        }
       }
 
       // Hash Password
