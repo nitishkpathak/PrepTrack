@@ -89,12 +89,37 @@ const registerUser =
         });
 
       // Send Verification Email
-      await sendVerificationEmail(
+      // await sendVerificationEmail(
 
-        email,
-        otp
+      //   email,
+      //   otp
 
-      );
+      // );
+
+      try {
+
+  await sendVerificationEmail(
+    email,
+    otp
+  );
+
+} catch (err) {
+
+  console.log(
+    "MAIL FAILED",
+    err
+  );
+
+}
+
+return res.status(201).json({
+
+  message:
+    "User registered"
+
+});
+
+
 
       // Generate Token
       const token =
