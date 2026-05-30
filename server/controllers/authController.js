@@ -31,23 +31,20 @@ const registerUser =
 
       // Check Existing User
       const existingUser =
-        await User.findOne({ email });
+        await User.findOne({
+          email,
+        });
 
       if (existingUser) {
 
-        if (!existingUser.isVerified) {
+        return res
+          .status(400)
+          .json({
 
-          await User.deleteOne({
-            _id: existingUser._id,
+            message:
+              "User already exists",
+
           });
-
-        } else {
-
-          return res.status(400).json({
-            message: "User already exists",
-          });
-
-        }
       }
 
       // Hash Password
@@ -89,34 +86,12 @@ const registerUser =
         });
 
       // Send Verification Email
-        try {
+      await sendVerificationEmail(
 
-          await sendVerificationEmail(
-            email,
-            otp
-          );
+        email,
+        otp
 
-        } catch (err) {
-
-          console.log(
-            "MAIL FAILED",
-            err
-          );
-
-          await User.deleteOne({
-            _id: user._id
-          });
-
-          return res.status(500).json({
-            message: "Failed to send OTP"
-          });
-
-        }
-
-        return res.status(201).json({
-          message: "OTP sent successfully"
-        });
-
+      );
 
       // Generate Token
       const token =

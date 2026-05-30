@@ -105,11 +105,13 @@ function Register() {
       setShowOTPModal(true);
 
     } catch (error) {
-      console.log(error.response?.data);
+
+      console.log(error);
+
       alert(
-        error.response?.data?.message ||
         "Something went wrong"
       );
+
     }
   };
 

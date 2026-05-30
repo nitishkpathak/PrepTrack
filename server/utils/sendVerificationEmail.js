@@ -4,24 +4,10 @@ const nodemailer =
 const sendVerificationEmail =
   async (email, otp) => {
 
-    console.log(
-      "EMAIL_USER =",
-      process.env.EMAIL_USER
-    );
-
-    console.log(
-      "EMAIL_PASS EXISTS =",
-      !!process.env.EMAIL_PASS
-    );
-
     const transporter =
       nodemailer.createTransport({
 
-        host: "smtp.gmail.com",
-
-        port: 587,
-
-        secure: false,
+        service: "gmail",
 
         auth: {
 
@@ -47,17 +33,32 @@ const sendVerificationEmail =
 
       html: `
 
-        <div style="font-family:sans-serif;padding:20px;">
+        <div
+          style="
+            font-family:sans-serif;
+            padding:20px;
+          "
+        >
 
-          <h2>Verify Your Email</h2>
+          <h2>
+            Verify Your Email
+          </h2>
 
-          <p>Your OTP:</p>
+          <p>
+            Your OTP:
+          </p>
 
-          <h1 style="color:#2563eb;">
+          <h1
+            style="
+              color:#2563eb;
+            "
+          >
             ${otp}
           </h1>
 
-          <p>OTP valid for 5 minutes.</p>
+          <p>
+            OTP valid for 5 minutes.
+          </p>
 
         </div>
 
@@ -65,28 +66,10 @@ const sendVerificationEmail =
 
     };
 
-    try {
-
-      const info =
-        await transporter.sendMail(
-          mailOptions
-        );
-
-      console.log(
-        "EMAIL SENT:",
-        info.response
-      );
-
-    } catch (error) {
-
-      console.log(
-        "EMAIL ERROR:",
-        error
-      );
-
-      throw error;
-    }
+    await transporter.sendMail(
+      mailOptions
+    );
   };
 
 module.exports =
-  sendVerificationEmail; 
+  sendVerificationEmail;
