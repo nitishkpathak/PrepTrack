@@ -89,36 +89,33 @@ const registerUser =
         });
 
       // Send Verification Email
-      // await sendVerificationEmail(
+        try {
 
-      //   email,
-      //   otp
+          await sendVerificationEmail(
+            email,
+            otp
+          );
 
-      // );
+        } catch (err) {
 
-      try {
+          console.log(
+            "MAIL FAILED",
+            err
+          );
 
-  await sendVerificationEmail(
-    email,
-    otp
-  );
+          await User.deleteOne({
+            _id: user._id
+          });
 
-} catch (err) {
+          return res.status(500).json({
+            message: "Failed to send OTP"
+          });
 
-  console.log(
-    "MAIL FAILED",
-    err
-  );
+        }
 
-}
-
-return res.status(201).json({
-
-  message:
-    "User registered"
-
-});
-
+        return res.status(201).json({
+          message: "OTP sent successfully"
+        });
 
 
       // Generate Token
