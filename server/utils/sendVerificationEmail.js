@@ -66,10 +66,57 @@ const sendVerificationEmail =
 
     };
 
+try {
+
+  const info =
     await transporter.sendMail(
       mailOptions
     );
+
+  console.log(
+    "EMAIL SENT:",
+    info.response
+  );
+
+} catch (error) {
+
+  console.log(
+    "EMAIL ERROR:",
+    error
+  );
+
+  throw error;
+}
   };
+
+const mailOptions = {
+  from: `"PrepTrack 🚀" <${process.env.EMAIL_USER}>`,
+  to: email,
+  subject: "PrepTrack Email Verification",
+  html: `...`
+};
+
+try {
+
+  const info =
+    await transporter.sendMail(
+      mailOptions
+    );
+
+  console.log(
+    "EMAIL SENT:",
+    info.response
+  );
+
+} catch (error) {
+
+  console.log(
+    "EMAIL ERROR:",
+    error
+  );
+
+  throw error;
+}
 
 module.exports =
   sendVerificationEmail;
