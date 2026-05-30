@@ -28,6 +28,15 @@ const questionSchema = new mongoose.Schema(
       type: String,
     },
 
+    link: {
+      type: String,
+    },
+
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

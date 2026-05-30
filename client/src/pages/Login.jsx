@@ -1,24 +1,65 @@
 import { useState } from "react";
+import axios from "axios";
 
 import { loginUser } from "../services/authService";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, } from "react-router-dom";
 
 function Login() {
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+    const [formData,
+    setFormData] =
+      useState({
+
+        email: "",
+        password: "",
+
+      });
+
+    const [loading,
+      setLoading] =
+      useState(false);
+
+    const [showForgot,
+        setShowForgot] =
+        useState(false);
+
+    const [forgotStep,
+    setForgotStep] =
+    useState(1);
+
+    const [forgotData,
+    setForgotData] =
+    useState({
+
+      email: "",
+      otp: "",
+      newPassword: "",
+      confirmPassword: "",
+
+    });
+
+    const [otpLoading,
+      setOtpLoading] =
+      useState(false);
+
+      const [resetLoading,
+      setResetLoading] =
+      useState(false);
 
   // Handle input
   const handleChange = (e) => {
 
     setFormData({
+
       ...formData,
-      [e.target.name]: e.target.value,
+
+      [e.target.name]:
+        e.target.value,
+
     });
 
   };
@@ -28,21 +69,68 @@ function Login() {
 
     e.preventDefault();
 
+    setLoading(true);
+
     try {
 
-      const data = await loginUser(
-        formData
-      );
+      const data =
+        await loginUser(
+          formData
+        );
 
       console.log(data);
 
       // Save token
       localStorage.setItem(
-        "token",
-        data.token
-      );
+      "token",
+      data.token
+    );
 
-      alert("Login Successful");
+      const optimizedUser = {
+
+      _id:
+        data.user._id,
+
+      name:
+        data.user.name,
+
+      email:
+        data.user.email,
+
+      role:
+        data.user.role,
+
+      bio:
+        data.user.bio,
+
+      createdAt:
+        data.user.createdAt,
+
+      streak: 
+       data.user.streak,
+
+      lastSolvedDate: 
+        data.user.lastSolvedDate,
+
+      // REMOVE HUGE IMAGE
+      profilePic:
+      data.user.profilePic || "",
+
+    };
+
+    localStorage.setItem(
+
+      "user",
+
+      JSON.stringify(
+        optimizedUser
+      )
+
+    );
+
+      alert(
+        "Login Successful 🚀"
+      );
 
       navigate("/dashboard");
 
@@ -50,52 +138,730 @@ function Login() {
 
       console.log(error);
 
-      alert("Invalid Credentials");
+      alert(
+        "Invalid Credentials"
+      );
+
+    } finally {
+
+      setLoading(false);
 
     }
   };
 
+  // ============================
+// HANDLE FORGOT INPUT
+// ============================
+
+const handleForgotChange =
+  (e) => {
+
+    setForgotData({
+
+      ...forgotData,
+
+      [e.target.name]:
+        e.target.value,
+
+    });
+  };
+
+// ============================
+// SEND OTP
+// ============================
+
+  const handleSendOTP =
+    async () => {
+
+      setOtpLoading(true);
+
+      try {
+
+        const response =
+          await axios.post(
+
+            "http://localhost:5000/api/password/send-otp",
+
+            {
+
+              email:
+                forgotData.email,
+
+            }
+
+          );
+
+        alert(
+          response.data.message
+        );
+
+        setForgotStep(2);
+
+      } catch (error) {
+
+        console.log(error);
+
+        alert(
+          error.response.data.message
+        );
+
+      } finally {
+
+        setOtpLoading(false);
+
+      }
+    };
+
+// ============================
+// RESET PASSWORD
+// ============================
+
+  const handleResetPassword =
+    async () => {
+
+      setResetLoading(true);
+
+      try {
+
+        if (
+
+          forgotData.newPassword !==
+          forgotData.confirmPassword
+
+        ) {
+
+          setResetLoading(false);
+
+          return alert(
+            "Passwords do not match"
+          );
+        }
+
+        const response =
+          await axios.post(
+
+            "http://localhost:5000/api/password/reset-password",
+
+            {
+
+              email:
+                forgotData.email,
+
+              otp:
+                forgotData.otp,
+
+              newPassword:
+                forgotData.newPassword,
+
+            }
+
+          );
+
+        alert(
+          response.data.message
+        );
+
+        setShowForgot(false);
+
+        setForgotStep(1);
+
+      } catch (error) {
+
+        console.log(error);
+
+        alert(
+          error.response.data.message
+        );
+
+      } finally {
+
+        setResetLoading(false);
+
+      }
+    };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
 
-      <div className="bg-gray-800 p-8 rounded-xl w-[400px] shadow-lg">
+    <div
+      className="
+        min-h-screen
+        flex
+        items-center
+        justify-center
 
-        <h1 className="text-3xl font-bold text-white text-center mb-6">
-          PrepTrack Login
-        </h1>
+        bg-white
+        dark:bg-black
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4"
+        px-4
+
+        transition
+        duration-300
+      "
+    >
+
+      <div
+        className="
+          bg-gray-200
+          dark:bg-gray-900
+
+          p-8
+          rounded-2xl
+          w-full
+          max-w-md
+
+          shadow-xl
+
+          border
+          border-gray-300
+          dark:border-gray-800
+
+          transition
+          duration-300
+        "
+      >
+
+        {/* Heading */}
+        <h1
+          className="
+            text-4xl
+            font-bold
+
+            text-black
+            dark:text-white
+
+            text-center
+            mb-2
+          "
         >
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-gray-700 text-white outline-none"
-          />
+          PrepTrack
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-gray-700 text-white outline-none"
-          />
+        </h1>
 
+        <p
+          className="
+            text-gray-700
+            dark:text-gray-400
+
+            text-center
+            mb-8
+          "
+        >
+
+          Login to continue 🚀
+
+        </p>
+
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-5"
+        >
+
+          {/* Email */}
+          <div>
+
+            <label
+              className="
+                block
+
+                text-gray-700
+                dark:text-gray-400
+
+                mb-2
+              "
+            >
+
+              Email
+
+            </label>
+
+            <input
+
+              type="email"
+
+              name="email"
+
+              placeholder="
+                Enter your email
+              "
+
+              value={formData.email}
+
+              onChange={handleChange}
+
+              className="
+                w-full
+                p-3
+                rounded-lg
+
+                bg-white
+                dark:bg-gray-800
+
+                text-black
+                dark:text-white
+
+                outline-none
+
+                border
+                border-gray-300
+                dark:border-gray-700
+
+                focus:border-blue-500
+
+                transition
+                duration-300
+              "
+            />
+
+          </div>
+
+          {/* Password */}
+          <div>
+
+            <label
+              className="
+                block
+
+                text-gray-700
+                dark:text-gray-400
+
+                mb-2
+              "
+            >
+
+              Password
+
+            </label>
+
+            <input
+
+              type="password"
+
+              name="password"
+
+              placeholder="
+                Enter your password
+              "
+
+              value={formData.password}
+
+              onChange={handleChange}
+
+              className="
+                w-full
+                p-3
+                rounded-lg
+
+                bg-white
+                dark:bg-gray-800
+
+                text-black
+                dark:text-white
+
+                outline-none
+
+                border
+                border-gray-300
+                dark:border-gray-700
+
+                focus:border-blue-500
+
+                transition
+                duration-300
+              "
+            />
+
+          </div>
+
+          {/* Button */}
           <button
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg"
+            type="submit"
+
+            disabled={loading}
+
+            className="
+              w-full
+              bg-blue-600
+              hover:bg-blue-700
+              text-white
+              p-3
+              rounded-lg
+              transition
+              duration-300
+              cursor-pointer
+            "
           >
-            Login
-          </button>
+
+            {
+              loading
+
+                ? "Logging in..."
+
+                : "Login"
+            }
+
+          </button>          
 
         </form>
 
+          <p
+          className="
+            text-right
+            mt-4
+          "
+        >
+
+          <button
+
+            onClick={() =>
+              setShowForgot(true)
+            }
+
+            className="
+              text-blue-500
+              hover:underline
+              cursor-pointer
+            "
+          >
+
+            Forgot Password?
+
+          </button>
+
+        </p>
+
+          <div
+            className="
+              mt-6
+              text-center
+            "
+          >
+
+            <p
+              className="
+                text-gray-700
+                dark:text-gray-400
+                mb-3
+              "
+            >
+
+              Don't have an account?
+
+            </p>
+
+        <Link
+          to="/register"
+        >
+
+            <button
+              className="
+                w-full
+
+                bg-green-600
+                hover:bg-green-700
+
+                text-white
+
+                p-3
+                rounded-lg
+
+                transition
+                duration-300
+
+                cursor-pointer
+              "
+            >
+
+              Register / Sign Up
+
+            </button>
+
+          </Link>
+
+        </div>
+
       </div>
+
+      {/* Forgot Password */}
+
+        {
+        showForgot && (
+
+          <div
+            className="
+              fixed
+              inset-0
+
+              bg-black/50
+
+              flex
+              items-center
+              justify-center
+
+              z-50
+            "
+          >
+
+            <div
+              className="
+                bg-white
+                dark:bg-gray-900
+
+                p-6
+                rounded-2xl
+
+                w-full
+                max-w-md
+
+                mx-4
+              "
+            >
+
+              <h2
+                className="
+                  text-2xl
+                  font-bold
+                  mb-5
+
+                  text-black
+                  dark:text-white
+                "
+              >
+
+                Forgot Password
+
+              </h2>
+
+              {
+
+                forgotStep === 1 && (
+
+                  <div className="space-y-4">
+
+                    <input
+
+                      type="email"
+
+                      name="email"
+
+                      placeholder="Enter Email"
+
+                      value={
+                        forgotData.email
+                      }
+
+                      onChange={
+                        handleForgotChange
+                      }
+
+                      className="
+                        w-full
+                        p-3
+                        rounded-lg
+
+                        bg-gray-100
+                        dark:bg-gray-800
+
+                        text-black
+                        dark:text-white
+
+                        outline-none
+                      "
+                    />
+
+                    <button
+
+                      onClick={
+                        handleSendOTP
+                      }
+
+                      className="
+                        w-full
+
+                        bg-blue-600
+                        hover:bg-blue-700
+
+                        text-white
+
+                        p-3
+                        rounded-lg
+
+                        cursor-pointer
+                      "
+                    >
+
+                      {
+                        otpLoading
+
+                          ? "Waiting..."
+
+                          : "Send OTP"
+                      }
+
+                    </button>
+
+                  </div>
+                )
+              }
+
+              {
+
+                forgotStep === 2 && (
+
+                  <div className="space-y-4">
+
+                    <input
+
+                      type="text"
+
+                      name="otp"
+
+                      placeholder="Enter OTP"
+
+                      value={
+                        forgotData.otp
+                      }
+
+                      onChange={
+                        handleForgotChange
+                      }
+
+                      className="
+                        w-full
+                        p-3
+                        rounded-lg
+
+                        bg-gray-100
+                        dark:bg-gray-800
+
+                        text-black
+                        dark:text-white
+
+                        outline-none
+                      "
+                    />
+
+                    <input
+
+                      type="password"
+
+                      name="newPassword"
+
+                      placeholder="New Password"
+
+                      value={
+                        forgotData.newPassword
+                      }
+
+                      onChange={
+                        handleForgotChange
+                      }
+
+                      className="
+                        w-full
+                        p-3
+                        rounded-lg
+
+                        bg-gray-100
+                        dark:bg-gray-800
+
+                        text-black
+                        dark:text-white
+
+                        outline-none
+                      "
+                    />
+
+                    <input
+
+                      type="password"
+
+                      name="confirmPassword"
+
+                      placeholder="Confirm Password"
+
+                      value={
+                        forgotData.confirmPassword
+                      }
+
+                      onChange={
+                        handleForgotChange
+                      }
+
+                      className="
+                        w-full
+                        p-3
+                        rounded-lg
+
+                        bg-gray-100
+                        dark:bg-gray-800
+
+                        text-black
+                        dark:text-white
+
+                        outline-none
+                      "
+                    />
+
+                    <button
+
+                      onClick={
+                        handleResetPassword
+                      }
+
+                      className="
+                        w-full
+
+                        bg-green-600
+                        hover:bg-green-700
+
+                        text-white
+
+                        p-3
+                        rounded-lg
+
+                        cursor-pointer
+                      "
+                    >
+
+                      {
+                        resetLoading
+
+                          ? "Waiting..."
+
+                          : "Reset Password"
+                      }
+
+                    </button>
+
+                  </div>
+                )
+              }
+
+              <button
+
+                onClick={() =>
+                  setShowForgot(false)
+                }
+
+                className="
+                  mt-5
+
+                  text-red-500
+                  hover:underline
+                "
+              >
+
+                Close
+
+              </button>
+
+            </div>
+
+          </div>
+        )
+      }
 
     </div>
   );

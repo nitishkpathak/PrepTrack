@@ -45,3 +45,47 @@ export const getQuestions = async () => {
 
   return response.data;
 };
+
+// Delete Question
+export const deleteQuestion = async (
+  id
+) => {
+
+  const token = localStorage.getItem(
+    "token"
+  );
+
+  const response = await axios.delete(
+    `${API_URL}/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+// Update Question
+export const updateQuestion = async (
+  id,
+  updatedData
+) => {
+
+  const token = localStorage.getItem(
+    "token"
+  );
+
+  const response = await axios.put(
+    `${API_URL}/${id}`,
+    updatedData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+};

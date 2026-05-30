@@ -1,5 +1,5 @@
 const Question = require("../models/Question");
-
+const User = require("../models/User");
 
 // Add Question
 const addQuestion = async (req, res) => {
@@ -11,6 +11,7 @@ const addQuestion = async (req, res) => {
       difficulty,
       status,
       notes,
+      link,
     } = req.body;
 
     const question = await Question.create({
@@ -19,6 +20,7 @@ const addQuestion = async (req, res) => {
       difficulty,
       status,
       notes,
+      link,
       user: req.user._id,
     });
 
@@ -77,7 +79,54 @@ const updateQuestion = async (req, res) => {
       });
     }
 
-    // Update question
+    // ============================
+    // STREAK LOGIC
+    // ============================
+
+    const oldStatus =
+      question.status;
+
+    const newStatus =
+      req.body.status;
+
+    if (
+      oldStatus !== "Solved" &&
+      newStatus === "Solved"
+    ) {
+
+      const user =
+        await User.findById(
+          req.user._id
+        );
+
+      const today =
+        new Date().toDateString();
+
+      const lastSolved =
+        user.lastSolvedDate
+          ? new Date(
+              user.lastSolvedDate
+            ).toDateString()
+          : null;
+
+      // Same day par sirf 1 baar streak increase
+      if (
+        lastSolved !== today
+      ) {
+
+        user.streak += 1;
+
+        user.lastSolvedDate =
+          new Date();
+
+        await user.save();
+      }
+    }
+
+    // ============================
+    // UPDATE QUESTION
+    // ============================
+
     const updatedQuestion =
       await Question.findByIdAndUpdate(
         req.params.id,
@@ -87,7 +136,9 @@ const updateQuestion = async (req, res) => {
         }
       );
 
-    res.status(200).json(updatedQuestion);
+    res.status(200).json(
+      updatedQuestion
+    );
 
   } catch (error) {
 

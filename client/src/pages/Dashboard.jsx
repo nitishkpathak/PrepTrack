@@ -1,22 +1,39 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+import {useEffect, useState,} from "react";
+import {useNavigate,} from "react-router-dom";
+import {Menu,} from "lucide-react";
+import toast from "react-hot-toast";
+import {formatDistanceToNow, } from "date-fns";
 
-import {
-  addQuestion,
-  getQuestions,
-} from "../services/questionService";
+import ThemeToggle from "../components/ThemeToggle";
+import Sidebar from "../components/Sidebar";
+import StatsCards from "../components/StatsCards";
+import FilterBar from "../components/FilterBar";
+import ProgressChart from "../components/ProgressChart";
+import DifficultyChart from "../components/DifficultyChart";
+
+import {addQuestion, getQuestions, deleteQuestion, updateQuestion,} from "../services/questionService";
 
 function Dashboard() {
 
   const navigate = useNavigate();
 
-  // Check token
-  const token = localStorage.getItem("token");
+  // Sidebar state
+  const [open, setOpen] = useState(false);
 
-  if (!token) {
-    navigate("/");
-  }
+  // Check token
+  const token = localStorage.getItem(
+    "token"
+  );
+
+  useEffect(() => {
+
+    if (!token) {
+
+      navigate("/");
+
+    }
+
+  }, [token]);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -25,35 +42,99 @@ function Dashboard() {
     difficulty: "Easy",
     status: "Pending",
     notes: "",
+    link: "",
   });
 
   // Questions state
   const [questions, setQuestions] = useState([]);
-
+  const [searchTerm, setSearchTerm] = useState("");
+  const [difficultyFilter, setDifficultyFilter,] = useState("");
+  const [statusFilter, setStatusFilter,] = useState("");
+  const [favoriteFilter, setFavoriteFilter] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [activeSection, setActiveSection] = useState("dashboard");
+  const [loading, setLoading] = useState(false);
+  const [expandedQuestion, setExpandedQuestion] = useState(null);
+  const [updatedQuestionId, setUpdatedQuestionId] = useState(null);
+  
   // Fetch Questions
   const fetchQuestions = async () => {
-
     try {
-
       const data = await getQuestions();
+
+      console.log(
+        "Dashboard Questions:",
+        data
+      );
 
       setQuestions(data);
 
     } catch (error) {
-
       console.log(error);
-
     }
   };
 
-  // Load questions on page load
-  useEffect(() => {
+    
 
+  // Load Questions
+  useEffect(() => {
     fetchQuestions();
 
+    window.scrollTo(0, 0);
   }, []);
 
-  // Handle input
+  const filteredQuestions =
+    questions.filter((question) => {
+
+      return (
+
+        question.title
+          .toLowerCase()
+          .includes(
+            searchTerm.toLowerCase()
+          )
+
+        &&
+
+        (
+          difficultyFilter === ""
+          ||
+          question.difficulty ===
+          difficultyFilter
+        )
+
+        &&
+
+        (
+          statusFilter === ""
+          ||
+          question.status ===
+          statusFilter
+        )
+
+        &&
+
+        (
+          !favoriteFilter
+          ||
+          question.favorite === true
+        )
+
+      );
+
+    })
+
+     .sort(
+
+    (a, b) =>
+
+      new Date(b.createdAt)
+      -
+      new Date(a.createdAt)
+
+  );
+
+  // Handle Input
   const handleChange = (e) => {
 
     setFormData({
@@ -63,41 +144,196 @@ function Dashboard() {
 
   };
 
-  // Handle submit
+  // Handle Submit
   const handleSubmit = async (e) => {
 
     e.preventDefault();
 
-    try {
+    if (
 
-      const data = await addQuestion(
-        formData
+      !formData.title ||
+      !formData.topic ||
+      !formData.notes
+
+    ) {
+
+      toast.error(
+        "Please fill all required fields 😄"
       );
 
-      console.log(data);
+      return;
+    }
 
-      alert("Question Added Successfully");
+    try {
 
-      // Refresh questions
+      setLoading(true);
+
+      if (editId) {
+
+        await updateQuestion(
+          editId,
+          formData
+        );
+
+        toast.success(`${formData.topic} Question Updated 🚀`);
+        setUpdatedQuestionId(editId);
+
+        setEditId(null);
+
+      } else {
+
+        await addQuestion(formData);
+
+        toast.success("Question Added Successfully");
+
+      }
+
+      // Refresh Questions
       fetchQuestions();
 
-      // Reset form
+      // Reset Form
       setFormData({
         title: "",
         topic: "",
         difficulty: "Easy",
         status: "Pending",
         notes: "",
+        link: "",
       });
+
+      setLoading(false);
 
     } catch (error) {
 
       console.log(error);
 
-      alert("Something went wrong");
+      toast.error("Something went wrong");
 
     }
   };
+
+  useEffect(() => {
+
+  if (updatedQuestionId) {
+
+    document
+      .getElementById(
+        updatedQuestionId
+      )
+      ?.scrollIntoView({
+
+        behavior: "smooth",
+        block: "center",
+
+      });
+
+    setUpdatedQuestionId(null);
+
+  }
+
+}, [questions]);
+
+
+  // Toggle Favorite
+const handleFavorite =
+  async (question) => {
+
+    try {
+
+      await updateQuestion(
+        question._id,
+        {
+          favorite:
+            !question.favorite,
+        }
+      );
+
+      fetchQuestions();
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+  };
+
+  // Delete Question
+    const handleDelete =
+      async (id) => {
+
+        const confirmDelete =
+          window.confirm(
+
+            "Are you sure you want to delete this question?"
+          );
+
+        if (!confirmDelete)
+          return;
+
+        try {
+
+          await deleteQuestion(id);
+
+          toast.success(
+            "Question Deleted"
+          );
+
+          fetchQuestions();
+
+        } catch (error) {
+
+          console.log(error);
+
+        }
+      };
+
+      // Update Status
+      const handleStatusChange =
+        async (
+          question,
+          newStatus
+        ) => {
+
+          try {
+
+            await updateQuestion(
+              question._id,
+              {
+                status: newStatus,
+              }
+            );
+
+            fetchQuestions();
+
+          } catch (error) {
+
+            console.log(error);
+
+          }
+        };
+
+
+    // Edit Question
+    const handleEdit = (question) => {
+
+      setEditId(question._id);
+
+      setFormData({
+        title: question.title,
+        topic: question.topic,
+        difficulty: question.difficulty,
+        status: question.status,
+        notes: question.notes,
+        link: question.link,
+      });
+
+      // Scroll to form
+      document
+        .getElementById("question-form")
+        .scrollIntoView({
+          behavior: "smooth",
+        });
+    };
 
   // Logout
   const handleLogout = () => {
@@ -109,135 +345,1028 @@ function Dashboard() {
   };
 
   return (
-    // <div className="min-h-screen bg-gray-900 text-white p-8">
-    <div className="flex bg-gray-950 text-white">
 
-    <Sidebar
-      handleLogout={handleLogout}
-    />
+    <div
+      className="
+        min-h-screen
+        bg-white
+        dark:bg-gray-950
+        text-black
+        dark:text-white
+        transition
+        duration-300
+        flex
+      "
+    >
+      <ThemeToggle />
 
-    <div className="flex-1 p-6 md:p-8 pt-24 md:pt-8">
+      {/* Sidebar */}
+      <Sidebar
+        activeSection={activeSection}
+        setActiveSection={
+          setActiveSection
+        }
+        open={open}
+        closeSidebar={() =>
+          setOpen(false)
+        }
+        handleLogout={handleLogout}
+      />
 
-      {/* Navbar */}
-      <div className="flex justify-between items-center mb-8">
+      {/* Main Content */}
+      <div className="flex-1 md:ml-[260px]">
 
-        <h1 className="text-2xl md:text-3xl font-bold pl-14 md:pl-0">
-          PrepTrack Dashboard
-        </h1>
-
-      </div>
-
-      {/* Add Question Form */}
-      <div className="bg-gray-800 p-6 rounded-xl mb-8">
-
-        <h2 className="text-2xl font-semibold mb-4">
-          Add Question
-        </h2>
-
-        <form
-          onSubmit={handleSubmit}
-          className="grid gap-4"
+        {/* Mobile Topbar */}
+        <div
+          className="
+            fixed
+            top-0
+            left-0
+            right-0
+            h-16
+            border-b
+            bg-white
+            dark:bg-gray-950
+            border-gray-300
+            dark:border-gray-800
+            flex
+            items-center
+            px-4
+            z-30
+            md:hidden
+          "
         >
 
-          <input
-            type="text"
-            name="title"
-            placeholder="Question Title"
-            value={formData.title}
-            onChange={handleChange}
-            className="p-3 rounded-lg bg-gray-700 outline-none"
-          />
-
-          <input
-            type="text"
-            name="topic"
-            placeholder="Topic"
-            value={formData.topic}
-            onChange={handleChange}
-            className="p-3 rounded-lg bg-gray-700 outline-none"
-          />
-
-          <select
-            name="difficulty"
-            value={formData.difficulty}
-            onChange={handleChange}
-            className="p-3 rounded-lg bg-gray-700 outline-none"
-          >
-            <option>Easy</option>
-            <option>Medium</option>
-            <option>Hard</option>
-          </select>
-
-          <textarea
-            name="notes"
-            placeholder="Notes"
-            value={formData.notes}
-            onChange={handleChange}
-            className="p-3 rounded-lg bg-gray-700 outline-none"
-          />
-
+          {/* Menu Button */}
           <button
-            className="bg-blue-600 hover:bg-blue-700 p-3 rounded-lg"
+            aria-label="Open Sidebar"
+            onClick={() => setOpen(true)}
+            className="
+              bg-blue-600
+              hover:bg-blue-700
+              p-2
+              rounded-lg
+            "
           >
-            Add Question
+            <Menu size={22} />
           </button>
 
-        </form>
+        </div>
 
-      </div>
+        {/* Content */}
+        <div
+          className="
+            p-4
+            sm:p-6
+            md:p-8
+            pt-24
+            md:pt-8
+          "
+        >
 
-      {/* Questions List */}
-      <div className="mt-8">
+          {/* Sticky Header */}
+          <div
+            className="
+              sticky
+              top-0
+              z-10
 
-        <h2 className="text-2xl font-bold mb-4">
-          Your Questions
-        </h2>
+              bg-white
+              dark:bg-gray-950
 
-        <div className="grid gap-4">
+              border-b
+              border-gray-300
+              dark:border-gray-800
 
-          {questions.map((question) => (
+              py-5
+              mb-8
+
+              backdrop-blur-md
+
+              transition
+              duration-300
+            "
+          >
+
+            <h1
+                className="
+                  text-2xl
+                  md:text-3xl
+                  font-bold
+
+                  text-black
+                  dark:text-white
+                "
+              >
+                PrepTrack Dashboard
+              </h1>
+
+          </div>
+
+          {location.pathname ===
+            "/dashboard" && ( 
+        <>
+
+          <StatsCards questions={questions} />
+          <FilterBar
+
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+
+            difficultyFilter={
+              difficultyFilter
+            }
+
+            setDifficultyFilter={
+              setDifficultyFilter
+            }
+
+            statusFilter={statusFilter}
+
+            setStatusFilter={
+              setStatusFilter
+            }
+
+          />
+          <button
+            aria-label="Toggle Favorites Filter"
+            onClick={() =>
+              setFavoriteFilter(
+                !favoriteFilter
+              )
+            }
+
+            className={`
+              mb-6
+              px-4
+              py-2
+              rounded-lg
+              cursor-pointer
+              transition-all
+
+              ${
+                favoriteFilter
+
+                  ? "bg-yellow-500 text-black"
+
+                  : "bg-gray-300 dark:bg-gray-700 text-black dark:text-white"
+              }
+            `}
+          >
+
+            {
+              favoriteFilter
+
+                ? "⭐ Showing Favorites"
+
+                : "☆ Show Favorites"
+            }
+
+          </button>
+          {/* Add Question */}
+          {
+          searchTerm === "" && (
 
             <div
-              key={question._id}
-              className="bg-gray-800 p-4 rounded-xl"
+              id="question-form"
+
+              className="
+                bg-gray-200
+                dark:bg-gray-800
+                p-6
+                rounded-xl
+                mb-8
+              "
             >
 
-              <h3 className="text-xl font-semibold">
-                {question.title}
-              </h3>
+            <h2
+              className="
+                text-2xl
+                font-semibold
+                mb-4
+              "
+            >
+              {editId
+              ? "Update Question"
+              : "Add Question"}
+            </h2>
 
-              <p className="text-gray-400">
-                {question.topic}
-              </p>
+            {/* Form */}
+            <form
+              onSubmit={handleSubmit}
+              className="grid gap-4"
+            >
 
-              <p className="mt-2">
-                Difficulty:
-                <span className="ml-2 text-blue-400">
-                  {question.difficulty}
-                </span>
-              </p>
+              {/* Title */}
+              <input
+                aria-label="Question Title"
+                type="text"
+                name="title"
+                placeholder="Question Title"
+                value={formData.title}
+                onChange={handleChange}
+                className="
+                  p-3
+                  rounded-lg
+                  bg-white
+                  dark:bg-gray-700
 
-              <p>
-                Status:
-                <span className="ml-2 text-green-400">
-                  {question.status}
-                </span>
-              </p>
+                  text-black
+                  dark:text-white
 
-              <p className="mt-2 text-gray-300">
-                {question.notes}
+                  border
+                  border-gray-300
+                  dark:border-gray-600
+                  outline-none
+                "
+              />
+
+              {/* Topic */}
+              <input
+                aria-label="Question Topic"
+                type="text"
+                name="topic"
+                placeholder="Topic"
+                value={formData.topic}
+                onChange={handleChange}
+                className="
+                  p-3
+                  rounded-lg
+                  bg-white
+                  dark:bg-gray-700
+
+                  text-black
+                  dark:text-white
+
+                  border
+                  border-gray-300
+                  dark:border-gray-600
+                  outline-none
+                "
+              />
+
+              {/* Difficulty */}
+              <select
+                id="difficulty"
+                name="difficulty"
+                aria-label="Select Difficulty"
+                value={formData.difficulty}
+                onChange={handleChange}
+                className="
+                  p-3
+                  rounded-lg
+                  bg-white
+                  dark:bg-gray-700
+
+                  text-black
+                  dark:text-white
+
+                  border
+                  border-gray-300
+                  dark:border-gray-600
+                  outline-none
+                  cursor-pointer
+                "
+              >
+                <option>Easy</option>
+                <option>Medium</option>
+                <option>Hard</option>
+                
+              </select>
+
+              {/* LeetCode Link */}
+              <input
+                aria-label="LeetCode Problem Link"
+                type="text"
+                name="link"
+                placeholder="
+                  LeetCode Problem Link
+                "
+                value={formData.link}
+                onChange={handleChange}
+                className="
+                  p-3
+                  rounded-lg
+                  bg-white
+                  dark:bg-gray-700
+
+                  text-black
+                  dark:text-white
+
+                  border
+                  border-gray-300
+                  dark:border-gray-600
+                  outline-none
+                "
+              />
+
+              {/* Notes */}
+              <textarea
+                aria-label="Question Notes"
+                name="notes"
+                placeholder="Notes"
+                value={formData.notes}
+                onChange={handleChange}
+
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "Enter"
+                    &&
+                    !e.shiftKey
+                  ) {
+
+                    e.preventDefault();
+
+                    handleSubmit(e);
+
+                  }
+                }}
+
+                className="
+                  p-3
+                  rounded-lg
+                  bg-white
+                  dark:bg-gray-700
+
+                  text-black
+                  dark:text-white
+
+                  border
+                  border-gray-300
+                  dark:border-gray-600
+                  outline-none
+                "
+              />
+
+
+              {/* Button */}
+              <button
+
+                disabled={loading}
+
+                className={`
+                  p-3
+                  rounded-lg
+                  transition-all
+
+                  ${
+                    loading
+
+                      ? "bg-blue-400 cursor-not-allowed"
+
+                      : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                  }
+                `}
+              >
+
+                {
+                loading
+
+      ?          "Loading..."
+      
+                : editId
+                  ? "Update Question"
+                  : "Add Question"}
+
+              </button>
+
+            </form>          
+
+          </div>
+          )
+          }
+
+          {/* Questions */}
+          <div>
+
+            <h2
+              className="
+                text-2xl
+                font-bold
+                mb-4
+              "
+            >
+              Your Questions
+            </h2>
+
+            <div className="grid gap-4">
+
+              {filteredQuestions.map((question) => (
+
+                <div
+                  key={question._id}
+                  id={question._id}
+
+                  className="
+                    p-4
+                    rounded-xl
+                    border
+                    bg-gray-200
+                    dark:bg-gray-800
+
+                    border-gray-300
+                    dark:border-gray-700
+                    hover:border-blue-500
+                    transition
+                  "
+                >
+
+              <div
+                    className="
+                      flex
+                      flex-col
+                      md:flex-row
+                      justify-between
+                      items-start
+                      gap-4
+                      mb-3
+                    "
+                  >
+
+                  {/* Title */}
+                  <h3
+                    className="
+                      text-xl
+                      font-semibold
+                    "
+                  >
+                    {question.title}
+                  </h3>
+
+                  {/* Topic */}
+                    <p
+                      className="
+                        text-gray-700
+                        dark:text-gray-400
+                        text-sm
+                        mt-1
+                      "
+                    >
+                      {question.topic}
+                    </p>
+
+                  {/* Difficulty */}
+                  <p className="mt-2">
+                    Difficulty:
+
+                    <span
+                      className={`
+                        ml-2
+                        px-2
+                        py-1
+                        rounded-lg
+                        text-sm
+
+                        ${
+                          question.difficulty === "Easy"
+                            ? "bg-green-600"
+
+                          : question.difficulty === "Medium"
+                            ? "bg-yellow-700 text-white"
+
+                          : "bg-red-600"
+                        }
+                      `}
+                    >
+                      {question.difficulty}
+                    </span>
+                    
+                  </p>
+              </div>
+
+                  {/* Status */}
+                  <div className="mt-3">
+
+                    <label
+                      className="
+                        mr-2
+
+                        text-black
+                        dark:text-white
+                      "
+                    >
+
+                      Status:
+
+                    </label>
+
+                    <select
+                      aria-label="Update Question Status"
+                      value={question.status}
+
+                      onChange={(e) =>
+
+                        handleStatusChange(
+
+                          question,
+
+                          e.target.value
+
+                        )
+
+                      }
+
+                      className={`
+                        p-2
+                        rounded-lg
+                        outline-none
+                        cursor-pointer
+
+                        border
+
+                        ${
+                          question.status === "Solved"
+
+                            ? `
+                              bg-green-600
+                              text-white
+                              border-green-500
+                            `
+
+                          : question.status === "Revision"
+
+                            ? `
+                              bg-yellow-700
+                              text-white
+                              border-yellow-400
+                            `
+
+                            : `
+                              bg-gray-300
+                              dark:bg-gray-700
+
+                              text-black
+                              dark:text-white
+
+                              border-gray-400
+                              dark:border-gray-600
+                            `
+                        }
+                      `}
+                    >
+
+                      <option value="Pending">
+                        Pending
+                      </option>
+
+                      <option value="Solved">
+                        Solved
+                      </option>
+
+                      <option value="Revision">
+                        Revision
+                      </option>
+
+                    </select>
+
+                  </div>
+
+                  {/* Notes */}
+                    <div className="mt-2">
+
+                      <p
+                        className={`
+                          text-gray-700
+                          dark:text-gray-300
+                          whitespace-pre-wrap
+                          leading-7
+
+                          ${
+                            expandedQuestion === question._id
+                              ? ""
+                              : "line-clamp-3"
+                          }
+                        `}
+                      >
+
+                        {question.notes}
+
+                      </p>
+
+                      {
+                        question.notes.length > 150 && (
+
+                          <button
+                          aria-label="Expand Question Notes"
+
+                            onClick={() =>
+
+                              setExpandedQuestion(
+
+                                expandedQuestion ===
+                                question._id
+
+                                  ? null
+
+                                  : question._id
+                              )
+                            }
+
+                            className="
+                              mt-2
+                              text-blue-300
+                              hover:text-blue-200
+                              text-sm
+                              cursor-pointer
+                            "
+                          >
+
+                            {
+                              expandedQuestion ===
+                              question._id
+
+                                ? "Read Less"
+
+                                : "Read More"
+                            }
+
+                          </button>
+
+                        )
+                      }
+
+                    </div>
+                
+                {/* Date for Questions */}
+                 <div
+                      className="
+                        mt-4
+                        inline-flex
+                        items-center
+                        gap-2
+                        px-3
+                        py-2
+                        rounded-lg
+                        text-sm
+                        bg-white
+                        dark:bg-gray-700
+
+                        text-gray-700
+                        dark:text-gray-300
+
+                        border
+                        border-gray-300
+                        dark:border-gray-600
+                      "
+                    >
+
+                      <span className="text-blue-300">
+                        Added:
+                      </span>
+
+                      <span>
+                        {new Date(
+                          question.createdAt
+                        ).toLocaleDateString()}
+                      </span>
+
+                    </div>
+
+                    {/* Updated Date */}
+                      <div
+                        className="
+                          mt-2
+                          inline-flex
+                          items-center
+                          gap-2
+
+                          bg-gray-200
+                          dark:bg-gray-700
+
+                          px-3
+                          py-2
+                          rounded-lg
+
+                          text-sm
+
+                          text-gray-700
+                          dark:text-gray-300
+
+                          border
+                          border-gray-300
+                          dark:border-gray-600
+
+                          transition
+                          duration-300
+                        "
+                      >
+
+                        <span className="text-green-500">
+                          Updated:
+                        </span>
+
+                        <span>
+
+                          {
+                            formatDistanceToNow(
+
+                              new Date(
+                                question.updatedAt
+                              ),
+
+                              {
+                                addSuffix: true,
+                              }
+
+                            )
+                          }
+
+                        </span>
+
+                      </div>
+
+                <div className="flex flex-wrap gap-3">
+                  
+                  {/* Favorite Button */}
+                    <button
+                        aria-label="Mark as Favorite"
+                        onClick={() =>
+                          handleFavorite(question)
+                        }
+                      
+
+                      className="
+                        mt-4
+                        bg-yellow-700
+                        hover:bg-yellow-800
+                        text-white
+                        px-4
+                        py-2
+                        rounded-lg
+                        cursor-pointer
+                      "
+                    >
+
+                      {
+                        question.favorite
+
+                          ? "⭐ Favorited"
+
+                          : "☆ Favorite"
+                      }
+
+                    </button>
+
+                    {/* Copy Notes Button */}
+                    <button
+                      aria-label="Copy Notes"
+
+                      onClick={() => {
+
+                        navigator.clipboard.writeText(
+                          question.notes
+                        );
+
+                        toast.success(
+                          "Notes Copied 😄"
+                        );
+                      }}
+
+                      className="
+                        mt-4
+                        bg-blue-600
+                        hover:bg-blue-700
+                        px-4
+                        py-2
+                        rounded-lg
+                        cursor-pointer
+                      "
+                    >
+
+                      📋 Copy
+
+                    </button>
+
+                  {/* Edit Button */}
+                  <button
+                  aria-label="Edit Question"
+                    onClick={() =>
+                      handleEdit(question)
+                    }
+                    className="
+                      mt-4
+                      mr-3
+                      bg-yellow-800
+                      hover:bg-yellow-900
+                      text-white
+                      px-4
+                      py-2
+                      rounded-lg
+                      cursor-pointer
+                    "
+                  >
+                    Edit
+                  </button>
+
+                  {/* Delete Button */}
+                    <button
+                      aria-label="Delete Question"
+                      onClick={() =>
+                        handleDelete(question._id)
+                      }
+                      className="
+                        mt-4
+                        bg-red-600
+                        hover:bg-red-700
+                        px-4
+                        py-2
+                        rounded-lg
+                        cursor-pointer
+                      "
+                    >
+                      Delete
+                    </button>
+
+                    {
+                      question.link && (
+
+                        <a
+                          href={question.link}
+                          target="_blank"
+                          rel="noreferrer"
+
+                          className="
+                            mt-4
+                            bg-blue-600
+                            hover:bg-blue-700
+                            px-4
+                            py-2
+                            rounded-lg
+                            cursor-pointer
+                            inline-block
+                          "
+                        >
+
+                          🔗 Open Problem
+
+                        </a>
+
+                      )
+                    }
+                  </div>
+                </div>
+
+              ))}
+
+            </div>
+
+          </div>
+            
+          </>
+        )}
+
+        {/* Questions Section */}
+        {activeSection === "questions" && (
+
+          <div>
+
+            <h1
+              className="
+                text-3xl
+                font-bold
+                mb-6
+              "
+            >
+              Questions
+            </h1>
+
+            <div className="grid gap-4">
+
+              {filteredQuestions.length === 0 ? (
+
+                <div
+                  className="
+                    bg-gray-200
+                    dark:bg-gray-800
+                    p-10
+                    rounded-xl
+                    text-center
+                  "
+                >
+
+                  <h2
+                    className="
+                      text-2xl
+                      font-bold
+                      mb-2
+                    "
+                  >
+                    No Questions Found 😄
+                  </h2>
+
+                  <p className="text-gray-400">
+                    Add a new question
+                    to get started 🚀
+                  </p>
+
+                </div>
+
+              ) : (
+
+                filteredQuestions.map((question) => (
+
+                  <div
+                    key={question._id}
+                    className="
+                      bg-gray-200
+                      dark:bg-gray-800
+                      p-4
+                      rounded-xl
+                    "
+                  >
+
+                    <h2 className="text-xl font-semibold">
+                      {question.title}
+                    </h2>
+
+                    <p className="text-gray-400">
+                      {question.topic}
+                    </p>
+
+                  </div>
+
+                ))
+
+              )}
+
+            </div>
+
+          </div>
+
+        )}
+
+        {/* Stats Section */}
+        {activeSection === "stats" && (
+
+          <div>
+
+            <h1
+              className="
+                text-3xl
+                font-bold
+                mb-6
+              "
+            >
+              Stats
+            </h1>
+
+            <StatsCards
+              questions={questions}
+            />
+
+            <ProgressChart
+            questions={questions}
+          />
+
+          <DifficultyChart
+            questions={questions}
+          />
+          </div>
+
+        )}
+
+
+        {/* Settings Section */}
+        {activeSection === "settings" && (
+
+          <div>
+
+            <h1
+              className="
+                text-3xl
+                font-bold
+                mb-6
+              "
+            >
+              Settings
+            </h1>
+
+            <div
+              className="
+                bg-gray-200
+                dark:bg-gray-800
+                p-6
+                rounded-xl
+              "
+            >
+
+              <p className="text-gray-700 dark:text-gray-300">
+                Settings coming soon 😄
               </p>
 
             </div>
 
-          ))}
+          </div>
+
+        )}
 
         </div>
+        
 
       </div>
-    </div>
 
     </div>
+
   );
 }
 
