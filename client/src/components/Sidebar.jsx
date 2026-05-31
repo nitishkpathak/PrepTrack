@@ -63,16 +63,12 @@ useEffect(() => {
 
   loadUser();
 
-  const interval =
-    setInterval(
-      loadUser,
-      1000
-    );
+  // Listen to custom 'userUpdated' event from Settings page
+  window.addEventListener("userUpdated", loadUser);
 
-  return () =>
-    clearInterval(
-      interval
-    );
+  return () => {
+    window.removeEventListener("userUpdated", loadUser);
+  };
 
 }, []);
 
