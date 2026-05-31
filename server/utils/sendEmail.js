@@ -19,6 +19,8 @@ const sendEmail =
 
         },
 
+        family: 4,
+
       });
 
     const mailOptions = {
