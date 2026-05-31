@@ -49,33 +49,9 @@ const userSchema =
         default: "",
       },
 
-      // ============================
-      // FORGOT PASSWORD
-      // ============================
-
-      resetOTP: {
-        type: String,
-      },
-
-      otpExpire: {
-        type: Date,
-      },
-
-      // ============================
-      // EMAIL VERIFICATION
-      // ============================
-
       isVerified: {
         type: Boolean,
-        default: false,
-      },
-
-      verifyOTP: {
-        type: String,
-      },
-
-      verifyOTPExpire: {
-        type: Date,
+        default: true,
       },
 
     },

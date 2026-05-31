@@ -277,25 +277,6 @@ const loginUser =
   
 
 // ============================
-// VERIFY EMAIL
-// ============================
-
-const verifyEmail =
-  async (req, res) => {
-    return res.status(200).json({ message: "Email Verified Successfully" });
-  };
-
-
-  // ============================
-// RESEND VERIFY OTP
-// ============================
-
-const resendVerifyOTP =
-  async (req, res) => {
-    return res.status(200).json({ message: "OTP Resent Successfully" });
-  };
-
-// ============================
 // EXPORTS
 // ============================
 
@@ -304,9 +285,5 @@ module.exports = {
   registerUser,
 
   loginUser,
-
-  verifyEmail,
-
-  resendVerifyOTP,
 
 };

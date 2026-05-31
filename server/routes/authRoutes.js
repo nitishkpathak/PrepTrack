@@ -10,10 +10,6 @@ const {
 
   loginUser,
 
-  verifyEmail,
-
-  resendVerifyOTP,
-
 } = require(
   "../controllers/authController"
 );
@@ -39,26 +35,6 @@ router.post(
   "/login",
 
   loginUser
-
-);
-
-// ============================
-// VERIFY EMAIL
-// ============================
-
-router.post(
-
-  "/verify-email",
-
-  verifyEmail
-
-);
-
-router.post(
-
-  "/resend-otp",
-
-  resendVerifyOTP
 
 );
 
