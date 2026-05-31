@@ -1,6 +1,6 @@
 # 🚀 PrepTrack
 
-PrepTrack is a full-stack DSA Progress Tracking Platform designed to help students and developers organize coding questions, track progress, maintain streaks, and analyze their preparation journey.
+PrepTrack is a full-stack (MERN) web application designed for students and developers to track their Data Structures & Algorithms (DSA) preparation. It enables users to record questions, write study notes, manage problem solving states, track streaks, and visualize their preparation progress.
 
 ## 🌐 Live Demo
 
@@ -72,14 +72,56 @@ Development Utilities: nodemon for hot-reloadin
 
 PrepTrack/
 ├── client/
-│ ├── src/
-│ └── public/
-├── server/
-│ ├── controllers/
-│ ├── routes/
-│ ├── models/
-│ └── middleware/
-└── README.md
+│   ├── src/
+│   │   ├── assets/           # Static assets/images
+│   │   ├── components/       # Reusable React components
+│   │   │   ├── DifficultyChart.jsx  # Recharts pie chart for question difficulty
+│   │   │   ├── FilterBar.jsx        # Searching and filtering controls
+│   │   │   ├── ProgressChart.jsx    # Progress tracking visualization
+│   │   │   ├── ProtectedRoute.jsx   # Auth guard for client-side pages
+│   │   │   ├── Sidebar.jsx          # Collapsible navigation drawer
+│   │   │   ├── StatsCards.jsx       # Overview statistics cards
+│   │   │   ├── StreakCard.jsx       # Daily solve streak card
+│   │   │   └── ThemeToggle.jsx      # Theme switcher (Light/Dark mode)
+│   │   ├── context/          # Context providers (currently empty)
+│   │   ├── pages/            # Application views (Home, Login, Register, Dashboard, Stats, Settings)
+│   │   ├── routes/           # Router-related utilities (currently empty)
+│   │   ├── services/         # API clients (authService, questionService, userService)
+│   │   ├── App.jsx           # Main routing configuration and auto-login logic
+│   │   ├── index.css         # Global stylesheet & Tailwind directives
+│   │   └── main.jsx          # Frontend application entry point
+│   ├── package.json          # Node dependencies for frontend
+│   └── vite.config.js        # Vite configuration
+│
+└── server/
+    ├── config/
+    │   └── db.js             # Mongoose connection logic
+    ├── controllers/
+    │   ├── authController.js     # Signup, login, verification, OTP generation
+    │   ├── passwordController.js # Password reset & recovery flows
+    │   ├── questionController.js # Question CRUD & Streak updating logic
+    │   └── userController.js     # User profile retrieval and modification
+    ├── middleware/
+    │   └── authMiddleware.js # Express route guard using JWT validation
+    ├── models/
+    │   ├── Question.js       # Question Schema definitions
+    │   └── User.js           # User Schema definitions & authentication flags
+    ├── routes/
+    │   ├── authRoutes.js     # Endpoints for authentication
+    │   ├── passwordRoutes.js # Endpoints for password resets
+    │   ├── questionRoutes.js # Endpoints for question CRUD
+    │   └── userRoutes.js     # Endpoints for profile updates
+    ├── utils/
+    │   ├── sendEmail.js             # Mail dispatch configuration
+    │   └── sendVerificationEmail.js # SMTP mail templates for verification
+    ├── server.js             # Server entry point
+    └── package.json          # Node dependencies for backend
+
+## Core Workflows
+Authentication & Verification
+
+<img width="558" height="431" alt="image" src="https://github.com/user-attachments/assets/d6c3bcd7-eccf-42c5-89ec-33a181488c71" />
+
 
 ## ⚙️ Installation
 
