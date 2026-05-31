@@ -65,12 +65,17 @@ const registerUser =
 
         ).toString();
 
-      // Create User
+// Send Verification Email FIRST
+        await sendVerificationEmail(
+          email,
+          otp
+        );
+
+// Create User ONLY if mail sent
       const user =
         await User.create({
 
           name,
-
           email,
 
           password:
@@ -84,14 +89,6 @@ const registerUser =
             5 * 60 * 1000,
 
         });
-
-      // Send Verification Email
-      await sendVerificationEmail(
-
-        email,
-        otp
-
-      );
 
       // Generate Token
       const token =
