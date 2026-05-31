@@ -107,45 +107,59 @@ const registerUser =
         );
 
       // Response
+      // res.status(201).json({
+
+      //   token,
+
+      //   user: {
+
+      //     _id:
+      //       user._id,
+
+      //     name:
+      //       user.name,
+
+      //     email:
+      //       user.email,
+
+      //     role:
+      //       user.role,
+
+      //     bio:
+      //       user.bio,
+
+      //     profilePic:
+      //       user.profilePic || "",
+
+      //     createdAt:
+      //       user.createdAt,
+
+      //     isVerified:
+      //       user.isVerified,
+
+      //     streak:
+      //       user.streak,
+
+      //     lastSolvedDate:
+      //       user.lastSolvedDate,
+
+      //   },
+
+      // });
+
+
       res.status(201).json({
 
-        token,
+  message: "OTP Sent",
 
-        user: {
+  otp,
 
-          _id:
-            user._id,
+  user: {
+    _id: user._id,
+    email: user.email
+  }
 
-          name:
-            user.name,
-
-          email:
-            user.email,
-
-          role:
-            user.role,
-
-          bio:
-            user.bio,
-
-          profilePic:
-            user.profilePic || "",
-
-          createdAt:
-            user.createdAt,
-
-          isVerified:
-            user.isVerified,
-
-          streak:
-            user.streak,
-
-          lastSolvedDate:
-            user.lastSolvedDate,
-
-        },
-
-      });
+});
 
     } catch (error) {
 

@@ -5,13 +5,15 @@ const sendVerificationEmail =
   async (email, otp) => {
 
     console.log("EMAIL_USER =", process.env.EMAIL_USER);
-console.log("EMAIL_PASS EXISTS =", !!process.env.EMAIL_PASS);
-console.log("OTP =", otp);
+    console.log("EMAIL_PASS EXISTS =", !!process.env.EMAIL_PASS);
+    console.log("OTP =", otp);
 
     const transporter =
       nodemailer.createTransport({
 
-        service: "gmail",
+          host: "smtp.gmail.com",
+          port: 587,
+          secure: false,
 
         auth: {
 
