@@ -66,10 +66,10 @@ const registerUser =
         ).toString();
 
 // Send Verification Email FIRST
-        await sendVerificationEmail(
-          email,
-          otp
-        );
+        // await sendVerificationEmail(
+        //   email,
+        //   otp
+        // );
 
 // Create User ONLY if mail sent
       const user =
