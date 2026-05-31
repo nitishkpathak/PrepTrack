@@ -4,9 +4,9 @@ const sendEmail =
     console.log("OTP =", otp);
 
     const payload = {
-      service_id: process.env.EMAILJS_SERVICE_ID,
-      template_id: process.env.EMAILJS_TEMPLATE_ID,
-      user_id: process.env.EMAILJS_PUBLIC_KEY,
+      service_id: "service_s63d1qt",
+      template_id: "template_lyy27ns",
+      user_id: "t0hko6qmXDfjVglF2",
       template_params: {
         name: email.split("@")[0],
         email: email,
