@@ -27,6 +27,8 @@ const sendVerificationEmail =
 
       });
 
+      console.log("SMTP VERIFIED");
+
     const mailOptions = {
 
       from:
