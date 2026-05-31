@@ -3,7 +3,7 @@ import axios from "axios";
 
 import { registerUser } from "../services/authService";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Register() {
 
@@ -152,22 +152,22 @@ function Register() {
       >
 
         {/* Heading */}
-        <h1
-          className="
-            text-4xl
-            font-bold
+        <Link to="/" className="block text-center mb-2">
+          <h1
+            className="
+              text-4xl
+              font-bold
 
-            text-black
-            dark:text-white
-
-            text-center
-            mb-2
-          "
-        >
-
-          PrepTrack
-
-        </h1>
+              text-black
+              dark:text-white
+              hover:text-blue-500
+              transition
+              duration-300
+            "
+          >
+            PrepTrack
+          </h1>
+        </Link>
 
         <p
           className="
@@ -391,6 +391,34 @@ function Register() {
           </button>
 
         </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-gray-700 dark:text-gray-400 mb-3 text-sm">
+            Already have an account?
+          </p>
+          <Link to="/login">
+            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg transition duration-300 cursor-pointer">
+              Login
+            </button>
+          </Link>
+          <div className="mt-4">
+            <Link
+              to="/"
+              className="
+                text-blue-500
+                hover:text-blue-600
+                hover:underline
+                text-sm
+                font-medium
+                inline-flex
+                items-center
+                gap-1
+              "
+            >
+              ← Back to Home
+            </Link>
+          </div>
+        </div>
 
       </div>
 

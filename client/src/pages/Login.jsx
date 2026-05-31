@@ -166,22 +166,22 @@ function Login() {
       >
 
         {/* Heading */}
-        <h1
-          className="
-            text-4xl
-            font-bold
+        <Link to="/" className="block text-center mb-2">
+          <h1
+            className="
+              text-4xl
+              font-bold
 
-            text-black
-            dark:text-white
-
-            text-center
-            mb-2
-          "
-        >
-
-          PrepTrack
-
-        </h1>
+              text-black
+              dark:text-white
+              hover:text-blue-500
+              transition
+              duration-300
+            "
+          >
+            PrepTrack
+          </h1>
+        </Link>
 
         <p
           className="
@@ -399,6 +399,24 @@ function Login() {
             </button>
 
           </Link>
+
+          <div className="mt-4">
+            <Link
+              to="/"
+              className="
+                text-blue-500
+                hover:text-blue-600
+                hover:underline
+                text-sm
+                font-medium
+                inline-flex
+                items-center
+                gap-1
+              "
+            >
+              ← Back to Home
+            </Link>
+          </div>
 
         </div>
 

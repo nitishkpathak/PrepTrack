@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import emailjs from "@emailjs/browser";
+import ThemeToggle from "../components/ThemeToggle";
 
 function Home() {
 
@@ -211,8 +212,10 @@ function Home() {
                 md:flex
 
                 gap-3
+                items-center
                 "
             >
+                <ThemeToggle className="p-2.5 rounded-xl bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-black dark:text-white transition duration-300 cursor-pointer" />
 
                 <Link to="/login">
 
@@ -247,7 +250,7 @@ function Home() {
                     text-white
                     "
                 >
-                    Get Started
+                    Sign Up
                 </button>
 
                 </Link>
@@ -255,29 +258,31 @@ function Home() {
             </div>
 
 
-            {/* Mobile Menu */}
+            {/* Mobile Theme Toggle & Menu */}
+            <div className="flex items-center gap-2 md:hidden">
+              <ThemeToggle className="p-2 rounded-xl bg-gray-200 dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-700 transition duration-300 cursor-pointer" />
+              <button
+                  onClick={() =>
+                  setMenuOpen(
+                      !menuOpen
+                  )
+                  }
 
-            <button
-                onClick={() =>
-                setMenuOpen(
-                    !menuOpen
-                )
-                }
+                  className="
+                  p-1
+                  "
+              >
 
-                className="
-                md:hidden
-                "
-            >
+                  {
+                  menuOpen
 
-                {
-                menuOpen
+                      ? <X size={24} />
 
-                    ? <X size={24} />
+                      : <Menu size={24} />
+                  }
 
-                    : <Menu size={24} />
-                }
-
-            </button>
+              </button>
+            </div>
 
             </div>
 
@@ -364,7 +369,7 @@ function Home() {
                         text-white
                     "
                     >
-                    Get Started
+                    Sign Up
                     </button>
 
                 </Link>

@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 
-function ThemeToggle() {
+function ThemeToggle({ className }) {
 
   const [darkMode,
   setDarkMode] =
@@ -62,29 +62,10 @@ function ThemeToggle() {
         )
       }
 
-      className="
-        fixed
-        top-4
-md:top-6
-
-right-4
-md:right-6
-        z-[100]
-
-        p-3
-        rounded-full
-
-        bg-gray-200
-        dark:bg-gray-800
-
-        text-black
-        dark:text-white
-
-        shadow-lg
-
-        transition
-        duration-300
-      "
+      className={
+        className ||
+        "fixed top-4 md:top-6 right-4 md:right-6 z-[100] p-3 rounded-full bg-gray-200 dark:bg-gray-800 text-black dark:text-white shadow-lg transition duration-300"
+      }
     >
 
           {
