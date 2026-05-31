@@ -4,7 +4,7 @@ PrepTrack is a full-stack (MERN) web application designed for students and devel
 
 ## 🌐 Live Demo
 
-*   **Frontend**: [https://preptrack.vercel.app](https://preptrack.vercel.app)
+*   **Frontend**: [https://prep-track-blue.vercel.app/](https://prep-track-blue.vercel.app/)
 *   **Backend**: [https://preptrack-kpjk.onrender.com](https://preptrack-kpjk.onrender.com)
 
 ---
