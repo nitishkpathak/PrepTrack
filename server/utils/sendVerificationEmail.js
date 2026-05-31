@@ -27,7 +27,23 @@ const sendVerificationEmail =
 
       });
 
-      console.log("SMTP VERIFIED");
+   try {
+
+  await transporter.verify();
+
+  console.log(
+    "SMTP VERIFIED"
+  );
+
+} catch (err) {
+
+  console.log(
+    "VERIFY ERROR:",
+    err
+  );
+
+  throw err;
+}
 
     const mailOptions = {
 
@@ -74,9 +90,27 @@ const sendVerificationEmail =
 
     };
 
+    try {
+
+  const info =
     await transporter.sendMail(
       mailOptions
     );
+
+  console.log(
+    "EMAIL SENT:",
+    info
+  );
+
+} catch (err) {
+
+  console.log(
+    "SENDMAIL ERROR:",
+    err
+  );
+
+  throw err;
+}
   };
 
 module.exports =
