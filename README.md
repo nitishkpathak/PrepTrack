@@ -52,16 +52,21 @@ Development Utilities: nodemon for hot-reloadin
 
 ### Home Page
 
-(Add screenshot here)
+<img width="1351" height="598" alt="image" src="https://github.com/user-attachments/assets/2573cd21-f1eb-41e0-a282-ab547acb209b" />
+
 
 ### Dashboard
 
 <img width="1350" height="596" alt="image" src="https://github.com/user-attachments/assets/05eef2d0-17a3-4a1d-bc1d-c5d53b569cf3" />
+<img width="1350" height="594" alt="image" src="https://github.com/user-attachments/assets/08288be9-cc18-4e2c-b294-070f3a076782" />
+<img width="1353" height="595" alt="image" src="https://github.com/user-attachments/assets/7b8fe559-fd8b-48a2-922f-aa8612723657" />
+
 
 
 ### Stats Page
 
-(Add screenshot here)
+<img width="1349" height="601" alt="image" src="https://github.com/user-attachments/assets/0cab9c83-6624-46ec-a65d-32ff2576dee9" />
+
 
 ## 📂 Project Structure
 
