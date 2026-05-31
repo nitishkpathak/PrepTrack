@@ -50,9 +50,6 @@ const registerUser =
           });
       }
 
-      // Delete any existing stale temp verification session for this email
-      await TempUser.deleteOne({ email });
-
       // Hash Password
       const hashedPassword =
         await bcrypt.hash(
@@ -60,26 +57,9 @@ const registerUser =
           10
         );
 
-      // Generate OTP
-      const otp =
-        Math.floor(
-
-          100000 +
-
-          Math.random() *
-          900000
-
-        ).toString();
-
-      // Send Verification Email FIRST
-      await sendVerificationEmail(
-        email,
-        otp
-      );
-
-      // Create TempUser
-      const tempUser =
-        await TempUser.create({
+      // Create User directly as verified
+      const user =
+        await User.create({
 
           name,
           email,
@@ -87,22 +67,64 @@ const registerUser =
           password:
             hashedPassword,
 
-          otp,
-
-          otpExpire:
-            Date.now() +
-            5 * 60 * 1000,
+          isVerified: true, // Automatically verify user on signup
 
         });
 
+      // Generate Token
+      const token =
+        jwt.sign(
+
+          {
+            id: user._id,
+          },
+
+          process.env.JWT_SECRET,
+
+          {
+            expiresIn: "30d",
+          }
+
+        );
+
+      // Response
       res.status(201).json({
 
-        message: "OTP Sent",
+        token,
 
         user: {
-          _id: tempUser._id,
-          email: tempUser.email
-        }
+
+          _id:
+            user._id,
+
+          name:
+            user.name,
+
+          email:
+            user.email,
+
+          role:
+            user.role,
+
+          bio:
+            user.bio,
+
+          profilePic:
+            user.profilePic || "",
+
+          createdAt:
+            user.createdAt,
+
+          isVerified:
+            user.isVerified,
+
+          streak:
+            user.streak,
+
+          lastSolvedDate:
+            user.lastSolvedDate,
+
+        },
 
       });
 

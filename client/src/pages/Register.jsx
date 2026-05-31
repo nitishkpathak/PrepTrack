@@ -20,15 +20,6 @@ function Register() {
 
     });
 
-    // User OTP Verification
-    const [showOTPModal,
-      setShowOTPModal] =
-      useState(false);
-
-      const [otp,
-      setOtp] =
-      useState("");
-
   // Handle input change
   const handleChange = (e) => {
 
@@ -57,33 +48,37 @@ function Register() {
 
       console.log(data);
 
+      // Save token & user metadata to log in automatically
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
       // User Profile Data
       const userData = {
 
         name:
-          formData.name,
+          data.user.name,
 
         email:
-          formData.email,
+          data.user.email,
 
         joined:
-          new Date()
+          new Date(data.user.createdAt)
           .toLocaleDateString(),
 
         role:
-          "DSA Learner",
+          data.user.role || "DSA Learner",
 
         bio:
-          "Passionate coder 🚀",
+          data.user.bio || "Passionate coder 🚀",
 
-        image: "",
+        image: data.user.profilePic || "",
 
       };
 
       // Save User Profile
       localStorage.setItem(
 
-        `profile_${formData.email}`,
+        `profile_${data.user.email}`,
 
         JSON.stringify(userData)
 
@@ -94,104 +89,24 @@ function Register() {
 
         "currentUser",
 
-        formData.email
+        data.user.email
 
       );
 
       alert(
-        "OTP sent to your email 🚀"
+        "Account Registered Successfully! 🚀"
       );
 
-      setShowOTPModal(true);
+      navigate("/dashboard");
 
     } catch (error) {
 
       console.log(error);
 
       alert(
-        "Something went wrong"
+        error.response?.data?.message || "Something went wrong"
       );
 
-    }
-  };
-
-  // ============================
-// VERIFY EMAIL OTP
-// ============================
-
-const handleVerifyOTP =
-  async () => {
-
-    try {
-
-      const response =
-        await axios.post(
-
-          `${import.meta.env.VITE_API_URL}/api/auth/verify-email`,
-
-          {
-
-            email:
-              formData.email,
-
-            otp,
-
-          }
-
-        );
-
-      alert(
-        response.data.message
-      );
-
-      setShowOTPModal(false);
-
-      navigate("/login");
-
-    } catch (error) {
-
-      console.log(error);
-
-      alert(
-        error.response.data.message
-      );
-    }
-  };
-
-  // ============================
-// RESEND OTP
-// ============================
-
-const handleResendOTP =
-  async () => {
-
-    try {
-
-      const response =
-        await axios.post(
-
-          `${import.meta.env.VITE_API_URL}/api/auth/resend-otp`,
-
-          {
-
-            email:
-              formData.email,
-
-          }
-
-        );
-
-      alert(
-        response.data.message
-      );
-
-    } catch (error) {
-
-      console.log(error);
-
-      alert(
-        error.response.data.message
-      );
     }
   };
 
@@ -478,134 +393,6 @@ const handleResendOTP =
         </form>
 
       </div>
-
-      {/* OTP */}
-      {
-    showOTPModal && (
-
-      <div
-        className="
-          fixed
-          inset-0
-
-          bg-black/50
-
-          flex
-          items-center
-          justify-center
-
-          z-50
-        "
-      >
-
-        <div
-          className="
-            bg-white
-            dark:bg-gray-900
-
-            p-6
-            rounded-2xl
-
-            w-full
-            max-w-md
-
-            mx-4
-          "
-        >
-
-          <h2
-            className="
-              text-2xl
-              font-bold
-              mb-5
-
-              text-black
-              dark:text-white
-            "
-          >
-
-            Verify Your Email
-
-          </h2>
-
-          <input
-
-            type="text"
-
-            placeholder="Enter OTP"
-
-            value={otp}
-
-            onChange={(e) =>
-              setOtp(
-                e.target.value
-              )
-            }
-
-            className="
-              w-full
-              p-3
-              rounded-lg
-
-              bg-gray-100
-              dark:bg-gray-800
-
-              text-black
-              dark:text-white
-
-              outline-none
-              mb-4
-            "
-          />
-
-          <button
-
-            onClick={
-              handleVerifyOTP
-            }
-
-            className="
-              w-full
-
-              bg-green-600
-              hover:bg-green-700
-
-              text-white
-
-              p-3
-              rounded-lg
-            "
-          >
-
-            Verify OTP
-
-          </button>
-
-          <button
-
-            onClick={
-                        handleResendOTP
-                      }
-
-                      className="
-                        mt-4
-
-                        text-blue-500
-                        hover:underline
-
-                        cursor-pointer
-                      "
-          >
-
-            Resend OTP
-
-          </button>
-
-        </div>
-
-      </div>
-    )
-  }
 
     </div>
   );
