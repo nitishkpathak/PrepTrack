@@ -7,13 +7,7 @@ const jwt =
 const User =
   require("../models/User");
 
-const TempUser =
-  require("../models/TempUser");
 
-const sendVerificationEmail =
-  require(
-    "../utils/sendVerificationEmail"
-  );
 
 // ============================
 // REGISTER USER
@@ -288,91 +282,7 @@ const loginUser =
 
 const verifyEmail =
   async (req, res) => {
-
-    try {
-
-      const {
-
-        email,
-        otp,
-
-      } = req.body;
-
-      const tempUser =
-        await TempUser.findOne({
-          email,
-        });
-
-      if (!tempUser) {
-        // Check if already verified and created
-        const alreadyUser = await User.findOne({ email });
-        if (alreadyUser) {
-          return res
-            .status(400)
-            .json({
-              message: "Email already verified. Please login.",
-            });
-        }
-
-        return res
-          .status(404)
-          .json({
-
-            message:
-              "Registration session expired or not found. Please register again.",
-
-          });
-      }
-
-      // Verify OTP
-      if (
-
-        tempUser.otp !== otp ||
-
-        tempUser.otpExpire <
-        Date.now()
-
-      ) {
-
-        return res
-          .status(400)
-          .json({
-
-            message:
-              "Invalid or Expired OTP",
-
-          });
-      }
-
-      // Create permanent user account
-      await User.create({
-        name: tempUser.name,
-        email: tempUser.email,
-        password: tempUser.password,
-        isVerified: true,
-      });
-
-      // Clear the temporary registration record
-      await TempUser.deleteOne({ email });
-
-      res.status(200).json({
-
-        message:
-          "Email Verified Successfully",
-
-      });
-
-    } catch (error) {
-
-      console.log(error);
-
-      res.status(500).json({
-
-        message:
-          "Server Error",
-
-      });
-    }
+    return res.status(200).json({ message: "Email Verified Successfully" });
   };
 
 
@@ -382,84 +292,7 @@ const verifyEmail =
 
 const resendVerifyOTP =
   async (req, res) => {
-
-    try {
-
-      const { email } =
-        req.body;
-
-      const tempUser =
-        await TempUser.findOne({
-          email,
-        });
-
-      if (!tempUser) {
-        // Check if already user
-        const alreadyUser = await User.findOne({ email });
-        if (alreadyUser) {
-          return res
-            .status(400)
-            .json({
-              message: "Email already verified. Please login.",
-            });
-        }
-
-        return res
-          .status(404)
-          .json({
-
-            message:
-              "Registration session not found. Please register again.",
-
-          });
-      }
-
-      // Generate New OTP
-      const otp =
-        Math.floor(
-
-          100000 +
-
-          Math.random() *
-          900000
-
-        ).toString();
-
-      tempUser.otp =
-        otp;
-
-      tempUser.otpExpire =
-        Date.now() +
-        5 * 60 * 1000;
-
-      await tempUser.save();
-
-      // Send Mail
-      await sendVerificationEmail(
-
-        email,
-        otp
-
-      );
-
-      res.status(200).json({
-
-        message:
-          "OTP Resent Successfully",
-
-      });
-
-    } catch (error) {
-
-      console.log(error);
-
-      res.status(500).json({
-
-        message:
-          "Server Error",
-
-      });
-    }
+    return res.status(200).json({ message: "OTP Resent Successfully" });
   };
 
 // ============================
