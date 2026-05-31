@@ -11,9 +11,7 @@ const sendVerificationEmail =
     const transporter =
       nodemailer.createTransport({
 
-          host: "smtp.gmail.com",
-          port: 587,
-          secure: false,
+        service: "gmail",
 
         auth: {
 

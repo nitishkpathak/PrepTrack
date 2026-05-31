@@ -7,6 +7,9 @@ const jwt =
 const User =
   require("../models/User");
 
+const TempUser =
+  require("../models/TempUser");
+
 const sendVerificationEmail =
   require(
     "../utils/sendVerificationEmail"
@@ -47,6 +50,9 @@ const registerUser =
           });
       }
 
+      // Delete any existing stale temp verification session for this email
+      await TempUser.deleteOne({ email });
+
       // Hash Password
       const hashedPassword =
         await bcrypt.hash(
@@ -65,15 +71,15 @@ const registerUser =
 
         ).toString();
 
-// Send Verification Email FIRST
-        // await sendVerificationEmail(
-        //   email,
-        //   otp
-        // );
+      // Send Verification Email FIRST
+      await sendVerificationEmail(
+        email,
+        otp
+      );
 
-// Create User ONLY if mail sent
-      const user =
-        await User.create({
+      // Create TempUser
+      const tempUser =
+        await TempUser.create({
 
           name,
           email,
@@ -81,85 +87,24 @@ const registerUser =
           password:
             hashedPassword,
 
-          verifyOTP:
-            otp,
+          otp,
 
-          verifyOTPExpire:
+          otpExpire:
             Date.now() +
             5 * 60 * 1000,
 
         });
 
-      // Generate Token
-      const token =
-        jwt.sign(
-
-          {
-            id: user._id,
-          },
-
-          process.env.JWT_SECRET,
-
-          {
-            expiresIn: "30d",
-          }
-
-        );
-
-      // Response
-      // res.status(201).json({
-
-      //   token,
-
-      //   user: {
-
-      //     _id:
-      //       user._id,
-
-      //     name:
-      //       user.name,
-
-      //     email:
-      //       user.email,
-
-      //     role:
-      //       user.role,
-
-      //     bio:
-      //       user.bio,
-
-      //     profilePic:
-      //       user.profilePic || "",
-
-      //     createdAt:
-      //       user.createdAt,
-
-      //     isVerified:
-      //       user.isVerified,
-
-      //     streak:
-      //       user.streak,
-
-      //     lastSolvedDate:
-      //       user.lastSolvedDate,
-
-      //   },
-
-      // });
-
-
       res.status(201).json({
 
-  message: "OTP Sent",
+        message: "OTP Sent",
 
-  otp,
+        user: {
+          _id: tempUser._id,
+          email: tempUser.email
+        }
 
-  user: {
-    _id: user._id,
-    email: user.email
-  }
-
-});
+      });
 
     } catch (error) {
 
@@ -331,19 +276,28 @@ const verifyEmail =
 
       } = req.body;
 
-      const user =
-        await User.findOne({
+      const tempUser =
+        await TempUser.findOne({
           email,
         });
 
-      if (!user) {
+      if (!tempUser) {
+        // Check if already verified and created
+        const alreadyUser = await User.findOne({ email });
+        if (alreadyUser) {
+          return res
+            .status(400)
+            .json({
+              message: "Email already verified. Please login.",
+            });
+        }
 
         return res
           .status(404)
           .json({
 
             message:
-              "User not found",
+              "Registration session expired or not found. Please register again.",
 
           });
       }
@@ -351,9 +305,9 @@ const verifyEmail =
       // Verify OTP
       if (
 
-        user.verifyOTP !== otp ||
+        tempUser.otp !== otp ||
 
-        user.verifyOTPExpire <
+        tempUser.otpExpire <
         Date.now()
 
       ) {
@@ -368,14 +322,16 @@ const verifyEmail =
           });
       }
 
-      // Verify User
-      user.isVerified =
-        true;
+      // Create permanent user account
+      await User.create({
+        name: tempUser.name,
+        email: tempUser.email,
+        password: tempUser.password,
+        isVerified: true,
+      });
 
-      user.verifyOTP = "";
-      user.verifyOTPExpire = "";
-
-      await user.save();
+      // Clear the temporary registration record
+      await TempUser.deleteOne({ email });
 
       res.status(200).json({
 
@@ -410,19 +366,28 @@ const resendVerifyOTP =
       const { email } =
         req.body;
 
-      const user =
-        await User.findOne({
+      const tempUser =
+        await TempUser.findOne({
           email,
         });
 
-      if (!user) {
+      if (!tempUser) {
+        // Check if already user
+        const alreadyUser = await User.findOne({ email });
+        if (alreadyUser) {
+          return res
+            .status(400)
+            .json({
+              message: "Email already verified. Please login.",
+            });
+        }
 
         return res
           .status(404)
           .json({
 
             message:
-              "User not found",
+              "Registration session not found. Please register again.",
 
           });
       }
@@ -438,14 +403,14 @@ const resendVerifyOTP =
 
         ).toString();
 
-      user.verifyOTP =
+      tempUser.otp =
         otp;
 
-      user.verifyOTPExpire =
+      tempUser.otpExpire =
         Date.now() +
         5 * 60 * 1000;
 
-      await user.save();
+      await tempUser.save();
 
       // Send Mail
       await sendVerificationEmail(
