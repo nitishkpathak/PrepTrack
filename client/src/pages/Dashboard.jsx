@@ -21,6 +21,24 @@ function Dashboard() {
   // Sidebar state
   const [open, setOpen] = useState(false);
 
+  // Preferred Platform link helper
+  const savedUser = JSON.parse(localStorage.getItem("user")) || {};
+  const userPreferredPlatform = savedUser.preferredPlatform || "LeetCode";
+
+  const getPlatformUrl = (platform) => {
+    switch (platform) {
+      case "LeetCode":
+        return "https://leetcode.com";
+      case "GeeksforGeeks":
+        return "https://www.geeksforgeeks.org";
+      case "Codeforces":
+        return "https://codeforces.com";
+      default:
+        return "https://leetcode.com";
+    }
+  };
+  const preferredPlatformLink = getPlatformUrl(userPreferredPlatform);
+
   // Check token
   const token = localStorage.getItem(
     "token"
@@ -556,6 +574,10 @@ const handleFavorite =
 
               transition
               duration-300
+              flex
+              justify-between
+              items-center
+              w-full
             "
           >
 
@@ -571,6 +593,33 @@ const handleFavorite =
               >
                 PrepTrack Dashboard
               </h1>
+
+            {/* Quick Practice Shortcut */}
+            {preferredPlatformLink && (
+              <a
+                href={preferredPlatformLink}
+                target="_blank"
+                rel="noreferrer"
+                className="
+                  px-4
+                  py-2
+                  bg-blue-600
+                  hover:bg-blue-700
+                  text-white
+                  font-semibold
+                  rounded-lg
+                  transition
+                  text-sm
+                  flex
+                  items-center
+                  gap-2
+                  cursor-pointer
+                  shadow-md
+                "
+              >
+                <span>Practice on {userPreferredPlatform} 🚀</span>
+              </a>
+            )}
 
           </div>
 
