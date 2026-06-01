@@ -57,6 +57,8 @@ function Dashboard() {
   const [expandedQuestion, setExpandedQuestion] = useState(null);
   const [updatedQuestionId, setUpdatedQuestionId] = useState(null);
   const [fetching, setFetching] = useState(false);
+  const [addMode, setAddMode] = useState("manual");
+  const [linkInput, setLinkInput] = useState("");
   
   // Fetch Questions
   const fetchQuestions = async () => {
@@ -116,6 +118,100 @@ function Dashboard() {
       })
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }, [questions, searchTerm, difficultyFilter, statusFilter, favoriteFilter]);
+
+  // Parse problem link to auto-fill form details
+  const handleParseLink = () => {
+    if (!linkInput) {
+      toast.error("Please paste a valid problem URL first 😄");
+      return;
+    }
+
+    try {
+      let title = "";
+      let platform = "";
+      const url = new URL(linkInput);
+
+      // LeetCode check
+      if (url.hostname.includes("leetcode.com")) {
+        platform = "LeetCode";
+        const match = url.pathname.match(/\/problems\/([a-zA-Z0-9-]+)/);
+        if (match && match[1]) {
+          title = match[1]
+            .split("-")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+        }
+      }
+      // GeeksforGeeks check
+      else if (url.hostname.includes("geeksforgeeks.org")) {
+        platform = "GeeksforGeeks";
+        const match = url.pathname.match(/\/problems\/([a-zA-Z0-9-]+)/);
+        if (match && match[1]) {
+          title = match[1]
+            .split("-")
+            .filter((word) => !(/^\d+$/.test(word) && word.length > 5))
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+        }
+      }
+      // Codeforces check
+      else if (url.hostname.includes("codeforces.com")) {
+        platform = "Codeforces";
+        const match = url.pathname.match(/\/problemset\/problem\/(\d+)\/([A-Z])/) || url.pathname.match(/\/contest\/(\d+)\/problem\/([A-Z])/);
+        if (match) {
+          title = `Codeforces ${match[1]}${match[2]}`;
+        }
+      }
+
+      // Fallback platform detector
+      if (!platform) {
+        const hostParts = url.hostname.split(".");
+        if (hostParts.length >= 2) {
+          const rawName = hostParts[hostParts.length - 2];
+          platform = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+        }
+      }
+
+      // Fallback parser if we couldn't get title
+      if (!title) {
+        const segments = url.pathname.split("/").filter(Boolean);
+        let lastSegment = "";
+        for (let i = segments.length - 1; i >= 0; i--) {
+          if (isNaN(segments[i])) {
+            lastSegment = segments[i];
+            break;
+          }
+        }
+        if (!lastSegment && segments.length > 0) {
+          lastSegment = segments[segments.length - 1];
+        }
+        title = lastSegment
+          .replace(/[-_]/g, " ")
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+      }
+
+      if (!title) {
+        title = "New DSA Problem";
+      }
+
+      // Populate form data
+      setFormData({
+        title: title,
+        topic: platform || "DSA",
+        difficulty: "Medium",
+        status: "Pending",
+        notes: "",
+        link: linkInput,
+      });
+
+      toast.success("Successfully fetched question details! Please verify below. 🚀");
+    } catch (error) {
+      console.error(error);
+      toast.error("Invalid URL. Please enter a complete web link.");
+    }
+  };
 
   // Handle Input
   const handleChange = (e) => {
@@ -183,6 +279,8 @@ function Dashboard() {
         notes: "",
         link: "",
       });
+      setLinkInput("");
+      setAddMode("manual");
 
       setLoading(false);
 
@@ -522,199 +620,297 @@ const handleFavorite =
               "
             >
 
-            <h2
-              className="
-                text-2xl
-                font-semibold
-                mb-4
-              "
-            >
-              {editId
-              ? "Update Question"
-              : "Add Question"}
-            </h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-semibold">
+                {editId ? "Update Question" : "Add Question"}
+              </h2>
+            </div>
+
+            {/* Form Mode Tabs (Only show if not editing a question) */}
+            {!editId && (
+              <div className="flex gap-4 border-b border-gray-300 dark:border-gray-700 pb-3 mb-5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAddMode("manual");
+                    setLinkInput("");
+                    setFormData({
+                      title: "",
+                      topic: "",
+                      difficulty: "Easy",
+                      status: "Pending",
+                      notes: "",
+                      link: "",
+                    });
+                  }}
+                  className={`pb-1 font-semibold transition-all border-b-2 cursor-pointer ${
+                    addMode === "manual"
+                      ? "text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500"
+                      : "text-gray-500 border-transparent hover:text-gray-700 dark:hover:text-gray-300"
+                  }`}
+                >
+                  Manually Add
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAddMode("link");
+                    setLinkInput("");
+                    setFormData({
+                      title: "",
+                      topic: "",
+                      difficulty: "Easy",
+                      status: "Pending",
+                      notes: "",
+                      link: "",
+                    });
+                  }}
+                  className={`pb-1 font-semibold transition-all border-b-2 cursor-pointer ${
+                    addMode === "link"
+                      ? "text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500"
+                      : "text-gray-500 border-transparent hover:text-gray-700 dark:hover:text-gray-300"
+                  }`}
+                >
+                  Add via Link
+                </button>
+              </div>
+            )}
 
             {/* Form */}
             <form
               onSubmit={handleSubmit}
               className="grid gap-4"
             >
+              {/* URL Input and Done Button for Link mode */}
+              {addMode === "link" && !formData.title && (
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    aria-label="Paste Problem URL"
+                    type="url"
+                    placeholder="Paste Link (LeetCode, GeeksforGeeks, etc.)"
+                    value={linkInput}
+                    onChange={(e) => setLinkInput(e.target.value)}
+                    className="
+                      flex-1
+                      p-3
+                      rounded-lg
+                      bg-white
+                      dark:bg-gray-700
+                      text-black
+                      dark:text-white
+                      border
+                      border-gray-300
+                      dark:border-gray-600
+                      outline-none
+                    "
+                  />
+                  <button
+                    type="button"
+                    onClick={handleParseLink}
+                    className="
+                      px-6
+                      py-3
+                      rounded-lg
+                      bg-blue-600
+                      hover:bg-blue-700
+                      text-white
+                      font-semibold
+                      cursor-pointer
+                      transition-all
+                    "
+                  >
+                    Done
+                  </button>
+                </div>
+              )}
 
-              {/* Title */}
-              <input
-                aria-label="Question Title"
-                type="text"
-                name="title"
-                placeholder="Question Title"
-                value={formData.title}
-                onChange={handleChange}
-                className="
-                  p-3
-                  rounded-lg
-                  bg-white
-                  dark:bg-gray-700
+              {/* Show Form fields if Manual mode OR Link mode with parsed title */}
+              {(addMode === "manual" || (addMode === "link" && formData.title)) && (
+                <>
+                  {addMode === "link" && !editId && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLinkInput("");
+                        setFormData({
+                          title: "",
+                          topic: "",
+                          difficulty: "Easy",
+                          status: "Pending",
+                          notes: "",
+                          link: "",
+                        });
+                      }}
+                      className="text-red-600 dark:text-red-400 hover:underline text-sm text-left mb-2 cursor-pointer w-fit inline-flex items-center gap-1 font-medium"
+                    >
+                      ← Paste a different link
+                    </button>
+                  )}
 
-                  text-black
-                  dark:text-white
+                  {/* Title */}
+                  <input
+                    aria-label="Question Title"
+                    type="text"
+                    name="title"
+                    placeholder="Question Title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    className="
+                      p-3
+                      rounded-lg
+                      bg-white
+                      dark:bg-gray-700
 
-                  border
-                  border-gray-300
-                  dark:border-gray-600
-                  outline-none
-                "
-              />
+                      text-black
+                      dark:text-white
 
-              {/* Topic */}
-              <input
-                aria-label="Question Topic"
-                type="text"
-                name="topic"
-                placeholder="Topic"
-                value={formData.topic}
-                onChange={handleChange}
-                className="
-                  p-3
-                  rounded-lg
-                  bg-white
-                  dark:bg-gray-700
+                      border
+                      border-gray-300
+                      dark:border-gray-600
+                      outline-none
+                    "
+                  />
 
-                  text-black
-                  dark:text-white
+                  {/* Topic */}
+                  <input
+                    aria-label="Question Topic"
+                    type="text"
+                    name="topic"
+                    placeholder="Topic"
+                    value={formData.topic}
+                    onChange={handleChange}
+                    className="
+                      p-3
+                      rounded-lg
+                      bg-white
+                      dark:bg-gray-700
 
-                  border
-                  border-gray-300
-                  dark:border-gray-600
-                  outline-none
-                "
-              />
+                      text-black
+                      dark:text-white
 
-              {/* Difficulty */}
-              <select
-                id="difficulty"
-                name="difficulty"
-                aria-label="Select Difficulty"
-                value={formData.difficulty}
-                onChange={handleChange}
-                className="
-                  p-3
-                  rounded-lg
-                  bg-white
-                  dark:bg-gray-700
+                      border
+                      border-gray-300
+                      dark:border-gray-600
+                      outline-none
+                    "
+                  />
 
-                  text-black
-                  dark:text-white
+                  {/* Difficulty */}
+                  <select
+                    id="difficulty"
+                    name="difficulty"
+                    aria-label="Select Difficulty"
+                    value={formData.difficulty}
+                    onChange={handleChange}
+                    className="
+                      p-3
+                      rounded-lg
+                      bg-white
+                      dark:bg-gray-700
 
-                  border
-                  border-gray-300
-                  dark:border-gray-600
-                  outline-none
-                  cursor-pointer
-                "
-              >
-                <option>Easy</option>
-                <option>Medium</option>
-                <option>Hard</option>
-                
-              </select>
+                      text-black
+                      dark:text-white
 
-              {/* LeetCode Link */}
-              <input
-                aria-label="LeetCode Problem Link"
-                type="text"
-                name="link"
-                placeholder="
-                  LeetCode Problem Link
-                "
-                value={formData.link}
-                onChange={handleChange}
-                className="
-                  p-3
-                  rounded-lg
-                  bg-white
-                  dark:bg-gray-700
+                      border
+                      border-gray-300
+                      dark:border-gray-600
+                      outline-none
+                      cursor-pointer
+                    "
+                  >
+                    <option>Easy</option>
+                    <option>Medium</option>
+                    <option>Hard</option>
+                  </select>
 
-                  text-black
-                  dark:text-white
+                  {/* Problem Link */}
+                  <input
+                    aria-label="Problem Link"
+                    type="text"
+                    name="link"
+                    placeholder="Problem Link"
+                    value={formData.link}
+                    onChange={handleChange}
+                    className="
+                      p-3
+                      rounded-lg
+                      bg-white
+                      dark:bg-gray-700
 
-                  border
-                  border-gray-300
-                  dark:border-gray-600
-                  outline-none
-                "
-              />
+                      text-black
+                      dark:text-white
 
-              {/* Notes */}
-              <textarea
-                aria-label="Question Notes"
-                name="notes"
-                placeholder="Notes"
-                value={formData.notes}
-                onChange={handleChange}
+                      border
+                      border-gray-300
+                      dark:border-gray-600
+                      outline-none
+                    "
+                  />
 
-                onKeyDown={(e) => {
-                  if (
-                    e.key === "Enter"
-                    &&
-                    !e.shiftKey
-                  ) {
+                  {/* Notes */}
+                  <textarea
+                    aria-label="Question Notes"
+                    name="notes"
+                    placeholder="Notes"
+                    value={formData.notes}
+                    onChange={handleChange}
 
-                    e.preventDefault();
+                    onKeyDown={(e) => {
+                      if (
+                        e.key === "Enter"
+                        &&
+                        !e.shiftKey
+                      ) {
 
-                    handleSubmit(e);
+                        e.preventDefault();
 
-                  }
-                }}
+                        handleSubmit(e);
 
-                className="
-                  p-3
-                  rounded-lg
-                  bg-white
-                  dark:bg-gray-700
+                      }
+                    }}
 
-                  text-black
-                  dark:text-white
+                    className="
+                      p-3
+                      rounded-lg
+                      bg-white
+                      dark:bg-gray-700
 
-                  border
-                  border-gray-300
-                  dark:border-gray-600
-                  outline-none
-                "
-              />
+                      text-black
+                      dark:text-white
 
+                      border
+                      border-gray-300
+                      dark:border-gray-600
+                      outline-none
+                    "
+                  />
 
-              {/* Button */}
-              <button
+                  {/* Button */}
+                  <button
+                    disabled={loading}
+                    className={`
+                      p-3
+                      rounded-lg
+                      transition-all
+                      text-white
+                      font-semibold
 
-                disabled={loading}
-
-                className={`
-                  p-3
-                  rounded-lg
-                  transition-all
-
-                  ${
-                    loading
-
-                      ? "bg-blue-400 cursor-not-allowed"
-
-                      : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                  }
-                `}
-              >
-
-                {
-                loading
-
-      ?          "Loading..."
-      
-                : editId
-                  ? "Update Question"
-                  : "Add Question"}
-
-              </button>
-
-            </form>          
-
+                      ${
+                        loading
+                          ? "bg-blue-400 cursor-not-allowed"
+                          : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                      }
+                    `}
+                  >
+                    {loading
+                      ? "Loading..."
+                      : editId
+                        ? "Update Question"
+                        : "Add Question"}
+                  </button>
+                </>
+              )}          
+            </form>
           </div>
           )
           }
