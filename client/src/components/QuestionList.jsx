@@ -153,10 +153,15 @@ function QuestionList({
                     }
                     className="
                       mt-2
-                      text-blue-300
-                      hover:text-blue-200
+                      text-blue-600
+                      dark:text-blue-400
+                      hover:text-blue-800
+                      dark:hover:text-blue-300
                       text-sm
+                      font-semibold
+                      hover:underline
                       cursor-pointer
+                      transition-all
                     "
                   >
                     {expandedQuestion === question._id ? "Read Less" : "Read More"}
