@@ -724,44 +724,65 @@ function Home() {
 
                 </div>
 
-                <div
-                className="
-                    mt-6
-
-                    bg-orange-500/20
-
-                    border
-                    border-orange-400/30
-
-                    rounded-xl
-
-                    p-4
-                "
-                >
-                <p
+                <div className="grid grid-cols-2 gap-4 mt-6">
+                  <div
                     className="
-                    text-orange-200
+                      bg-orange-500/20
+                      border
+                      border-orange-400/30
+                      rounded-xl
+                      p-4
                     "
-                >
-                    🔥 Current Streak
-                </p>
+                  >
+                    <p
+                      className="
+                      text-orange-200
+                      "
+                    >
+                      🔥 Current Streak
+                    </p>
 
-                <h3
+                    <h3
+                      className="
+                      text-3xl
+                      font-bold
+                      "
+                    >
+                      30 Days
+                    </h3>
+                  </div>
+
+                  <div
                     className="
-                    text-3xl
-                    font-bold
+                      bg-green-500/20
+                      border
+                      border-green-400/30
+                      rounded-xl
+                      p-4
+                      flex
+                      flex-col
+                      justify-between
                     "
-                >
-                    30 Days
-                </h3>
+                  >
+                    <div>
+                      <p
+                        className="
+                        text-green-200
+                        "
+                      >
+                        🎯 Today's Target
+                      </p>
+                      <h3 className="text-2xl font-bold">3 / 4 Solved</h3>
+                    </div>
+                    <div className="w-full bg-white/20 rounded-full h-2 mt-2">
+                      <div className="bg-green-400 h-2 rounded-full" style={{ width: "75%" }}></div>
+                    </div>
+                  </div>
                 </div>
 
+              </div>
             </div>
-
-            </div>
-
-        </div>
-
+          </div>
         </section>
 
 {/* Stats */}
@@ -1011,7 +1032,7 @@ function Home() {
                     mb-3
                 "
                 >
-                Daily Streak
+                Daily Targets & Streaks
                 </h3>
 
                 <p
@@ -1020,8 +1041,7 @@ function Home() {
                     dark:text-gray-400
                 "
                 >
-                Stay consistent every day and
-                build a strong problem-solving habit.
+                Set personalized daily targets and track streaks with interactive completion meters.
                 </p>
 
             </div>
@@ -1146,7 +1166,7 @@ function Home() {
                     mb-3
                 "
                 >
-                Placement Ready
+                Quick Platform Launch
                 </h3>
 
                 <p
@@ -1155,8 +1175,7 @@ function Home() {
                     dark:text-gray-400
                 "
                 >
-                Prepare systematically for coding
-                interviews and placement drives.
+                Open and practice on your preferred platform directly from the sticky header.
                 </p>
 
             </div>
@@ -1191,7 +1210,7 @@ function Home() {
                     mb-3
                 "
                 >
-                Secure Storage
+                Automatic Scraper
                 </h3>
 
                 <p
@@ -1200,8 +1219,7 @@ function Home() {
                     dark:text-gray-400
                 "
                 >
-                Your progress stays safe and
-                accessible anytime.
+                Paste links from LeetCode or GFG to auto-populate question titles and notes instantly.
                 </p>
 
             </div>
