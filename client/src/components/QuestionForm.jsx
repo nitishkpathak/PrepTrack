@@ -14,6 +14,9 @@ function QuestionForm({
   handleChange,
   handleSubmit,
 }) {
+  const savedUser = JSON.parse(localStorage.getItem("user")) || {};
+  const defaultPlatform = savedUser.preferredPlatform || "LeetCode";
+
   return (
     <div
       id="question-form"
@@ -41,7 +44,7 @@ function QuestionForm({
               setLinkInput("");
               setFormData({
                 title: "",
-                topic: "",
+                topic: defaultPlatform,
                 difficulty: "Easy",
                 status: "Pending",
                 notes: "",
@@ -63,7 +66,7 @@ function QuestionForm({
               setLinkInput("");
               setFormData({
                 title: "",
-                topic: "",
+                topic: defaultPlatform,
                 difficulty: "Easy",
                 status: "Pending",
                 notes: "",
@@ -141,7 +144,7 @@ function QuestionForm({
                   setLinkInput("");
                   setFormData({
                     title: "",
-                    topic: "",
+                    topic: defaultPlatform,
                     difficulty: "Easy",
                     status: "Pending",
                     notes: "",
@@ -176,12 +179,10 @@ function QuestionForm({
               "
             />
 
-            {/* Topic */}
-            <input
-              aria-label="Question Topic"
-              type="text"
+            {/* Topic / Platform Dropdown */}
+            <select
+              aria-label="Question Platform"
               name="topic"
-              placeholder="Topic"
               value={formData.topic}
               onChange={handleChange}
               className="
@@ -195,8 +196,17 @@ function QuestionForm({
                 border-gray-300
                 dark:border-gray-600
                 outline-none
+                cursor-pointer
               "
-            />
+            >
+              <option value="LeetCode">LeetCode</option>
+              <option value="GeeksforGeeks">GeeksforGeeks</option>
+              <option value="Codeforces">Codeforces</option>
+              <option value="DSA">DSA / Other</option>
+              {formData.topic && !["LeetCode", "GeeksforGeeks", "Codeforces", "DSA"].includes(formData.topic) && (
+                <option value={formData.topic}>{formData.topic}</option>
+              )}
+            </select>
 
             {/* Difficulty */}
             <select

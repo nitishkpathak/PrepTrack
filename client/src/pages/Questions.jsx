@@ -35,9 +35,11 @@ function Questions() {
   const [linkInput, setLinkInput] = useState("");
   const [scraping, setScraping] = useState(false);
 
+  const savedUser = JSON.parse(localStorage.getItem("user")) || {};
+
   const [formData, setFormData] = useState({
     title: "",
-    topic: "",
+    topic: savedUser.preferredPlatform || "LeetCode",
     difficulty: "Easy",
     status: "Pending",
     notes: "",
@@ -60,7 +62,7 @@ function Questions() {
         // Initialize default platform for adding questions
         setFormData((prev) => ({
           ...prev,
-          topic: prev.topic || profileData.user.preferredPlatform || "",
+          topic: prev.topic || profileData.user.preferredPlatform || "LeetCode",
         }));
       }
     } catch (error) {
@@ -227,7 +229,7 @@ function Questions() {
       const savedUser = JSON.parse(localStorage.getItem("user")) || {};
       setFormData({
         title: "",
-        topic: savedUser.preferredPlatform || "",
+        topic: savedUser.preferredPlatform || "LeetCode",
         difficulty: "Easy",
         status: "Pending",
         notes: "",
