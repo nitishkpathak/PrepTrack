@@ -81,6 +81,12 @@ function Dashboard() {
       if (profileData && profileData.user) {
         localStorage.setItem("user", JSON.stringify(profileData.user));
         window.dispatchEvent(new Event("userUpdated"));
+
+        // Initialize default platform for adding questions
+        setFormData((prev) => ({
+          ...prev,
+          topic: prev.topic || profileData.user.preferredPlatform || "",
+        }));
       }
 
     } catch (error) {
@@ -295,9 +301,10 @@ function Dashboard() {
       fetchQuestions();
 
       // Reset Form
+      const savedUser = JSON.parse(localStorage.getItem("user")) || {};
       setFormData({
         title: "",
-        topic: "",
+        topic: savedUser.preferredPlatform || "",
         difficulty: "Easy",
         status: "Pending",
         notes: "",
