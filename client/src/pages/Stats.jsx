@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Menu } from "lucide-react";
 
 
-import ThemeToggle from "../components/ThemeToggle";
 import Sidebar from "../components/Sidebar";
 import StatsCards from "../components/StatsCards";
 import ProgressChart from "../components/ProgressChart";
@@ -68,7 +67,6 @@ const fetchQuestions =
         duration-300
       "
     >
-      <ThemeToggle />
 
       {/* Sidebar */}
       <Sidebar

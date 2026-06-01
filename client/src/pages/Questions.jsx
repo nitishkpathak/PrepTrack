@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Menu } from "lucide-react";
 
-import ThemeToggle from "../components/ThemeToggle";
 import Sidebar from "../components/Sidebar";
 
 import {
@@ -64,7 +63,6 @@ function Questions() {
         duration-300
       "
     >
-      <ThemeToggle />
 
       {/* Sidebar */}
       <Sidebar

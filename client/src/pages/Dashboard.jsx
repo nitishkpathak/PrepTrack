@@ -3,7 +3,6 @@ import {useNavigate,} from "react-router-dom";
 import {Menu,} from "lucide-react";
 import toast from "react-hot-toast";
 
-import ThemeToggle from "../components/ThemeToggle";
 import Sidebar from "../components/Sidebar";
 import StatsCards from "../components/StatsCards";
 import FilterBar from "../components/FilterBar";
@@ -455,7 +454,6 @@ const handleFavorite =
         flex
       "
     >
-      <ThemeToggle />
 
       {/* Sidebar */}
       <Sidebar

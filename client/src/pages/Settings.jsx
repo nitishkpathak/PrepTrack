@@ -3,7 +3,6 @@ import axios from "axios";
 import { Menu } from "lucide-react";
 
 
-import ThemeToggle from "../components/ThemeToggle";
 import Sidebar from "../components/Sidebar";
 
 import {updateProfile, } from "../services/userService";
@@ -261,7 +260,6 @@ alert(
       "
     >
 
-    <ThemeToggle />
       {/* Sidebar */}
       <Sidebar
           open={sidebarOpen}

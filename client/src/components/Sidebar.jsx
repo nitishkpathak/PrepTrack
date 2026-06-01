@@ -18,6 +18,8 @@ import {
   useNavigate,
 } from "react-router-dom";
 
+import ThemeToggle from "./ThemeToggle";
+
 function Sidebar({
 
   open,
@@ -408,51 +410,45 @@ useEffect(() => {
 
         </div>
 
-        {/* Logout */}
+        {/* Logout & Theme Toggle */}
         <div
           className="
             p-5
-
             border-t
             border-gray-300
             dark:border-gray-800
+            space-y-4
           "
         >
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+              Theme Mode
+            </span>
+            <ThemeToggle className="p-2 rounded-lg bg-gray-300 dark:bg-gray-800 hover:bg-gray-400 dark:hover:bg-gray-700 text-black dark:text-white transition duration-300 cursor-pointer" />
+          </div>
 
           <button
-
             onClick={() => {
-
               closeSidebar?.();
-
               handleLogout();
-
             }}
-
             className="
               w-full
               flex
               items-center
               justify-center
               gap-2
-
               bg-red-600
               hover:bg-red-700
-
               text-white
-
               p-3
               rounded-lg
               cursor-pointer
             "
           >
-
             <LogOut size={20} />
-
             Logout
-
           </button>
-
         </div>
 
       </div>
