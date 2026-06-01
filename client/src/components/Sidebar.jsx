@@ -5,6 +5,7 @@ import {
   Settings,
   LogOut,
   X,
+  User,
 } from "lucide-react";
 
 import {
@@ -364,6 +365,42 @@ useEffect(() => {
 
                 <span>
                   Stats
+                </span>
+
+              </div>
+
+            </Link>
+
+            {/* Profile */}
+            <Link to="/profile">
+
+              <div
+                className={`
+                  flex
+                  items-center
+                  gap-3
+                  p-3
+                  rounded-lg
+                  cursor-pointer
+                  transition
+
+                  ${
+                    location.pathname ===
+                    "/profile"
+
+                      ? "bg-blue-600 text-white"
+
+                      : "hover:bg-gray-300 dark:hover:bg-gray-800"
+                  }
+                `}
+              >
+
+                <User
+                  size={20}
+                />
+
+                <span>
+                  Profile
                 </span>
 
               </div>

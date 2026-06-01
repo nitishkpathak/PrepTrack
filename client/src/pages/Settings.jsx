@@ -3,7 +3,6 @@ import { Menu, Lock, Settings as SettingsIcon, AlertTriangle } from "lucide-reac
 import toast from "react-hot-toast";
 
 import Sidebar from "../components/Sidebar";
-import NavbarProfile from "../components/NavbarProfile";
 import { getProfile, updatePreferences, changePassword } from "../services/userService";
 import { resetAllQuestions } from "../services/questionService";
 
@@ -134,21 +133,18 @@ function Settings() {
       {/* Main */}
       <div className="flex-1 p-4 md:p-6 md:ml-[260px]">
         {/* Sticky Header */}
-        <div className="sticky top-0 z-20 bg-white dark:bg-gray-950 border-b border-gray-300 dark:border-gray-800 py-5 mb-8 backdrop-blur-md transition duration-300 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <button
-              aria-label="Open Sidebar"
-              onClick={() => setSidebarOpen(true)}
-              className="md:hidden p-2 bg-blue-600 text-white rounded-lg cursor-pointer"
-            >
-              <Menu size={20} />
-            </button>
-            <h1 className="text-2xl md:text-3xl font-bold text-black dark:text-white flex items-center gap-2">
-              <SettingsIcon size={24} className="text-blue-500" />
-              Settings
-            </h1>
-          </div>
-          <NavbarProfile />
+        <div className="sticky top-0 z-20 bg-white dark:bg-gray-950 border-b border-gray-300 dark:border-gray-800 py-5 mb-8 backdrop-blur-md transition duration-300 flex items-center gap-4">
+          <button
+            aria-label="Open Sidebar"
+            onClick={() => setSidebarOpen(true)}
+            className="md:hidden p-2 bg-blue-600 text-white rounded-lg cursor-pointer"
+          >
+            <Menu size={20} />
+          </button>
+          <h1 className="text-2xl md:text-3xl font-bold text-black dark:text-white flex items-center gap-2">
+            <SettingsIcon size={24} className="text-blue-500" />
+            Settings
+          </h1>
         </div>
 
         <div className="max-w-4xl mx-auto space-y-8">

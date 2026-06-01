@@ -16,6 +16,7 @@ import Dashboard from "./pages/Dashboard";
 import Questions from "./pages/Questions";
 import Stats from "./pages/Stats";
 import Settings from "./pages/Settings";
+import Profile from "./pages/Profile";
 
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -171,6 +172,22 @@ function App() {
             <ProtectedRoute>
 
               <Stats />
+
+            </ProtectedRoute>
+
+          }
+
+        />
+
+        <Route
+
+          path="/profile"
+
+          element={
+
+            <ProtectedRoute>
+
+              <Profile />
 
             </ProtectedRoute>
 
