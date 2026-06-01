@@ -89,3 +89,18 @@ export const updateQuestion = async (
 
   return response.data;
 };
+
+// Scrape Description
+export const scrapeDescription = async (link) => {
+  const token = localStorage.getItem("token");
+  const response = await axios.post(
+    `${API_URL}/scrape-description`,
+    { link },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};

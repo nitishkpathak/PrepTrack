@@ -9,10 +9,12 @@ const {
   getQuestions,
   updateQuestion,
   deleteQuestion,
+  scrapeDescription,
 } = require("../controllers/questionController");
 
 router.post("/", protect, addQuestion);
 router.get("/", protect, getQuestions);
+router.post("/scrape-description", protect, scrapeDescription);
 router.put("/:id", protect, updateQuestion);
 router.delete("/:id", protect, deleteQuestion);
 

@@ -11,7 +11,7 @@ import FilterBar from "../components/FilterBar";
 import ProgressChart from "../components/ProgressChart";
 import DifficultyChart from "../components/DifficultyChart";
 
-import {addQuestion, getQuestions, deleteQuestion, updateQuestion,} from "../services/questionService";
+import {addQuestion, getQuestions, deleteQuestion, updateQuestion, scrapeDescription} from "../services/questionService";
 
 function Dashboard() {
 
@@ -59,6 +59,7 @@ function Dashboard() {
   const [fetching, setFetching] = useState(false);
   const [addMode, setAddMode] = useState("manual");
   const [linkInput, setLinkInput] = useState("");
+  const [scraping, setScraping] = useState(false);
   
   // Fetch Questions
   const fetchQuestions = async () => {
@@ -120,12 +121,13 @@ function Dashboard() {
   }, [questions, searchTerm, difficultyFilter, statusFilter, favoriteFilter]);
 
   // Parse problem link to auto-fill form details
-  const handleParseLink = () => {
+  const handleParseLink = async () => {
     if (!linkInput) {
       toast.error("Please paste a valid problem URL first 😄");
       return;
     }
 
+    setScraping(true);
     try {
       let title = "";
       let platform = "";
@@ -196,13 +198,24 @@ function Dashboard() {
         title = "New DSA Problem";
       }
 
+      // Fetch description (Notes) from server side scraping endpoint
+      let description = "";
+      try {
+        const res = await scrapeDescription(linkInput);
+        if (res && res.description) {
+          description = res.description;
+        }
+      } catch (err) {
+        console.error("Scraping description error:", err);
+      }
+
       // Populate form data
       setFormData({
         title: title,
         topic: platform || "DSA",
         difficulty: "Medium",
         status: "Pending",
-        notes: "",
+        notes: description,
         link: linkInput,
       });
 
@@ -210,6 +223,8 @@ function Dashboard() {
     } catch (error) {
       console.error(error);
       toast.error("Invalid URL. Please enter a complete web link.");
+    } finally {
+      setScraping(false);
     }
   };
 
@@ -687,6 +702,7 @@ const handleFavorite =
                   <input
                     aria-label="Paste Problem URL"
                     type="url"
+                    disabled={scraping}
                     placeholder="Paste Link (LeetCode, GeeksforGeeks, etc.)"
                     value={linkInput}
                     onChange={(e) => setLinkInput(e.target.value)}
@@ -702,24 +718,28 @@ const handleFavorite =
                       border-gray-300
                       dark:border-gray-600
                       outline-none
+                      disabled:opacity-60
                     "
                   />
                   <button
                     type="button"
+                    disabled={scraping}
                     onClick={handleParseLink}
-                    className="
+                    className={`
                       px-6
                       py-3
                       rounded-lg
-                      bg-blue-600
-                      hover:bg-blue-700
                       text-white
                       font-semibold
-                      cursor-pointer
                       transition-all
-                    "
+                      ${
+                        scraping
+                          ? "bg-blue-400 cursor-not-allowed"
+                          : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                      }
+                    `}
                   >
-                    Done
+                    {scraping ? "Fetching..." : "Done"}
                   </button>
                 </div>
               )}
