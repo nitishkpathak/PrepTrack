@@ -10,8 +10,8 @@ function StreakCard({ questions = [] }) {
     useState(0);
 
   useEffect(() => {
-
-    const user =
+    const loadStreak = () => {
+      const user =
         JSON.parse(
           localStorage.getItem(
             "user"
@@ -21,7 +21,14 @@ function StreakCard({ questions = [] }) {
       setStreak(
         user?.streak || 0
       );
+    };
 
+    loadStreak();
+
+    window.addEventListener("userUpdated", loadStreak);
+    return () => {
+      window.removeEventListener("userUpdated", loadStreak);
+    };
   }, []);
 
   const solvedToday = questions.some(

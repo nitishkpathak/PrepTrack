@@ -12,6 +12,7 @@ import QuestionForm from "../components/QuestionForm";
 import QuestionList from "../components/QuestionList";
 
 import {addQuestion, getQuestions, deleteQuestion, updateQuestion, scrapeDescription} from "../services/questionService";
+import { getProfile } from "../services/userService";
 
 function Dashboard() {
 
@@ -65,14 +66,22 @@ function Dashboard() {
   const fetchQuestions = async () => {
     setFetching(true);
     try {
-      const data = await getQuestions();
+      const [questionsData, profileData] = await Promise.all([
+        getQuestions(),
+        getProfile(),
+      ]);
 
       console.log(
         "Dashboard Questions:",
-        data
+        questionsData
       );
 
-      setQuestions(data);
+      setQuestions(questionsData);
+
+      if (profileData && profileData.user) {
+        localStorage.setItem("user", JSON.stringify(profileData.user));
+        window.dispatchEvent(new Event("userUpdated"));
+      }
 
     } catch (error) {
       console.log(error);

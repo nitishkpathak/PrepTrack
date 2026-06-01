@@ -34,3 +34,33 @@ export const updateProfile =
 
     return response.data;
   };
+
+// GET PROFILE
+export const getProfile =
+  async () => {
+
+    const token =
+      localStorage.getItem(
+        "token"
+      );
+
+    const response =
+      await axios.get(
+
+        `${API}/profile`,
+
+        {
+
+          headers: {
+
+            Authorization:
+              `Bearer ${token}`,
+
+          },
+
+        }
+
+      );
+
+    return response.data;
+  };
