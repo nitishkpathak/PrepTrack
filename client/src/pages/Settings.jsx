@@ -12,10 +12,13 @@ function Settings() {
 
 
 
+  const savedUserJson = localStorage.getItem("user");
+  const initialUser = savedUserJson ? JSON.parse(savedUserJson) : {};
+
   // Edit Mode
   const [editing,
     setEditing] =
-    useState(true);
+    useState(false);
 
   // Menu
   const [sidebarOpen,
@@ -23,21 +26,20 @@ function Settings() {
     useState(false);
 
   // Profile State
-const [profile,
-  setProfile] =
-  useState({
+  const [profile,
+    setProfile] =
+    useState({
 
-    name: "",
-    email: "",
-    role: "",
-    bio: "",
+      name: initialUser.name || "",
+      email: initialUser.email || "",
+      role: initialUser.role || "",
+      bio: initialUser.bio || "",
+      profilePic: initialUser.profilePic || "",
+      joined: initialUser.createdAt
+        ? new Date(initialUser.createdAt).toLocaleDateString()
+        : "",
 
-    // FIXED
-    profilePic: "",
-
-    joined: "",
-
-  });
+    });
 
     // Load Saved Data
     useEffect(() => {
