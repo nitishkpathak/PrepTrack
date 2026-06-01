@@ -20,6 +20,8 @@ function Register() {
 
     });
 
+  const [loading, setLoading] = useState(false);
+
   // Handle input change
   const handleChange = (e) => {
 
@@ -38,6 +40,7 @@ function Register() {
   const handleSubmit = async (e) => {
 
     e.preventDefault();
+    setLoading(true);
 
     try {
 
@@ -107,6 +110,8 @@ function Register() {
         error.response?.data?.message || "Something went wrong"
       );
 
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -367,12 +372,13 @@ function Register() {
           <button
 
             type="submit"
+            disabled={loading}
 
-            className="
+            className={`
               w-full
 
               bg-green-600
-              hover:bg-green-700
+              ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700 cursor-pointer"}
 
               text-white
 
@@ -381,12 +387,10 @@ function Register() {
 
               transition
               duration-300
-
-              cursor-pointer
-            "
+            `}
           >
 
-            Register
+            {loading ? "Registering, please wait..." : "Register"}
 
           </button>
 

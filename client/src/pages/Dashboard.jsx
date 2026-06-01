@@ -56,9 +56,11 @@ function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [expandedQuestion, setExpandedQuestion] = useState(null);
   const [updatedQuestionId, setUpdatedQuestionId] = useState(null);
+  const [fetching, setFetching] = useState(false);
   
   // Fetch Questions
   const fetchQuestions = async () => {
+    setFetching(true);
     try {
       const data = await getQuestions();
 
@@ -71,6 +73,8 @@ function Dashboard() {
 
     } catch (error) {
       console.log(error);
+    } finally {
+      setFetching(false);
     }
   };
 
@@ -751,7 +755,22 @@ const handleFavorite =
 
             <div className="grid gap-4">
 
-              {filteredQuestions.map((question) => (
+              {fetching ? (
+                <div className="text-center py-10 bg-gray-200 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-800 rounded-2xl animate-pulse">
+                  <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                    🔄 Loading questions from server...
+                  </h3>
+                  <p className="text-sm text-gray-400 mt-2">
+                    Please wait, initial load may take a moment if server is waking up
+                  </p>
+                </div>
+              ) : filteredQuestions.length === 0 ? (
+                <div className="text-center py-10 bg-gray-200 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-800 rounded-2xl">
+                  <h3 className="text-xl font-bold mb-2">No Questions Found 😄</h3>
+                  <p className="text-gray-400">Add a new question above to start tracking!</p>
+                </div>
+              ) : (
+                filteredQuestions.map((question) => (
 
                 <div
                   key={question._id}
@@ -1206,7 +1225,7 @@ const handleFavorite =
                   </div>
                 </div>
 
-              ))}
+              )))}
 
             </div>
 
@@ -1232,7 +1251,16 @@ const handleFavorite =
 
             <div className="grid gap-4">
 
-              {filteredQuestions.length === 0 ? (
+              {fetching ? (
+                <div className="text-center py-10 bg-gray-200 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-800 rounded-2xl animate-pulse">
+                  <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                    🔄 Loading questions from server...
+                  </h3>
+                  <p className="text-sm text-gray-400 mt-2">
+                    Please wait, initial load may take a moment if server is waking up
+                  </p>
+                </div>
+              ) : filteredQuestions.length === 0 ? (
 
                 <div
                   className="
