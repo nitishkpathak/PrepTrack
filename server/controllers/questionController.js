@@ -1,5 +1,6 @@
 const Question = require("../models/Question");
 const User = require("../models/User");
+const { scrapeProblemDescription } = require("../utils/scraper");
 
 // Add Question
 const addQuestion = async (req, res) => {
@@ -189,52 +190,7 @@ const deleteQuestion = async (req, res) => {
   }
 };
 
-// Helper to clean HTML
-const cleanHtml = (html) => {
-  if (!html) return "";
-  
-  let text = html;
-
-  // Replace common block tags with newlines
-  text = text.replace(/<(p|div|br|li|h1|h2|h3|h4|h5|h6)[^>]*>/gi, "\n");
-  text = text.replace(/<\/p>|<\/div>|<\/li>/gi, "\n");
-  
-  // Format bold / italic/ code tags
-  text = text.replace(/<(strong|b)[^>]*>([\s\S]*?)<\/\1>/gi, "**$2**");
-  text = text.replace(/<(em|i)[^>]*>([\s\S]*?)<\/\1>/gi, "*$2*");
-  text = text.replace(/<code[^>]*>([\s\S]*?)<\/code>/gi, "`$1`");
-
-  // Remove all other HTML tags
-  text = text.replace(/<[^>]*>/g, "");
-
-  // Clean up HTML entities
-  const entities = {
-    "&nbsp;": " ",
-    "&lt;": "<",
-    "&gt;": ">",
-    "&amp;": "&",
-    "&quot;": '"',
-    "&apos;": "'",
-    "&middot;": "·",
-    "&ndash;": "–",
-    "&mdash;": "—",
-    "&#39;": "'",
-    "&le;": "≤",
-    "&ge;": "≥",
-    "&lt;=": "≤",
-    "&gt;=": "≥",
-  };
-  for (const [entity, value] of Object.entries(entities)) {
-    text = text.replaceAll(entity, value);
-  }
-
-  // Remove multiple consecutive empty lines
-  text = text.replace(/\n\s*\n\s*\n+/g, "\n\n");
-  
-  return text.trim();
-};
-
-// Scrape Description from Link
+// Scrape Description from Link (Delegated to scraper utility)
 const scrapeDescription = async (req, res) => {
   try {
     const { link } = req.body;
@@ -242,69 +198,8 @@ const scrapeDescription = async (req, res) => {
       return res.status(400).json({ message: "Link is required" });
     }
 
-    const url = new URL(link);
-    let description = "";
-
-    // LeetCode
-    if (url.hostname.includes("leetcode.com")) {
-      const match = url.pathname.match(/\/problems\/([a-zA-Z0-9-]+)/);
-      if (match && match[1]) {
-        const slug = match[1];
-        const response = await fetch("https://leetcode.com/graphql", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
-          },
-          body: JSON.stringify({
-            query: `
-              query questionContent($titleSlug: String!) {
-                question(titleSlug: $titleSlug) {
-                  content
-                }
-              }
-            `,
-            variables: { titleSlug: slug }
-          })
-        });
-        const data = await response.json();
-        const content = data.data?.question?.content;
-        if (content) {
-          description = cleanHtml(content);
-        }
-      }
-    }
-    // GeeksforGeeks
-    else if (url.hostname.includes("geeksforgeeks.org")) {
-      const response = await fetch(link, {
-        headers: {
-          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
-        }
-      });
-      const html = await response.text();
-
-      // Try parsing from NEXT_DATA first
-      const scriptMatch = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
-      if (scriptMatch) {
-        try {
-          const data = JSON.parse(scriptMatch[1]);
-          const probData = data.props?.pageProps?.initialState?.problemData?.allData?.probData;
-          if (probData && probData.problem_question) {
-            description = cleanHtml(probData.problem_question);
-          }
-        } catch (e) {
-          console.error("Error parsing __NEXT_DATA__ GFG script:", e);
-        }
-      }
-
-      // Fallback: search for div class="problem-statement" in HTML
-      if (!description) {
-        const match = html.match(/<div class="problem-statement">([\s\S]*?)<\/div>/);
-        if (match && match[1]) {
-          description = cleanHtml(match[1]);
-        }
-      }
-    }
+    // Call external scraper service to parse description
+    const description = await scrapeProblemDescription(link);
 
     res.status(200).json({ description });
   } catch (error) {
