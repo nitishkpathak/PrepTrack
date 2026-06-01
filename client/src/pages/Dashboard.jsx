@@ -1,4 +1,4 @@
-import {useEffect, useState,} from "react";
+import {useEffect, useState, useMemo} from "react";
 import {useNavigate,} from "react-router-dom";
 import {Menu,} from "lucide-react";
 import toast from "react-hot-toast";
@@ -87,56 +87,35 @@ function Dashboard() {
     window.scrollTo(0, 0);
   }, []);
 
-  const filteredQuestions =
-    questions.filter((question) => {
-
-      return (
-
-        question.title
-          .toLowerCase()
-          .includes(
-            searchTerm.toLowerCase()
+  const filteredQuestions = useMemo(() => {
+    return questions
+      .filter((question) => {
+        return (
+          question.title
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
+          &&
+          (
+            difficultyFilter === ""
+            ||
+            question.difficulty === difficultyFilter
           )
-
-        &&
-
-        (
-          difficultyFilter === ""
-          ||
-          question.difficulty ===
-          difficultyFilter
-        )
-
-        &&
-
-        (
-          statusFilter === ""
-          ||
-          question.status ===
-          statusFilter
-        )
-
-        &&
-
-        (
-          !favoriteFilter
-          ||
-          question.favorite === true
-        )
-
-      );
-
-    })
-
-     .sort(
-
-    (a, b) =>
-
-      new Date(b.createdAt)
-      -
-      new Date(a.createdAt)
-
-  );
+          &&
+          (
+            statusFilter === ""
+            ||
+            question.status === statusFilter
+          )
+          &&
+          (
+            !favoriteFilter
+            ||
+            question.favorite === true
+          )
+        );
+      })
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }, [questions, searchTerm, difficultyFilter, statusFilter, favoriteFilter]);
 
   // Handle Input
   const handleChange = (e) => {

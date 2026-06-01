@@ -6,15 +6,11 @@ import { Menu } from "lucide-react";
 import ThemeToggle from "../components/ThemeToggle";
 import Sidebar from "../components/Sidebar";
 
-import {getQuestions,} from "../services/questionService";
 import {updateProfile, } from "../services/userService";
 
 function Settings() {
 
-  // Questions State
-  const [questions,
-    setQuestions] =
-    useState([]);
+
 
   // Edit Mode
   const [editing,
@@ -43,29 +39,8 @@ const [profile,
 
   });
 
-  // Fetch Questions
-  const fetchQuestions =
-    async () => {
-
-      try {
-
-        const data =
-          await getQuestions();
-
-        setQuestions(data);
-
-      } catch (error) {
-
-        console.log(error);
-
-      }
-    };
-
     // Load Saved Data
     useEffect(() => {
-
-      // QUESTIONS
-      fetchQuestions();
 
       // PROFILE
       const fetchProfile =

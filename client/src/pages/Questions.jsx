@@ -18,21 +18,22 @@ function Questions() {
     setSidebarOpen] =
     useState(false);
 
+  const [fetching, setFetching] = useState(false);
+
   // Fetch Questions
   const fetchQuestions =
     async () => {
-
+      setFetching(true);
       try {
-
         const data =
           await getQuestions();
 
         setQuestions(data);
 
       } catch (error) {
-
         console.log(error);
-
+      } finally {
+        setFetching(false);
       }
     };
 
@@ -151,7 +152,21 @@ function Questions() {
         {/* Questions Grid */}
         <div className="grid gap-6">
 
-          {
+          {fetching ? (
+            <div className="text-center py-10 bg-gray-200 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-800 rounded-2xl animate-pulse">
+              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                🔄 Loading questions from server...
+              </h3>
+              <p className="text-sm text-gray-400 mt-2">
+                Please wait, initial load may take a moment if server is waking up
+              </p>
+            </div>
+          ) : questions.length === 0 ? (
+            <div className="text-center py-10 bg-gray-200 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-800 rounded-2xl">
+              <h3 className="text-xl font-bold mb-2">No Questions Found 😄</h3>
+              <p className="text-gray-400">Add a new question from the dashboard to start tracking!</p>
+            </div>
+          ) :
             questions.map(
               (question) => (
 
