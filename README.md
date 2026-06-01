@@ -12,14 +12,15 @@ PrepTrack is a full-stack (MERN) web application designed for students and devel
 ## ✨ Features
 
 *   **User Authentication (Register/Login)**: Fast, instant registration without OTP constraints.
-*   **Dashboard Overview**: View daily problem-solving stats and streaks at a glance.
-*   **Questions CRUD**: Easily add, view, update, and delete DSA problems.
-*   **Status Tracking**: Group questions into *Solved*, *Pending*, and *Revision* states.
-*   **Favorites System**: Bookmark important questions for quick revision.
-*   **Daily Streak Tracking**: Build and maintain consistency with automated daily streak counts.
-*   **Progress Statistics**: Visualize difficulty distribution and solve progress with interactive charts.
-*   **Dark/Light Theme Toggle**: Native theme switching available across the platform (including landing page).
-*   **Optimized Performance**: Custom window event-driven state updates to avoid CPU overhead (replaced heavy 1s setInterval polling).
+*   **Modular Dashboard & Questions**: Refactored layouts using modular components (`QuestionForm` and `QuestionList`) for high readability.
+*   **Enhanced DSA Form**: Support for manual DSA entries and automated scraper fetching to parse problem descriptions directly from LeetCode, GFG, Codeforces, etc.
+*   **Study Target Preferences**: Customize your daily practice target (questions/day) and preferred platform from the Settings panel.
+*   **Daily Goal Tracker**: Monitor today's practice progress vs. daily goal directly inside the Streak Card with visual percentage indicators.
+*   **Quick Practice Shortcut**: One-click launcher button dynamically rendered in the Dashboard header pointing to your preferred practice platform.
+*   **Dedicated Profile Page**: A sleek, full-page workspace linked from the sidebar to view details and modify avatars, names, roles, and bios.
+*   **Security & Data Control**: Secure change password form and database wipe options under Settings.
+*   **Optimized Performance**: Replaced sequential blocking API calls with concurrent `Promise.all` requests and smooth skeleton loading indicators for faster page loads.
+*   **Dark/Light Theme Toggle**: Native theme switching integrated directly inside the sidebar footer.
 *   **Contact Form Integration**: Fully functional landing page contact form using EmailJS.
 
 ---
@@ -64,7 +65,7 @@ PrepTrack/
 │   │   │   ├── StreakCard.jsx       # Daily solve streak card
 │   │   │   └── ThemeToggle.jsx      # Theme switcher (Light/Dark mode)
 │   │   ├── context/          # Context providers
-│   │   ├── pages/            # Application views (Home, Login, Register, Dashboard, Stats, Settings)
+│   │   ├── pages/            # Application views (Home, Login, Register, Dashboard, Stats, Profile, Settings)
 │   │   ├── routes/           # Router-related utilities
 │   │   ├── services/         # API clients (authService, questionService, userService)
 │   │   ├── App.jsx           # Main routing configuration and auto-login logic
