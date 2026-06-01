@@ -10,6 +10,7 @@ import ProgressChart from "../components/ProgressChart";
 import DifficultyChart from "../components/DifficultyChart";
 import QuestionForm from "../components/QuestionForm";
 import QuestionList from "../components/QuestionList";
+import NavbarProfile from "../components/NavbarProfile";
 
 import {addQuestion, getQuestions, deleteQuestion, updateQuestion, scrapeDescription} from "../services/questionService";
 import { getProfile } from "../services/userService";
@@ -549,6 +550,9 @@ const handleFavorite =
 
               transition
               duration-300
+              flex
+              justify-between
+              items-center
             "
           >
 
@@ -564,6 +568,8 @@ const handleFavorite =
               >
                 PrepTrack Dashboard
               </h1>
+
+            <NavbarProfile />
 
           </div>
 

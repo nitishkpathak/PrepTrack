@@ -15,6 +15,7 @@ import {
   scrapeDescription,
 } from "../services/questionService";
 import { getProfile } from "../services/userService";
+import NavbarProfile from "../components/NavbarProfile";
 
 function Questions() {
   const [questions, setQuestions] = useState([]);
@@ -340,33 +341,37 @@ function Questions() {
             gap-4
           "
         >
-          <div className="flex items-center gap-4 justify-between md:justify-start">
-            <button
-              aria-label="Open Sidebar"
-              onClick={() => setSidebarOpen(true)}
-              className="
-                md:hidden
-                p-2
-                bg-blue-600
-                text-white
-                rounded-lg
-                cursor-pointer
-              "
-            >
-              <Menu size={20} />
-            </button>
+          <div className="flex items-center gap-4 justify-between w-full">
+            <div className="flex items-center gap-4">
+              <button
+                aria-label="Open Sidebar"
+                onClick={() => setSidebarOpen(true)}
+                className="
+                  md:hidden
+                  p-2
+                  bg-blue-600
+                  text-white
+                  rounded-lg
+                  cursor-pointer
+                "
+              >
+                <Menu size={20} />
+              </button>
 
-            <h1
-              className="
-                text-2xl
-                md:text-3xl
-                font-bold
-                text-black
-                dark:text-white
-              "
-            >
-              Questions
-            </h1>
+              <h1
+                className="
+                  text-2xl
+                  md:text-3xl
+                  font-bold
+                  text-black
+                  dark:text-white
+                "
+              >
+                Questions
+              </h1>
+            </div>
+
+            <NavbarProfile />
           </div>
         </div>
 

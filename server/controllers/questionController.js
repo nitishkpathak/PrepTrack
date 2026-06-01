@@ -209,10 +209,44 @@ const scrapeDescription = async (req, res) => {
   }
 };
 
+// Reset all questions and streak for a user
+const resetQuestions = async (req, res) => {
+  try {
+    await Question.deleteMany({ user: req.user._id });
+
+    // Reset user streak and lastSolvedDate
+    const user = await User.findById(req.user._id);
+    if (user) {
+      user.streak = 0;
+      user.lastSolvedDate = null;
+      await user.save();
+    }
+
+    res.status(200).json({
+      message: "All questions and daily streak have been successfully reset.",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        bio: user.bio,
+        profilePic: user.profilePic || "",
+        createdAt: user.createdAt,
+        streak: user.streak,
+        lastSolvedDate: user.lastSolvedDate,
+      }
+    });
+  } catch (error) {
+    console.error("Reset questions failed:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 module.exports = {
   addQuestion,
   getQuestions,
   updateQuestion,
   deleteQuestion,
   scrapeDescription,
+  resetQuestions,
 };

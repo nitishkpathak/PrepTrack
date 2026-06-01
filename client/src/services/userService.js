@@ -63,4 +63,68 @@ export const getProfile =
       );
 
     return response.data;
+  };
+
+// UPDATE PREFERENCES
+export const updatePreferences =
+  async (preferenceData) => {
+
+    const token =
+      localStorage.getItem(
+        "token"
+      );
+
+    const response =
+      await axios.put(
+
+        `${API}/preferences`,
+
+        preferenceData,
+
+        {
+
+          headers: {
+
+            Authorization:
+              `Bearer ${token}`,
+
+          },
+
+        }
+
+      );
+
+    return response.data;
+  };
+
+// CHANGE PASSWORD
+export const changePassword =
+  async (passwordData) => {
+
+    const token =
+      localStorage.getItem(
+        "token"
+      );
+
+    const response =
+      await axios.put(
+
+        `${API}/change-password`,
+
+        passwordData,
+
+        {
+
+          headers: {
+
+            Authorization:
+              `Bearer ${token}`,
+
+          },
+
+        }
+
+      );
+
+    return response.data;
   };

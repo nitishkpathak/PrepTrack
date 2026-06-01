@@ -104,3 +104,17 @@ export const scrapeDescription = async (link) => {
   );
   return response.data;
 };
+
+// Reset All Questions
+export const resetAllQuestions = async () => {
+  const token = localStorage.getItem("token");
+  const response = await axios.delete(
+    `${API_URL}/reset/all`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};

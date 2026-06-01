@@ -8,6 +8,7 @@ import StreakCard from "../components/StreakCard";
 
 import { getQuestions } from "../services/questionService";
 import { getProfile } from "../services/userService";
+import NavbarProfile from "../components/NavbarProfile";
 
 function Stats() {
   const [questions, setQuestions] = useState([]);
@@ -98,48 +99,54 @@ function Stats() {
 
                 transition
                 duration-300
+                flex
+                justify-between
+                items-center
               "
             >
 
-            {/* Mobile Menu Button */}
-            <button
-              aria-label="Open Sidebar"
-              onClick={() =>
-                setSidebarOpen(true)
-              }
+              <div className="flex items-center gap-4">
+                {/* Mobile Menu Button */}
+                <button
+                  aria-label="Open Sidebar"
+                  onClick={() =>
+                    setSidebarOpen(true)
+                  }
 
-              className="
-                md:hidden
+                  className="
+                    md:hidden
 
-                p-2
-                mb-4
+                    p-2
 
-                bg-blue-600
-                text-white
+                    bg-blue-600
+                    text-white
 
-                rounded-lg
-                cursor-pointer
-              "
-            >
+                    rounded-lg
+                    cursor-pointer
+                  "
+                >
 
-              <Menu size={20} />
+                  <Menu size={20} />
 
-            </button>
+                </button>
 
-            <h1
-              className="
-                text-2xl
-                md:text-3xl
-                font-bold
+                <h1
+                  className="
+                    text-2xl
+                    md:text-3xl
+                    font-bold
 
-                text-black
-                dark:text-white
-              "
-            >
+                    text-black
+                    dark:text-white
+                  "
+                >
 
-              Stats
+                  Stats
 
-            </h1>
+                </h1>
+              </div>
+
+              <NavbarProfile />
 
           </div>
 

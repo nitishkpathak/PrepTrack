@@ -54,6 +54,16 @@ const userSchema =
         default: true,
       },
 
+      dailyGoal: {
+        type: Number,
+        default: 2,
+      },
+
+      preferredPlatform: {
+        type: String,
+        default: "LeetCode",
+      },
+
     },
 
     {

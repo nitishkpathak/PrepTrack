@@ -1,739 +1,302 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { Menu } from "lucide-react";
-
+import { Menu, Lock, Settings as SettingsIcon, AlertTriangle } from "lucide-react";
+import toast from "react-hot-toast";
 
 import Sidebar from "../components/Sidebar";
-
-import {updateProfile, } from "../services/userService";
+import NavbarProfile from "../components/NavbarProfile";
+import { getProfile, updatePreferences, changePassword } from "../services/userService";
+import { resetAllQuestions } from "../services/questionService";
 
 function Settings() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loadingPrefs, setLoadingPrefs] = useState(false);
+  const [loadingPass, setLoadingPass] = useState(false);
+  const [loadingReset, setLoadingReset] = useState(false);
 
+  // Practice preferences state
+  const [prefs, setPrefs] = useState({
+    dailyGoal: 2,
+    preferredPlatform: "LeetCode",
+  });
 
+  // Password update state
+  const [passData, setPassData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
 
-  const savedUserJson = localStorage.getItem("user");
-  const initialUser = savedUserJson ? JSON.parse(savedUserJson) : {};
-
-  // Edit Mode
-  const [editing,
-    setEditing] =
-    useState(false);
-
-  // Menu
-  const [sidebarOpen,
-    setSidebarOpen] =
-    useState(false);
-
-  // Profile State
-  const [profile,
-    setProfile] =
-    useState({
-
-      name: initialUser.name || "",
-      email: initialUser.email || "",
-      role: initialUser.role || "",
-      bio: initialUser.bio || "",
-      profilePic: initialUser.profilePic || "",
-      joined: initialUser.createdAt
-        ? new Date(initialUser.createdAt).toLocaleDateString()
-        : "",
-
-    });
-
-    // Load Saved Data
-    useEffect(() => {
-
-      // PROFILE
-      const fetchProfile =
-        async () => {
-
-          try {
-
-            const token =
-              localStorage.getItem(
-                "token"
-              );
-
-            // IF NO TOKEN
-            if (!token) return;
-
-            // FETCH PROFILE
-            const response =
-              await axios.get(
-
-                `${import.meta.env.VITE_API_URL}/api/user/profile`,
-
-                {
-
-                  headers: {
-
-                    Authorization:
-                      `Bearer ${token}`,
-
-                  },
-
-                }
-
-              );
-
-            const user =
-              response.data.user;
-
-            // SAVE USER
-            localStorage.setItem(
-
-              "user",
-
-              JSON.stringify(user)
-
-            );
-
-            // SET PROFILE
-            setProfile({
-
-              name:
-                user.name || "",
-
-              email:
-                user.email || "",
-
-              role:
-                user.role || "",
-
-              bio:
-                user.bio || "",
-
-              joined:
-                user.createdAt
-
-                  ? new Date(
-                      user.createdAt
-                    ).toLocaleDateString()
-
-                  : "",
-
-              profilePic:
-                user.profilePic || "",
-
-            });
-
-            setEditing(false);
-
-          } catch (error) {
-
-            console.log(error);
-
-          }
-        };
-
-      fetchProfile();
-
-    }, []);
-
-  // Handle Input
-  const handleChange = (e) => {
-
-    setProfile({
-
-      ...profile,
-
-      [e.target.name]:
-        e.target.value,
-
-    });
-  };
-
-  // Handle Image
-  const handleImage = (e) => {
-
-    const file =
-      e.target.files[0];
-
-      if (
-            file.size >
-            3 * 1024 * 1024
-          ) {
-
-            alert(
-              "Image must be less than 1MB"
-            );
-
-            return;
-          }
-
-    const reader =
-      new FileReader();
-
-    reader.onloadend = () => {
-
-      setProfile({
-
-        ...profile,
-
-        profilePic:
-        reader.result,
-
-      });
-    };
-
-    if (file) {
-
-      reader.readAsDataURL(file);
-
+  // Load preferences from profile
+  const fetchPrefs = async () => {
+    try {
+      const data = await getProfile();
+      if (data && data.user) {
+        setPrefs({
+          dailyGoal: data.user.dailyGoal ?? 2,
+          preferredPlatform: data.user.preferredPlatform || "LeetCode",
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load settings:", error);
     }
   };
 
-// Save Profile
-const handleSave =
-  async () => {
+  useEffect(() => {
+    fetchPrefs();
+  }, []);
 
+  const handlePrefChange = (e) => {
+    setPrefs({
+      ...prefs,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handlePrefSubmit = async (e) => {
+    e.preventDefault();
+    setLoadingPrefs(true);
     try {
-
-      const data =
-        await updateProfile({
-
-          name:
-            profile.name,
-
-          role:
-            profile.role,
-
-          bio:
-            profile.bio,
-
-          profilePic:
-          profile.profilePic,
-
-        });
-
-      localStorage.setItem(
-
-  "user",
-
-  JSON.stringify({
-
-    ...data.user,
-
-    // KEEP IMAGE
-    profilePic:
-      profile.profilePic,
-
-  })
-
-);
-
-setEditing(false);
-
-alert(
-  "Profile Saved Successfully 🚀"
-);
-
-  window.dispatchEvent(
-    new Event("userUpdated")
-  );
-
+      const res = await updatePreferences(prefs);
+      localStorage.setItem("user", JSON.stringify(res.user));
+      window.dispatchEvent(new Event("userUpdated"));
+      toast.success("Preferences updated successfully! 🚀");
     } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Failed to update preferences ❌");
+    } finally {
+      setLoadingPrefs(false);
+    }
+  };
 
-      console.log(error);
+  const handlePassChange = (e) => {
+    setPassData({
+      ...passData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-      alert(
-        "Update Failed ❌"
-      );
+  const handlePassSubmit = async (e) => {
+    e.preventDefault();
+    if (passData.newPassword !== passData.confirmPassword) {
+      toast.error("New passwords do not match! ❌");
+      return;
+    }
+    if (passData.newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters ❌");
+      return;
+    }
+
+    setLoadingPass(true);
+    try {
+      await changePassword({
+        currentPassword: passData.currentPassword,
+        newPassword: passData.newPassword,
+      });
+      setPassData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      toast.success("Password updated successfully! 🔐");
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Failed to change password ❌");
+    } finally {
+      setLoadingPass(false);
+    }
+  };
+
+  const handleResetData = async () => {
+    const confirm = window.confirm(
+      "WARNING: This will permanently delete ALL your questions and reset your daily streak to 0. This action CANNOT be undone. Are you sure you want to proceed?"
+    );
+    if (!confirm) return;
+
+    setLoadingReset(true);
+    try {
+      const res = await resetAllQuestions();
+      localStorage.setItem("user", JSON.stringify(res.user));
+      window.dispatchEvent(new Event("userUpdated"));
+      toast.success("All data has been successfully reset! 🧹");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to reset account questions ❌");
+    } finally {
+      setLoadingReset(false);
     }
   };
 
   return (
-
-    <div
-      className="
-        flex
-        min-h-screen
-
-        bg-white
-        dark:bg-black
-
-        text-black
-        dark:text-white
-
-        transition
-        duration-300
-      "
-    >
-
+    <div className="flex min-h-screen bg-white dark:bg-black text-black dark:text-white transition duration-300">
       {/* Sidebar */}
-      <Sidebar
-          open={sidebarOpen}
-          closeSidebar={() =>
-            setSidebarOpen(false)
-          }
-        />
+      <Sidebar open={sidebarOpen} closeSidebar={() => setSidebarOpen(false)} />
 
       {/* Main */}
-      <div
-        className="
-            flex-1
-            p-4
-            md:p-6
-            md:ml-[260px]
-          "
-      >
-
-      {/* Sticky Header */}
-          <div
-            className="
-              sticky
-              top-0
-              z-20
-
-              bg-white
-              dark:bg-gray-950
-
-              border-b
-              border-gray-300
-              dark:border-gray-800
-
-              py-5
-              mb-8
-
-              backdrop-blur-md
-
-              transition
-              duration-300
-            "
-          >
-
-      {/* Mobile Menu */}
-      <button
-        aria-label="Open Sidebar"
-        onClick={() =>
-          setSidebarOpen(true)
-        }
-
-        className="
-          md:hidden
-
-          p-2
-          mb-4
-
-          bg-blue-600
-          text-white
-
-          rounded-lg
-          cursor-pointer
-        "
-      >
-
-        <Menu size={20} />
-
-      </button>
-
-      <h1
-        className="
-          text-2xl
-          md:text-3xl
-          font-bold
-
-          text-black
-          dark:text-white
-        "
-      >
-
-        Settings
-
-                </h1>
-
-              </div>
-
-        {/* Profile Section */}
-        {
-
-          editing ? (
-
-            <div
-              className="
-                bg-gray-200
-                dark:bg-gray-900
-
-                p-8
-                rounded-2xl
-
-                border
-                border-gray-300
-                dark:border-gray-800
-
-                w-full
-                max-w-4xl
-                mx-auto
-                mb-10
-
-                shadow-lg
-
-                transition
-                duration-300
-              "
+      <div className="flex-1 p-4 md:p-6 md:ml-[260px]">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-20 bg-white dark:bg-gray-950 border-b border-gray-300 dark:border-gray-800 py-5 mb-8 backdrop-blur-md transition duration-300 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <button
+              aria-label="Open Sidebar"
+              onClick={() => setSidebarOpen(true)}
+              className="md:hidden p-2 bg-blue-600 text-white rounded-lg cursor-pointer"
             >
+              <Menu size={20} />
+            </button>
+            <h1 className="text-2xl md:text-3xl font-bold text-black dark:text-white flex items-center gap-2">
+              <SettingsIcon size={24} className="text-blue-500" />
+              Settings
+            </h1>
+          </div>
+          <NavbarProfile />
+        </div>
 
-              {/* Profile Image */}
-              <div
-                className="
-                  flex
-                  flex-col
-                  items-center
-                  mb-8
-                "
-              >
-
-                <img
-
-                  src={
-                      profile.profilePic
-                        ? profile.profilePic
-                        : "/default-profile.png"
-                    }
-
-                  alt="Profile"
-
-                  className="
-                    w-36
-                    h-36
-                    rounded-full
-                    object-cover
-                    border-4
-                    border-blue-500
-                  "
-                />
-
-                <label
-                  className="
-                    mt-5
-
-                    bg-blue-600
-                    hover:bg-blue-700
-
-                    text-white
-
-                    px-5
-                    py-2
-
-                    rounded-lg
-                    cursor-pointer
-
-                    transition
-                    duration-300
-                  "
-                >
-
-                  Upload Photo
-
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImage}
-                    hidden
-                  />
-
+        <div className="max-w-4xl mx-auto space-y-8">
+          {/* Practice Preferences */}
+          <div className="bg-gray-200 dark:bg-gray-900 p-6 md:p-8 rounded-2xl border border-gray-300 dark:border-gray-800 shadow-md">
+            <h2 className="text-xl font-bold mb-5 flex items-center gap-2 border-b border-gray-300 dark:border-gray-800 pb-3">
+              🎯 Study Preferences
+            </h2>
+            <form onSubmit={handlePrefSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  Daily Question Goal
                 </label>
-
+                <select
+                  name="dailyGoal"
+                  value={prefs.dailyGoal}
+                  onChange={handlePrefChange}
+                  className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-700 outline-none cursor-pointer"
+                >
+                  <option value={1}>1 Question / day</option>
+                  <option value={2}>2 Questions / day</option>
+                  <option value={3}>3 Questions / day</option>
+                  <option value={5}>5 Questions / day</option>
+                  <option value={10}>10 Questions / day</option>
+                </select>
               </div>
 
-              {/* Name */}
-              <input
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  Preferred Platform
+                </label>
+                <select
+                  name="preferredPlatform"
+                  value={prefs.preferredPlatform}
+                  onChange={handlePrefChange}
+                  className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-700 outline-none cursor-pointer"
+                >
+                  <option value="LeetCode">LeetCode</option>
+                  <option value="GeeksforGeeks">GeeksforGeeks</option>
+                  <option value="Codeforces">Codeforces</option>
+                  <option value="DSA">General DSA / Other</option>
+                </select>
+              </div>
 
-                type="text"
+              <div className="md:col-span-2 pt-2">
+                <button
+                  type="submit"
+                  disabled={loadingPrefs}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition disabled:opacity-50 cursor-pointer"
+                >
+                  {loadingPrefs ? "Saving..." : "Save Preferences"}
+                </button>
+              </div>
+            </form>
+          </div>
 
-                name="name"
+          {/* Change Password */}
+          <div className="bg-gray-200 dark:bg-gray-900 p-6 md:p-8 rounded-2xl border border-gray-300 dark:border-gray-800 shadow-md">
+            <h2 className="text-xl font-bold mb-5 flex items-center gap-2 border-b border-gray-300 dark:border-gray-800 pb-3">
+              <Lock size={20} className="text-yellow-500" />
+              Security Settings
+            </h2>
+            <form onSubmit={handlePassSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  name="currentPassword"
+                  value={passData.currentPassword}
+                  onChange={handlePassChange}
+                  placeholder="Enter current password"
+                  required
+                  className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-700 outline-none text-sm"
+                />
+              </div>
 
-                value={profile.name}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    name="newPassword"
+                    value={passData.newPassword}
+                    onChange={handlePassChange}
+                    placeholder="Min 6 characters"
+                    required
+                    className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-700 outline-none text-sm"
+                  />
+                </div>
 
-                onChange={handleChange}
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={passData.confirmPassword}
+                    onChange={handlePassChange}
+                    placeholder="Repeat new password"
+                    required
+                    className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-700 outline-none text-sm"
+                  />
+                </div>
+              </div>
 
-                placeholder="Full Name"
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={loadingPass}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition disabled:opacity-50 cursor-pointer"
+                >
+                  {loadingPass ? "Updating..." : "Update Password"}
+                </button>
+              </div>
+            </form>
+          </div>
 
-                className="
-                  w-full
-                  p-3
-                  rounded-lg
-
-                  bg-white
-                  dark:bg-gray-800
-
-                  text-black
-                  dark:text-white
-
-                  outline-none
-
-                  border
-                  border-gray-300
-                  dark:border-gray-700
-
-                  mb-4
-
-                  transition
-                  duration-300
-                "
-              />
-
-              {/* Role */}
-              <input
-
-                type="text"
-
-                name="role"
-
-                value={profile.role}
-
-                onChange={handleChange}
-
-                placeholder="Role"
-
-                className="
-                  w-full
-                  p-3
-                  rounded-lg
-
-                  bg-white
-                  dark:bg-gray-800
-
-                  text-black
-                  dark:text-white
-
-                  outline-none
-
-                  border
-                  border-gray-300
-                  dark:border-gray-700
-
-                  mb-4
-
-                  transition
-                  duration-300
-                "
-              />
-
-              {/* Bio */}
-              <textarea
-
-                name="bio"
-
-                value={profile.bio}
-
-                onChange={handleChange}
-
-                placeholder="
-                  Write something about yourself
-                "
-
-                className="
-                  w-full
-                  p-3
-                  rounded-lg
-
-                  bg-white
-                  dark:bg-gray-800
-
-                  text-black
-                  dark:text-white
-
-                  outline-none
-
-                  border
-                  border-gray-300
-                  dark:border-gray-700
-
-                  h-32
-                  mb-4
-
-                  transition
-                  duration-300
-                "
-              />
-
-              {/* Save Button */}
+          {/* Danger Zone */}
+          <div className="bg-red-50/10 dark:bg-red-950/10 p-6 md:p-8 rounded-2xl border border-red-500/30 dark:border-red-500/20 shadow-md">
+            <h2 className="text-xl font-bold text-red-600 dark:text-red-500 mb-4 flex items-center gap-2 border-b border-red-500/20 pb-3">
+              <AlertTriangle size={20} />
+              Danger Zone
+            </h2>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h3 className="font-semibold text-lg text-black dark:text-white">
+                  Reset Questions and Streaks
+                </h3>
+                <p className="text-sm text-gray-500 mt-1 max-w-xl">
+                  This will permanently delete all your questions, difficulty data, analytics, and reset your daily practice streak to zero. This operation is permanent.
+                </p>
+              </div>
               <button
-
-                onClick={handleSave}
-
-                className="
-                  bg-blue-600
-                  hover:bg-blue-700
-
-                  text-white
-
-                  px-6
-                  py-3
-
-                  rounded-lg
-                  cursor-pointer
-
-                  transition
-                  duration-300
-                "
+                onClick={handleResetData}
+                disabled={loadingReset}
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-3 rounded-lg transition disabled:opacity-50 self-start md:self-center cursor-pointer whitespace-nowrap"
               >
-
-                Save Profile
-
+                {loadingReset ? "Resetting..." : "Reset All Data"}
               </button>
-
             </div>
-
-          ) : (
-
-            <div
-              className="
-                bg-gray-200
-                dark:bg-gray-900
-
-                p-10
-                rounded-2xl
-
-                border
-                border-gray-300
-                dark:border-gray-800
-
-                w-full
-                max-w-4xl
-                mx-auto
-                mb-10
-
-                text-center
-
-                shadow-lg
-
-                transition
-                duration-300
-              "
-            >
-
-              {/* Profile Image */}
-              <img
-
-                src={
-                      profile.profilePic
-                        ? profile.profilePic
-                        : "/default-profile.png"
-                    }
-
-                alt="Profile"
-
-                className="
-                  w-40
-                  h-40
-                  rounded-full
-                  object-cover
-                  border-4
-                  border-blue-500
-                  mx-auto
-                  mb-6
-                "
-              />
-
-              {/* Name */}
-              <h2
-                className="
-                  text-4xl
-                  font-bold
-                  mb-3
-                "
-              >
-
-                {profile.name}
-
-              </h2>
-
-              {/* Email */}
-              <p
-                className="
-                  text-gray-700
-                  dark:text-gray-400
-                  mb-2
-                "
-              >
-
-                {profile.email}
-
-              </p>
-
-              {/* Role */}
-              <p
-                className="
-                  text-blue-500
-                  text-xl
-                  mb-4
-                "
-              >
-
-                {profile.role}
-
-              </p>
-
-              {/* Joined */}
-              <p
-                className="
-                  text-sm
-                  text-gray-500
-                  mb-5
-                "
-              >
-
-                Joined:
-                {profile.joined}
-
-              </p>
-
-              {/* Bio */}
-              <p
-                className="
-                  text-gray-700
-                  dark:text-gray-400
-
-                  max-w-2xl
-                  mx-auto
-                  leading-8
-                "
-              >
-
-                {profile.bio}
-
-              </p>
-
-              {/* Edit Button */}
-              <button
-
-                onClick={() =>
-                  setEditing(true)
-                }
-
-                className="
-                  mt-8
-
-                  bg-yellow-600
-                  hover:bg-yellow-700
-
-                  text-white
-
-                  px-6
-                  py-3
-
-                  rounded-lg
-                  cursor-pointer
-
-                  transition
-                  duration-300
-                "
-              >
-
-                Edit Profile
-
-              </button>
-
-            </div>
-
-          )
-
-        }
-
+          </div>
+        </div>
       </div>
-
     </div>
   );
 }
