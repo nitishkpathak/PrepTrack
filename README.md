@@ -99,7 +99,8 @@ PrepTrack/
 ## 📸 Screenshots
 
 ### Home Page
-<img width="1351" height="598" alt="image" src="https://github.com/user-attachments/assets/2573cd21-f1eb-41e0-a282-ab547acb209b" />
+<img width="1351" height="598" alt="image" src="https://github.com/user-attachments/assets/d8bf89f2-a645-4707-a7dc-c822be327c3c" />
+
 
 ### Dashboard
 <img width="1352" height="596" alt="image" src="https://github.com/user-attachments/assets/6615a074-c28d-4181-b9be-8ce481cf9467" />
