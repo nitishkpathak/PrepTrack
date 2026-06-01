@@ -1327,7 +1327,7 @@ function Home() {
                 </p>
 
                 <p className="opacity-90">
-                    MERN Stack Developer
+                    Software Engineer
                 </p>
                 </div>
 
