@@ -16,64 +16,32 @@ const sendEmail =
 // REGISTER USER
 // ============================
 
-const registerUser =
-  async (req, res) => {
+const registerUser = async (req, res) => {
+  try {
+    const { email } = req.body;
 
-    try {
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
 
-      const {
+    // Check if user already exists and is fully registered
+    const existingUser = await User.findOne({ email });
+    if (existingUser && existingUser.isVerified && existingUser.password) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
 
-        name,
-        email,
-        password,
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes valid
 
-      } = req.body;
-
-      // Check Existing User
-      const existingUser =
-        await User.findOne({
-          email,
-        });
-
-      if (existingUser) {
-
-        return res
-          .status(400)
-          .json({
-
-            message:
-              "User already exists",
-
-          });
-      }
-
-      // Hash Password
-      const hashedPassword =
-        await bcrypt.hash(
-          password,
-          10
-        );
-
-      // Generate OTP 6-digit
-      const otp = Math.floor(
-        100000 +
-          Math.random() *
-            900000
-      ).toString();
-
-      const otpExpires = new Date(
-        Date.now() +
-          10 * 60 * 1000
-      ); // OTP valid for 10 minutes
-
-        // Send Verification Email FIRST
-        await sendEmail({
-          email: email,
-          subject: "PrepTrack Account Verification OTP 🔐",
-          html: `
-          <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 600px;">
+    // Send Verification Email FIRST
+    await sendEmail({
+      email: email,
+      subject: "PrepTrack Account Verification OTP 🔐",
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 600px;">
           <h2 style="color: #863bff;">Welcome to PrepTrack! 🚀</h2>
-          <p>Thank you for signing up. Please verify your email address by entering the following One-Time Password (OTP):</p>
+          <p>Please verify your email address by entering the following One-Time Password (OTP):</p>
           <div style="font-size: 24px; font-weight: bold; color: #863bff; letter-spacing: 4px; padding: 15px; background-color: #f7f3ff; text-align: center; border-radius: 5px; margin: 20px 0;">
             ${otp}
           </div>
@@ -82,21 +50,27 @@ const registerUser =
       `,
     });
 
-      // Create User ONLY if email sending succeeds
-      const user = await User.create({
-        name,
+    if (existingUser) {
+      // Overwrite old OTP for unverified user
+      existingUser.otp = otp;
+      existingUser.otpExpires = otpExpires;
+      existingUser.isVerified = false; // Reset to false to be safe
+      await existingUser.save();
+    } else {
+      // Create a temporary unverified user
+      await User.create({
         email,
-        password: hashedPassword,
         isVerified: false,
         otp,
         otpExpires,
       });
+    }
 
-    // Send simple success response to frontend (no login JWT token yet)
-    res.status(201).json({
-      message: "OTP sent to email. Please verify your account.",
-      email: user.email,
+    res.status(200).json({
+      message: "OTP sent successfully to email.",
+      email,
     });
+
   } catch (error) {
     console.error("Signup failed:", error);
     res.status(500).json({
@@ -129,7 +103,7 @@ const verifyOTP = async (req, res) => {
 
     // Check if OTP is expired
     if (new Date() > user.otpExpires) {
-      return res.status(400).json({ message: "OTP has expired. Please signup again ⏰" });
+      return res.status(400).json({ message: "OTP has expired. Please request a new one ⏰" });
     }
 
     // Mark user as verified, clear OTP fields
@@ -138,13 +112,57 @@ const verifyOTP = async (req, res) => {
     user.otpExpires = null;
     await user.save();
 
-    // Generate login token directly so they log in automatically after verification
+    res.status(200).json({
+      message: "Email verified successfully! Please complete your profile. 🚀",
+      email,
+    });
+
+  } catch (error) {
+    console.error("OTP verification error:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// ============================
+// COMPLETE SIGNUP (NEW)
+// ============================
+const completeSignup = async (req, res) => {
+  try {
+    const { email, name, password } = req.body;
+
+    if (!email || !name || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.isVerified) {
+      return res.status(400).json({ message: "Email is not verified yet. Please verify OTP first." });
+    }
+
+    // Check if already completed
+    if (user.password) {
+      return res.status(400).json({ message: "Account setup is already complete. Please log in." });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Complete profile
+    user.name = name;
+    user.password = hashedPassword;
+    await user.save();
+
+    // Generate login JWT token directly
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "30d",
     });
 
     res.status(200).json({
-      message: "Email verified successfully! 🚀",
+      message: "Account registered successfully! 🚀",
       token,
       user: {
         _id: user._id,
@@ -161,7 +179,7 @@ const verifyOTP = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("OTP verification error:", error);
+    console.error("Complete signup failed:", error);
     res.status(500).json({ message: "Server Error" });
   }
 };
@@ -318,4 +336,6 @@ module.exports = {
   loginUser,
   
   verifyOTP,
+
+  completeSignup,
 };

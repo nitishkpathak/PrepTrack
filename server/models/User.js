@@ -8,7 +8,7 @@ const userSchema =
 
       name: {
         type: String,
-        required: true,
+        default: "",
       },
 
       email: {
@@ -19,7 +19,7 @@ const userSchema =
 
       password: {
         type: String,
-        required: true,
+        default: "",
       },
 
       role: {

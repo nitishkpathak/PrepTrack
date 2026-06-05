@@ -11,13 +11,15 @@ const {
   loginUser,
 
   verifyOTP,
+
+  completeSignup,
   
 } = require(
   "../controllers/authController"
 );
 
 // ============================
-// REGISTER
+// REGISTER (Phase 1: Send OTP)
 // ============================
 
 router.post(
@@ -25,6 +27,18 @@ router.post(
   "/register",
 
   registerUser
+
+);
+
+// ============================
+// COMPLETE SIGNUP (Phase 3: Set Credentials)
+// ============================
+
+router.post(
+
+  "/complete-signup",
+
+  completeSignup
 
 );
 
