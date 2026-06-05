@@ -51,21 +51,28 @@ const registerUser = async (req, res) => {
     } catch (emailjsError) {
       console.warn("EmailJS failed, falling back to Nodemailer SMTP:", emailjsError.message);
       
-      await sendEmail({
-        email: email,
-        subject: "PrepTrack Account Verification OTP 🔐",
-        otp: otp,
-        html: `
-          <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 600px;">
-            <h2 style="color: #863bff;">Welcome to PrepTrack! 🚀</h2>
-            <p>Please verify your email address by entering the following One-Time Password (OTP):</p>
-            <div style="font-size: 24px; font-weight: bold; color: #863bff; letter-spacing: 4px; padding: 15px; background-color: #f7f3ff; text-align: center; border-radius: 5px; margin: 20px 0;">
-              ${otp}
+      try {
+        await sendEmail({
+          email: email,
+          subject: "PrepTrack Account Verification OTP 🔐",
+          otp: otp,
+          html: `
+            <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 600px;">
+              <h2 style="color: #863bff;">Welcome to PrepTrack! 🚀</h2>
+              <p>Please verify your email address by entering the following One-Time Password (OTP):</p>
+              <div style="font-size: 24px; font-weight: bold; color: #863bff; letter-spacing: 4px; padding: 15px; background-color: #f7f3ff; text-align: center; border-radius: 5px; margin: 20px 0;">
+                ${otp}
+              </div>
+              <p style="font-size: 12px; color: #666;">This OTP is valid for 10 minutes. Please do not share it with anyone.</p>
             </div>
-            <p style="font-size: 12px; color: #666;">This OTP is valid for 10 minutes. Please do not share it with anyone.</p>
-          </div>
-        `,
-      });
+          `,
+        });
+      } catch (smtpError) {
+        console.error("SMTP also failed:", smtpError.message);
+        return res.status(500).json({
+          message: `Email dispatch failed. EmailJS: ${emailjsError.message}. SMTP: ${smtpError.message}`
+        });
+      }
     }
 
     if (existingUser) {
