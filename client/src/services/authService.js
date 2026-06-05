@@ -34,3 +34,35 @@ export const loginUser =
 
     return response.data;
   };
+
+// VERIFY OTP
+export const verifyOTP =
+  async (userData) => {
+
+    const response =
+      await axios.post(
+
+        `${API}/verify-otp`,
+
+        userData
+
+      );
+
+    return response.data;
+  };
+
+// COMPLETE SIGNUP
+export const completeSignup =
+  async (userData) => {
+
+    const response =
+      await axios.post(
+
+        `${API}/complete-signup`,
+
+        userData
+
+      );
+
+    return response.data;
+  };
