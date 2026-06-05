@@ -33,6 +33,7 @@ function Home() {
         "service_s63d1qt",
         "template_lyy27ns",
         {
+            to_email: "npathak.sp@gmail.com",
             name: formData.name,
             email: formData.email,
             subject: formData.subject,
