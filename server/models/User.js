@@ -51,7 +51,7 @@ const userSchema =
 
       isVerified: {
         type: Boolean,
-        default: true,
+        default: false,
       },
 
       dailyGoal: {
@@ -62,6 +62,16 @@ const userSchema =
       preferredPlatform: {
         type: String,
         default: "LeetCode",
+      },
+
+      otp: {
+        type: String,
+        default: null,
+      },
+
+      otpExpires: {
+        type: Date,
+        default: null,
       },
 
     },

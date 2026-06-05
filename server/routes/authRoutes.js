@@ -10,6 +10,8 @@ const {
 
   loginUser,
 
+  verifyOTP,
+  
 } = require(
   "../controllers/authController"
 );
@@ -35,6 +37,18 @@ router.post(
   "/login",
 
   loginUser
+
+);
+
+// ============================
+// VERIFY OTP
+// ============================
+
+router.post(
+
+  "/verify-otp",
+
+  verifyOTP
 
 );
 
