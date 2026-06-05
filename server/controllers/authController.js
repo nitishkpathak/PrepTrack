@@ -66,25 +66,9 @@ const registerUser =
           10 * 60 * 1000
       ); // OTP valid for 10 minutes
 
-      // Create User (default isVerified: false)
-      const user =
-        await User.create({
-
-          name,
-          email,
-
-          password:
-            hashedPassword,
-
-          isVerified: false, // Automatically verify user on signup
-          otp, 
-          otpExpires,
-        });
-
-        // Send Verification Email
+        // Send Verification Email FIRST
         await sendEmail({
-
-          email: user.email,
+          email: email,
           subject: "PrepTrack Account Verification OTP 🔐",
           html: `
           <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 600px;">
@@ -97,15 +81,26 @@ const registerUser =
         </div>
       `,
     });
+
+      // Create User ONLY if email sending succeeds
+      const user = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+        isVerified: false,
+        otp,
+        otpExpires,
+      });
+
     // Send simple success response to frontend (no login JWT token yet)
     res.status(201).json({
       message: "OTP sent to email. Please verify your account.",
       email: user.email,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Signup failed:", error);
     res.status(500).json({
-      message: "Server Error",
+      message: error.message || "Server Error",
     });
   }
 };
