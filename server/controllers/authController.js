@@ -38,6 +38,7 @@ const registerUser = async (req, res) => {
     await sendEmail({
       email: email,
       subject: "PrepTrack Account Verification OTP 🔐",
+      otp: otp,
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 600px;">
           <h2 style="color: #863bff;">Welcome to PrepTrack! 🚀</h2>
