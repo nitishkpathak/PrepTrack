@@ -146,9 +146,8 @@ function ContributionCalendar({ questions = [] }) {
         </div>
       </div>
 
-      {/* Grid wrapper */}
       <div className="overflow-x-auto pb-2 custom-scrollbar">
-        <div className="min-w-[960px] flex items-start">
+        <div className="min-w-[960px] w-fit mx-auto flex items-start">
           {/* Days labels */}
           <div className="flex flex-col gap-[4px] text-[9px] font-bold text-gray-500 dark:text-gray-500 pr-2 select-none w-8 pt-[22px]">
             <div className="h-[12px] flex items-center justify-end">Sun</div>
