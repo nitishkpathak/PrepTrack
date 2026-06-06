@@ -500,7 +500,6 @@ const handleFavorite =
           dark:text-white
           transition
           duration-300
-          flex
         "
       >
 
