@@ -122,7 +122,7 @@ function ContributionCalendar({ questions = [] }) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-950 p-6 rounded-2xl border border-gray-300 dark:border-gray-800 shadow-md transition duration-300">
+    <div className="bg-white dark:bg-gray-950 p-6 rounded-2xl border border-gray-300 dark:border-gray-800 shadow-md transition duration-300 w-full max-w-full overflow-hidden">
       {/* Title section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-2">
         <div>
