@@ -14,6 +14,9 @@ function QuestionForm({
   handleChange,
   handleSubmit,
 }) {
+  const savedUser = JSON.parse(localStorage.getItem("user")) || {};
+  const defaultPlatform = savedUser.preferredPlatform || "LeetCode";
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;

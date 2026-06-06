@@ -42,24 +42,7 @@ function Stats() {
   }, []);
 
   return (
-
-    <div
-      className="
-        flex
-        w-full
-        min-h-screen
-
-        bg-white
-        dark:bg-black
-
-        text-black
-        dark:text-white
-
-        transition
-        duration-300
-      "
-    >
-
+    <>
       {/* Sidebar */}
       <Sidebar
           open={sidebarOpen}
@@ -68,16 +51,32 @@ function Stats() {
           }
         />
 
-      {/* Main */}
       <div
         className="
-            flex-1
-            p-4
-            md:p-6
-            md:ml-[260px]
-            min-w-0
-          "
-        >
+          flex
+          w-full
+          min-h-screen
+
+          bg-white
+          dark:bg-black
+
+          text-black
+          dark:text-white
+
+          transition
+          duration-300
+        "
+      >
+        {/* Main */}
+        <div
+          className="
+              flex-1
+              p-4
+              md:p-6
+              md:ml-[260px]
+              min-w-0
+            "
+          >
 
             {/* Sticky Header */}
             <div
@@ -331,6 +330,7 @@ function Stats() {
         )}
       </div>
     </div>
+    </>
   );
 }
 

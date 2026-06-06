@@ -476,21 +476,7 @@ const handleFavorite =
   };
 
   return (
-
-    <div
-      className="
-        min-h-screen
-        w-full
-        bg-white
-        dark:bg-gray-950
-        text-black
-        dark:text-white
-        transition
-        duration-300
-        flex
-      "
-    >
-
+    <>
       {/* Sidebar */}
       <Sidebar
         activeSection={activeSection}
@@ -504,8 +490,22 @@ const handleFavorite =
         handleLogout={handleLogout}
       />
 
-      {/* Main Content */}
-      <div className="flex-1 md:ml-[260px] min-w-0">
+      <div
+        className="
+          min-h-screen
+          w-full
+          bg-white
+          dark:bg-gray-950
+          text-black
+          dark:text-white
+          transition
+          duration-300
+          flex
+        "
+      >
+
+        {/* Main Content */}
+        <div className="flex-1 md:ml-[260px] min-w-0">
 
         {/* Mobile Topbar */}
         <div
@@ -883,7 +883,7 @@ const handleFavorite =
       </div>
 
     </div>
-
+    </>
   );
 }
 

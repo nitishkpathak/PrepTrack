@@ -144,12 +144,13 @@ function Settings() {
   };
 
   return (
-    <div className="flex w-full min-h-screen bg-white dark:bg-black text-black dark:text-white transition duration-300">
+    <>
       {/* Sidebar */}
       <Sidebar open={sidebarOpen} closeSidebar={() => setSidebarOpen(false)} />
 
-      {/* Main */}
-      <div className="flex-1 p-4 md:p-6 md:ml-[260px] min-w-0">
+      <div className="flex w-full min-h-screen bg-white dark:bg-black text-black dark:text-white transition duration-300">
+        {/* Main */}
+        <div className="flex-1 p-4 md:p-6 md:ml-[260px] min-w-0">
         {/* Sticky Header */}
         <div className="sticky top-0 z-20 bg-white dark:bg-gray-950 border-b border-gray-300 dark:border-gray-800 py-5 mb-8 backdrop-blur-md transition duration-300 flex items-center gap-4">
           <button
@@ -691,6 +692,7 @@ function Settings() {
         </div>
       )}
     </div>
+    </>
   );
 }
 
