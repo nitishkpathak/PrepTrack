@@ -127,4 +127,40 @@ export const changePassword =
       );
 
     return response.data;
-  };
+  };
+
+// REQUEST EMAIL CHANGE CURRENT
+export const requestChangeEmailCurrent = async () => {
+  const token = localStorage.getItem("token");
+  const response = await axios.post(`${API}/change-email/request-current`, {}, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+// VERIFY EMAIL CHANGE CURRENT
+export const verifyChangeEmailCurrent = async (otp) => {
+  const token = localStorage.getItem("token");
+  const response = await axios.post(`${API}/change-email/verify-current`, { otp }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+// REQUEST EMAIL CHANGE NEW
+export const requestChangeEmailNew = async (newEmail) => {
+  const token = localStorage.getItem("token");
+  const response = await axios.post(`${API}/change-email/request-new`, { newEmail }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+// VERIFY EMAIL CHANGE NEW
+export const verifyChangeEmailNew = async (otp) => {
+  const token = localStorage.getItem("token");
+  const response = await axios.post(`${API}/change-email/verify-new`, { otp }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};

@@ -3,7 +3,7 @@ import { Menu, Lock, Settings as SettingsIcon, AlertTriangle } from "lucide-reac
 import toast from "react-hot-toast";
 
 import Sidebar from "../components/Sidebar";
-import { getProfile, updatePreferences, changePassword } from "../services/userService";
+import { getProfile, updatePreferences, changePassword, requestChangeEmailCurrent, verifyChangeEmailCurrent, requestChangeEmailNew, verifyChangeEmailNew } from "../services/userService";
 import { resetAllQuestions } from "../services/questionService";
 import { forgotPassword, resetPassword } from "../services/authService";
 
@@ -20,6 +20,14 @@ function Settings() {
   const [resetOtp, setResetOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [resetLoading, setResetLoading] = useState(false);
+
+  // Email change flow states
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailStep, setEmailStep] = useState(1); // 1: Request Current, 2: Verify Current, 3: Request New, 4: Verify New
+  const [userEmail, setUserEmail] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [emailOtp, setEmailOtp] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
 
   // Practice preferences state
   const [prefs, setPrefs] = useState({
@@ -43,6 +51,7 @@ function Settings() {
           dailyGoal: data.user.dailyGoal ?? 2,
           preferredPlatform: data.user.preferredPlatform || "LeetCode",
         });
+        setUserEmail(data.user.email || "");
       }
     } catch (error) {
       console.error("Failed to load settings:", error);
@@ -208,6 +217,41 @@ function Settings() {
                 </button>
               </div>
             </form>
+          </div>
+
+          {/* Email Settings */}
+          <div className="bg-gray-200 dark:bg-gray-900 p-6 md:p-8 rounded-2xl border border-gray-300 dark:border-gray-800 shadow-md">
+            <h2 className="text-xl font-bold mb-5 flex items-center gap-2 border-b border-gray-300 dark:border-gray-800 pb-3">
+              📧 Email Settings
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  Current Email Address
+                </label>
+                <input
+                  type="email"
+                  value={userEmail}
+                  disabled
+                  className="w-full p-3 rounded-lg bg-white dark:bg-gray-850 text-gray-500 dark:text-gray-400 border border-gray-300 dark:border-gray-750 outline-none text-sm cursor-not-allowed"
+                />
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEmailModal(true);
+                    setEmailStep(1);
+                    setNewEmail("");
+                    setEmailOtp("");
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition cursor-pointer"
+                >
+                  Change Email Address
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Change Password */}
@@ -452,6 +496,194 @@ function Settings() {
                   className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold p-3 rounded-lg transition disabled:opacity-50 cursor-pointer"
                 >
                   {resetLoading ? "Updating..." : "Reset Password"}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Change Email Modal */}
+      {showEmailModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="bg-gray-200 dark:bg-gray-900 border border-gray-300 dark:border-gray-800 rounded-2xl p-6 w-full max-w-md shadow-2xl relative animate-scale-up">
+            <button
+              onClick={() => setShowEmailModal(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-black dark:hover:text-white text-xl font-bold cursor-pointer"
+            >
+              &times;
+            </button>
+
+            <h2 className="text-xl font-bold mb-2 text-black dark:text-white text-center">
+              Change Email Address 📧
+            </h2>
+            
+            {/* Step Indicators */}
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-6 text-[10px] uppercase font-bold tracking-wider text-gray-500">
+              <span className={`px-2 py-0.5 rounded ${emailStep === 1 ? "bg-blue-600 text-white" : "bg-gray-300 dark:bg-gray-850"}`}>1. Req Current</span>
+              <span className="text-gray-400">→</span>
+              <span className={`px-2 py-0.5 rounded ${emailStep === 2 ? "bg-blue-600 text-white" : "bg-gray-300 dark:bg-gray-850"}`}>2. Verify Current</span>
+              <span className="text-gray-400">→</span>
+              <span className={`px-2 py-0.5 rounded ${emailStep === 3 ? "bg-blue-600 text-white" : "bg-gray-300 dark:bg-gray-850"}`}>3. Req New</span>
+              <span className="text-gray-400">→</span>
+              <span className={`px-2 py-0.5 rounded ${emailStep === 4 ? "bg-blue-600 text-white" : "bg-gray-300 dark:bg-gray-850"}`}>4. Verify New</span>
+            </div>
+
+            {/* Step 1: Request OTP on current email */}
+            {emailStep === 1 && (
+              <div className="space-y-4 text-center">
+                <p className="text-sm text-gray-650 dark:text-gray-400">
+                  Identity verify karne ke liye aapke registered email <span className="font-semibold text-black dark:text-white">{userEmail}</span> par ek OTP code bheja jayega.
+                </p>
+                <button
+                  onClick={async () => {
+                    setEmailLoading(true);
+                    try {
+                      const res = await requestChangeEmailCurrent();
+                      toast.success(res.message || "OTP sent successfully! 📩");
+                      setEmailStep(2);
+                      setEmailOtp("");
+                    } catch (err) {
+                      toast.error(err.response?.data?.message || "Failed to send OTP to current email ❌");
+                    } finally {
+                      setEmailLoading(false);
+                    }
+                  }}
+                  disabled={emailLoading}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold p-3 rounded-lg transition disabled:opacity-50 cursor-pointer"
+                >
+                  {emailLoading ? "Sending OTP..." : "Send OTP to Current Email"}
+                </button>
+              </div>
+            )}
+
+            {/* Step 2: Verify OTP for current email */}
+            {emailStep === 2 && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    6-Digit OTP Code
+                  </label>
+                  <input
+                    type="text"
+                    maxLength="6"
+                    placeholder="000000"
+                    value={emailOtp}
+                    onChange={(e) => setEmailOtp(e.target.value)}
+                    className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white text-center tracking-widest text-xl font-bold border border-gray-300 dark:border-gray-700 outline-none"
+                  />
+                  <p className="text-xs text-gray-500 mt-2 text-center">
+                    OTP sent to <span className="font-semibold">{userEmail}</span>
+                  </p>
+                </div>
+                <button
+                  onClick={async () => {
+                    if (!emailOtp || emailOtp.length !== 6) {
+                      return toast.error("Please enter a valid 6-digit OTP code ❌");
+                    }
+                    setEmailLoading(true);
+                    try {
+                      const res = await verifyChangeEmailCurrent(emailOtp);
+                      toast.success(res.message || "Current email verified! 🚀");
+                      setEmailStep(3);
+                      setNewEmail("");
+                    } catch (err) {
+                      toast.error(err.response?.data?.message || "Verification failed ❌");
+                    } finally {
+                      setEmailLoading(false);
+                    }
+                  }}
+                  disabled={emailLoading}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold p-3 rounded-lg transition disabled:opacity-50 cursor-pointer"
+                >
+                  {emailLoading ? "Verifying..." : "Verify OTP & Continue"}
+                </button>
+              </div>
+            )}
+
+            {/* Step 3: Enter new email and send OTP */}
+            {emailStep === 3 && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    New Email Address
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="Enter your new email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-700 outline-none text-sm"
+                  />
+                </div>
+                <button
+                  onClick={async () => {
+                    if (!newEmail) return toast.error("Please enter new email address ❌");
+                    setEmailLoading(true);
+                    try {
+                      const res = await requestChangeEmailNew(newEmail);
+                      toast.success(res.message || "OTP sent to new email! 📩");
+                      setEmailStep(4);
+                      setEmailOtp("");
+                    } catch (err) {
+                      toast.error(err.response?.data?.message || "Failed to register new email ❌");
+                    } finally {
+                      setEmailLoading(false);
+                    }
+                  }}
+                  disabled={emailLoading}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold p-3 rounded-lg transition disabled:opacity-50 cursor-pointer"
+                >
+                  {emailLoading ? "Sending OTP..." : "Send OTP to New Email"}
+                </button>
+              </div>
+            )}
+
+            {/* Step 4: Verify OTP for new email */}
+            {emailStep === 4 && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    6-Digit OTP Code
+                  </label>
+                  <input
+                    type="text"
+                    maxLength="6"
+                    placeholder="000000"
+                    value={emailOtp}
+                    onChange={(e) => setEmailOtp(e.target.value)}
+                    className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white text-center tracking-widest text-xl font-bold border border-gray-300 dark:border-gray-700 outline-none"
+                  />
+                  <p className="text-xs text-gray-500 mt-2 text-center">
+                    OTP sent to <span className="font-semibold">{newEmail}</span>
+                  </p>
+                </div>
+                <button
+                  onClick={async () => {
+                    if (!emailOtp || emailOtp.length !== 6) {
+                      return toast.error("Please enter a valid 6-digit OTP code ❌");
+                    }
+                    setEmailLoading(true);
+                    try {
+                      const res = await verifyChangeEmailNew(emailOtp);
+                      toast.success(res.message || "Email address updated successfully! 🎉");
+                      
+                      // Update local states & storage
+                      setUserEmail(res.user.email);
+                      localStorage.setItem("user", JSON.stringify(res.user));
+                      window.dispatchEvent(new Event("userUpdated"));
+                      
+                      setShowEmailModal(false);
+                    } catch (err) {
+                      toast.error(err.response?.data?.message || "Verification failed ❌");
+                    } finally {
+                      setEmailLoading(false);
+                    }
+                  }}
+                  disabled={emailLoading}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold p-3 rounded-lg transition disabled:opacity-50 cursor-pointer"
+                >
+                  {emailLoading ? "Updating Email..." : "Verify & Complete Update"}
                 </button>
               </div>
             )}

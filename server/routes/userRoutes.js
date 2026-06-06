@@ -9,6 +9,10 @@ const {
   getProfile,
   updatePreferences,
   changePassword,
+  requestChangeEmailCurrent,
+  verifyChangeEmailCurrent,
+  requestChangeEmailNew,
+  verifyChangeEmailNew,
 } = require(
   "../controllers/userController"
 );
@@ -52,6 +56,30 @@ router.put(
   "/change-password",
   protect,
   changePassword
+);
+
+// ============================
+// CHANGE EMAIL (TWO-STEP OTP)
+// ============================
+router.post(
+  "/change-email/request-current",
+  protect,
+  requestChangeEmailCurrent
+);
+router.post(
+  "/change-email/verify-current",
+  protect,
+  verifyChangeEmailCurrent
+);
+router.post(
+  "/change-email/request-new",
+  protect,
+  requestChangeEmailNew
+);
+router.post(
+  "/change-email/verify-new",
+  protect,
+  verifyChangeEmailNew
 );
 
 module.exports =

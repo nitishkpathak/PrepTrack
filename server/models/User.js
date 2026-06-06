@@ -79,6 +79,26 @@ const userSchema =
         default: null,
       },
 
+      emailChangeOtp: {
+        type: String,
+        default: null,
+      },
+
+      emailChangeOtpExpires: {
+        type: Date,
+        default: null,
+      },
+
+      tempNewEmail: {
+        type: String,
+        default: "",
+      },
+
+      currentEmailVerifiedForChange: {
+        type: Boolean,
+        default: false,
+      },
+
     },
 
     {
