@@ -39,6 +39,7 @@ function Stats() {
 
   useEffect(() => {
     fetchQuestions();
+    window.scrollTo(0, 0);
   }, []);
 
   return (

@@ -1,6 +1,7 @@
 const Question = require("../models/Question");
 const User = require("../models/User");
 const { scrapeProblemDescription } = require("../utils/scraper");
+const bcrypt = require("bcryptjs");
 
 // Add Question
 const addQuestion = async (req, res) => {
@@ -221,16 +222,29 @@ const scrapeDescription = async (req, res) => {
 // Reset all questions and streak for a user
 const resetQuestions = async (req, res) => {
   try {
+    const { password } = req.body;
+    if (!password) {
+      return res.status(400).json({ message: "Password is required to reset data ❌" });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found ❌" });
+    }
+
+    // Verify password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect password! Reset cancelled ❌" });
+    }
+
     await Question.deleteMany({ user: req.user._id });
 
     // Reset user streak and lastSolvedDate
-    const user = await User.findById(req.user._id);
-    if (user) {
-      user.streak = 0;
-      user.longestStreak = 0;
-      user.lastSolvedDate = null;
-      await user.save();
-    }
+    user.streak = 0;
+    user.longestStreak = 0;
+    user.lastSolvedDate = null;
+    await user.save();
 
     res.status(200).json({
       message: "All questions and daily streak have been successfully reset.",

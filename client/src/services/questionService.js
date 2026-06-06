@@ -106,7 +106,7 @@ export const scrapeDescription = async (link) => {
 };
 
 // Reset All Questions
-export const resetAllQuestions = async () => {
+export const resetAllQuestions = async (password) => {
   const token = localStorage.getItem("token");
   const response = await axios.delete(
     `${API_URL}/reset/all`,
@@ -114,6 +114,7 @@ export const resetAllQuestions = async () => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      data: { password },
     }
   );
   return response.data;

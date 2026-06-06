@@ -13,6 +13,10 @@ function Settings() {
   const [loadingPass, setLoadingPass] = useState(false);
   const [loadingReset, setLoadingReset] = useState(false);
 
+  // Reset Data confirmation states
+  const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
+  const [resetPasswordInput, setResetPasswordInput] = useState("");
+
   // Forgot password flow states
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetStep, setResetStep] = useState(1); // 1: Email, 2: OTP, 3: Password
@@ -60,6 +64,7 @@ function Settings() {
 
   useEffect(() => {
     fetchPrefs();
+    window.scrollTo(0, 0);
   }, []);
 
   const handlePrefChange = (e) => {
@@ -123,21 +128,26 @@ function Settings() {
     }
   };
 
-  const handleResetData = async () => {
-    const confirm = window.confirm(
-      "WARNING: This will permanently delete ALL your questions and reset your daily streak to 0. This action CANNOT be undone. Are you sure you want to proceed?"
-    );
-    if (!confirm) return;
+  const handleResetData = () => {
+    setShowResetConfirmModal(true);
+  };
 
+  const handleConfirmResetData = async () => {
+    if (!resetPasswordInput) {
+      toast.error("Please enter your password ❌");
+      return;
+    }
     setLoadingReset(true);
     try {
-      const res = await resetAllQuestions();
+      const res = await resetAllQuestions(resetPasswordInput);
       localStorage.setItem("user", JSON.stringify(res.user));
       window.dispatchEvent(new Event("userUpdated"));
       toast.success("All data has been successfully reset! 🧹");
+      setShowResetConfirmModal(false);
+      setResetPasswordInput("");
     } catch (error) {
       console.error(error);
-      toast.error("Failed to reset account questions ❌");
+      toast.error(error.response?.data?.message || "Failed to reset account questions ❌");
     } finally {
       setLoadingReset(false);
     }
@@ -688,6 +698,66 @@ function Settings() {
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Reset Data Confirmation Modal */}
+      {showResetConfirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="bg-gray-200 dark:bg-gray-900 border border-gray-300 dark:border-gray-800 rounded-2xl p-6 w-full max-w-md shadow-2xl relative animate-scale-up">
+            <button
+              onClick={() => {
+                setShowResetConfirmModal(false);
+                setResetPasswordInput("");
+              }}
+              className="absolute top-4 right-4 text-gray-500 hover:text-black dark:hover:text-white text-xl font-bold cursor-pointer"
+            >
+              &times;
+            </button>
+
+            <h2 className="text-xl font-bold mb-4 text-red-600 dark:text-red-500 text-center flex items-center justify-center gap-2">
+              <AlertTriangle size={24} />
+              Reset Account Data?
+            </h2>
+
+            <p className="text-sm text-gray-700 dark:text-gray-400 text-center mb-6 leading-relaxed">
+              This action will permanently delete <span className="font-bold">ALL</span> your registered questions, streak status, and study history. It cannot be undone.
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  Enter Login Password
+                </label>
+                <input
+                  type="password"
+                  placeholder="Enter password to verify identity"
+                  value={resetPasswordInput}
+                  onChange={(e) => setResetPasswordInput(e.target.value)}
+                  className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-700 outline-none text-sm"
+                />
+              </div>
+
+              <div className="flex gap-4">
+                <button
+                  onClick={() => {
+                    setShowResetConfirmModal(false);
+                    setResetPasswordInput("");
+                  }}
+                  className="flex-1 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-black dark:text-white font-semibold p-3 rounded-lg transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmResetData}
+                  disabled={loadingReset || !resetPasswordInput}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold p-3 rounded-lg transition disabled:opacity-50 cursor-pointer"
+                >
+                  {loadingReset ? "Resetting..." : "Reset All Data"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

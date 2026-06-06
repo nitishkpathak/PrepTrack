@@ -69,6 +69,7 @@ function Profile() {
   useEffect(() => {
     fetchProfile();
     fetchSolvedCount();
+    window.scrollTo(0, 0);
   }, []);
 
   const handleChange = (e) => {
