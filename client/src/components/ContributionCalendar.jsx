@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 function ContributionCalendar({ questions = [] }) {
-  const { weeks, solveMap, totalSolvedLastYear } = useMemo(() => {
+  const { weeks, monthLabels, solveMap, totalSolvedLastYear } = useMemo(() => {
     // 1. Gather all solves and map to local YYYY-MM-DD
     const map = {};
     let solvedCount = 0;
@@ -35,10 +35,8 @@ function ContributionCalendar({ questions = [] }) {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     const tempDate = new Date(startDate);
-    // Set hours to noon to avoid daylight saving shifts issues
     tempDate.setHours(12, 0, 0, 0);
 
-    // Generate up to today (including Sunday alignment)
     while (tempDate <= today || tempDate.toDateString() === today.toDateString()) {
       const yyyy = tempDate.getFullYear();
       const mm = String(tempDate.getMonth() + 1).padStart(2, "0");
@@ -66,8 +64,49 @@ function ContributionCalendar({ questions = [] }) {
       groupedWeeks.push(days.slice(i, i + 7));
     }
 
+    // 4. Calculate month labels start week indices
+    const rawLabels = [];
+    let lastMonthName = "";
+    groupedWeeks.forEach((week, wIdx) => {
+      const firstDay = week[0];
+      // Check if the month starts in this week (day of the month is 1)
+      const hasMonthStart = week.some(day => {
+        const dayNum = parseInt(day.dateStr.split("-")[2], 10);
+        return dayNum === 1;
+      });
+
+      let monthNameToShow = "";
+      if (wIdx === 0) {
+        monthNameToShow = firstDay.monthName;
+      } else if (hasMonthStart) {
+        const startDay = week.find(day => parseInt(day.dateStr.split("-")[2], 10) === 1);
+        monthNameToShow = startDay.monthName;
+      }
+
+      if (monthNameToShow && monthNameToShow !== lastMonthName) {
+        rawLabels.push({
+          name: monthNameToShow,
+          weekIndex: wIdx,
+        });
+        lastMonthName = monthNameToShow;
+      }
+    });
+
+    // Filter labels to prevent overlap (ensure at least 3 weeks gap between labels)
+    const filteredLabels = [];
+    for (let i = 0; i < rawLabels.length; i++) {
+      const current = rawLabels[i];
+      const next = rawLabels[i + 1];
+      if (next && next.weekIndex - current.weekIndex < 3) {
+        // Skip current to favor the next full month
+        continue;
+      }
+      filteredLabels.push(current);
+    }
+
     return {
       weeks: groupedWeeks,
+      monthLabels: filteredLabels,
       solveMap: map,
       totalSolvedLastYear: solvedCount,
     };
@@ -84,6 +123,7 @@ function ContributionCalendar({ questions = [] }) {
 
   return (
     <div className="bg-white dark:bg-gray-950 p-6 rounded-2xl border border-gray-300 dark:border-gray-800 shadow-md transition duration-300">
+      {/* Title section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-2">
         <div>
           <h2 className="text-xl font-bold text-black dark:text-white flex items-center gap-2">
@@ -106,36 +146,33 @@ function ContributionCalendar({ questions = [] }) {
         </div>
       </div>
 
+      {/* Grid wrapper */}
       <div className="overflow-x-auto pb-2 custom-scrollbar">
-        <div className="min-w-[860px] flex flex-col">
-          {/* Months Header */}
-          <div className="flex pl-8 mb-1.5 text-[10px] font-semibold text-gray-500 dark:text-gray-400 h-4 relative select-none">
-            {weeks.map((week, wIdx) => {
-              const firstDay = week[0];
-              const prevWeek = weeks[wIdx - 1];
-              // Show month label if it's the first week or the month changed from the previous week
-              const showLabel = !prevWeek || firstDay.monthIndex !== prevWeek[0].monthIndex;
-              if (showLabel) {
-                return (
-                  <div key={wIdx} className="absolute" style={{ left: `${wIdx * 16 + 36}px` }}>
-                    {firstDay.monthName}
-                  </div>
-                );
-              }
-              return null;
-            })}
+        <div className="min-w-[960px] flex items-start">
+          {/* Days labels */}
+          <div className="flex flex-col gap-[4px] text-[9px] font-bold text-gray-500 dark:text-gray-500 pr-2 select-none w-8 pt-[22px]">
+            <div className="h-[12px] flex items-center justify-end">Sun</div>
+            <div className="h-[12px] flex items-center justify-end"></div>
+            <div className="h-[12px] flex items-center justify-end">Tue</div>
+            <div className="h-[12px] flex items-center justify-end"></div>
+            <div className="h-[12px] flex items-center justify-end">Thu</div>
+            <div className="h-[12px] flex items-center justify-end"></div>
+            <div className="h-[12px] flex items-center justify-end">Sat</div>
           </div>
 
-          <div className="flex items-start">
-            {/* Days labels */}
-            <div className="flex flex-col gap-[4px] text-[9px] font-bold text-gray-400 dark:text-gray-500 pr-2 select-none w-8 pt-[1px]">
-              <div className="h-[12px] flex items-center justify-end">Sun</div>
-              <div className="h-[12px] flex items-center justify-end"></div>
-              <div className="h-[12px] flex items-center justify-end">Tue</div>
-              <div className="h-[12px] flex items-center justify-end"></div>
-              <div className="h-[12px] flex items-center justify-end">Thu</div>
-              <div className="h-[12px] flex items-center justify-end"></div>
-              <div className="h-[12px] flex items-center justify-end">Sat</div>
+          {/* Calendar Grid Container */}
+          <div className="flex flex-col flex-1">
+            {/* Month Labels Row */}
+            <div className="relative h-4 mb-1.5 select-none w-full">
+              {monthLabels.map((ml, idx) => (
+                <div
+                  key={idx}
+                  style={{ left: `${ml.weekIndex * 16}px` }}
+                  className="absolute text-[10px] font-bold text-gray-500 dark:text-gray-400 text-left pl-[2px] whitespace-nowrap overflow-visible"
+                >
+                  {ml.name}
+                </div>
+              ))}
             </div>
 
             {/* Weeks Grid */}
