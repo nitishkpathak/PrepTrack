@@ -14,8 +14,26 @@ function QuestionForm({
   handleChange,
   handleSubmit,
 }) {
-  const savedUser = JSON.parse(localStorage.getItem("user")) || {};
-  const defaultPlatform = savedUser.preferredPlatform || "LeetCode";
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image is too large. Please select an image under 5MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64String = event.target.result;
+      const imgTag = `\n<img src="${base64String}" alt="${file.name || 'image'}" />\n`;
+      setFormData({
+        ...formData,
+        notes: (formData.notes || "") + imgTag
+      });
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <div
@@ -258,32 +276,49 @@ function QuestionForm({
               />
             )}
 
-            {/* Notes */}
-            <textarea
-              aria-label="Question Notes"
-              name="notes"
-              placeholder="Notes"
-              value={formData.notes}
-              onChange={handleChange}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmit(e);
-                }
-              }}
-              className="
-                p-3
-                rounded-lg
-                bg-white
-                dark:bg-gray-700
-                text-black
-                dark:text-white
-                border
-                border-gray-300
-                dark:border-gray-600
-                outline-none
-              "
-            />
+            {/* Notes with Attach Image Option */}
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center">
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  Notes
+                </label>
+                <label className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-100 hover:bg-blue-200 dark:bg-blue-950/50 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-400 text-xs font-semibold rounded-lg border border-blue-200 dark:border-blue-800 cursor-pointer transition">
+                  📎 Attach Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+              <textarea
+                aria-label="Question Notes"
+                name="notes"
+                placeholder="Write your notes here... (HTML formatting and attached images are supported)"
+                value={formData.notes}
+                onChange={handleChange}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
+                className="
+                  p-3
+                  rounded-lg
+                  bg-white
+                  dark:bg-gray-700
+                  text-black
+                  dark:text-white
+                  border
+                  border-gray-300
+                  dark:border-gray-600
+                  outline-none
+                  min-h-[120px]
+                "
+              />
+            </div>
 
             {/* Button */}
             <button
