@@ -82,7 +82,7 @@ useEffect(() => {
       "token"
     );
 
-    navigate("/login");
+    navigate("/");
   };
 
   return (

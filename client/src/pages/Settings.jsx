@@ -902,7 +902,7 @@ function Settings() {
                         
                         localStorage.removeItem("token");
                         localStorage.removeItem("user");
-                        window.location.href = "/login";
+                        window.location.href = "/";
                       } catch (err) {
                         toast.error(err.response?.data?.message || "Verification failed ❌");
                       } finally {
