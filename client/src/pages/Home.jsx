@@ -1841,218 +1841,222 @@ function Home() {
             </Link>
 
             </div>
-
-        </div>
-
+          </div>
         </section>
 
-{/* Footer */}
         <footer
-        className="
-            bg-black
-            text-gray-400
-
-            py-12
-            px-6
-        "
-        >
-
-        <div
-            className="
-            max-w-7xl
-            mx-auto
-
-            grid
-            md:grid-cols-3
-
-            gap-10
-            "
-        >
-
-            {/* Brand */}
-
-            <div>
-
-            <h2
-                className="
-                text-3xl
-                font-bold
-
-                text-white
-
-                mb-4
-                "
-            >
-                🚀 PrepTrack
-            </h2>
-
-            <p>
-                Your personal DSA preparation
-                companion.
-            </p>
-
-            {/* Social */}
-
-            <div
-                className="
-                flex
-                gap-4
-
-                mt-5
-                "
-            >
-
-                <a
-                href="https://github.com/nitishkpathak"
-                target="_blank"
-                rel="noreferrer"
-
-                className="
-                    hover:text-white
-
-                    transition
-                    duration-300
-                "
-                >
-                GitHub
-                </a>
-
-                <a
-                href="https://www.linkedin.com/in/nitishkpathak/"
-                target="_blank"
-                rel="noreferrer"
-
-                className="
-                    hover:text-blue-400
-
-                    transition
-                    duration-300
-                "
-                >
-                LinkedIn
-                </a>
-
-            </div>
-
-            </div>
-
-            {/* Quick Links */}
-
-            <div>
-
-            <h3
-                className="
-                text-white
-                font-semibold
-
-                mb-4
-                "
-            >
-                Quick Links
-            </h3>
-
-            <div
-                className="
-                flex
-                flex-col
-
-                gap-3
-                "
-            >
-
-                <a
-                    href="#home"
-                    className="hover:text-white"
-                    >
-                    Home
-                </a>
-
-<a
-                href="#about"
-                className="hover:text-white"
-                >
-                About
-                </a>
-
-                <a
-                href="#features"
-                className="hover:text-white"
-                >
-                Features
-                </a>
-
-                <a
-                href="#how"
-                className="hover:text-white"
-                >
-                How It Works
-                </a>
-
-                <a
-                href="#contact"
-                className="hover:text-white"
-                >
-                Contact
-                </a>
-
-            </div>
-
-            </div>
-
-            {/* About */}
-
-            <div>
-
-            <h3
-                className="
-                text-white
-                font-semibold
-
-                mb-4
-                "
-            >
-                About
-            </h3>
-
-            <p>
-                Built with ❤️ for DSA learners,
-                coding interview preparation,
-                and placement success.
-            </p>
-
-            <p
-                className="
-                mt-4
-                text-sm
-                "
-            >
-                Track. Practice.
-                Improve. Repeat.
-            </p>
-
-            </div>
-
-        </div>
-
-        <div
-            className="
+          className="
+            relative
+            bg-gray-50
+            dark:bg-gray-950
+            text-gray-600
+            dark:text-gray-400
             border-t
-            border-gray-800
-
-            mt-10
-            pt-6
-
-            text-center
-            "
+            border-gray-200
+            dark:border-gray-900
+            py-16
+            px-6
+            md:px-12
+            transition-colors
+            duration-300
+            overflow-hidden
+          "
         >
+          {/* Subtle glowing decorations */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent dark:via-purple-500/50" />
+          <div className="absolute -top-40 left-1/4 w-96 h-96 bg-blue-500/5 dark:bg-purple-500/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-40 right-1/4 w-96 h-96 bg-purple-500/5 dark:bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
 
-            © {new Date().getFullYear()}
-            {" "}
-            PrepTrack.
-            All rights reserved.
+          <div
+            className="
+              max-w-7xl
+              mx-auto
+              grid
+              grid-cols-1
+              sm:grid-cols-2
+              lg:grid-cols-4
+              gap-12
+              relative
+              z-10
+            "
+          >
+            {/* Column 1: Brand & Social */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 group cursor-pointer w-fit">
+                <span className="text-3xl transform group-hover:scale-125 group-hover:rotate-12 transition duration-300">🚀</span>
+                <h2 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                  PrepTrack
+                </h2>
+              </div>
+              <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+                Your ultimate companion for tracking DSA preparation, analyzing strengths, maintaining streaks, and cracking tech interviews! 💻🔥
+              </p>
+              
+              {/* Badges container */}
+              <div className="flex flex-col gap-2.5 pt-1">
+                <div className="inline-flex items-center gap-2.5 w-fit px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 text-xs font-semibold text-blue-600 dark:text-blue-400 select-none hover:scale-105 transition duration-300">
+                  <span>📱 Installable PWA Ready</span>
+                </div>
+                <div className="inline-flex items-center gap-2.5 w-fit px-3.5 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-900/60 text-xs font-semibold text-orange-600 dark:text-orange-400 select-none hover:scale-105 transition duration-300">
+                  <span>🔥 Live Streak Heatmap</span>
+                </div>
+              </div>
 
-        </div>
+              {/* Social links */}
+              <div className="flex gap-5 pt-2">
+                <a
+                  href="https://github.com/nitishkpathak"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-black dark:hover:text-white transition duration-300 text-sm flex items-center gap-2 group font-medium"
+                >
+                  <span className="text-lg group-hover:scale-125 transition duration-300">🐙</span> GitHub
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/nitishkpathak/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-blue-650 dark:hover:text-blue-400 transition duration-300 text-sm flex items-center gap-2 group font-medium"
+                >
+                  <span className="text-lg group-hover:scale-125 transition duration-300">💼</span> LinkedIn
+                </a>
+              </div>
+            </div>
 
+            {/* Column 2: Navigation Links */}
+            <div className="space-y-6">
+              <h3 className="text-black dark:text-white font-bold text-lg tracking-wider flex items-center gap-2">
+                <span>🔗</span> Quick Navigation
+              </h3>
+              <ul className="space-y-3.5 text-sm">
+                <li>
+                  <a href="#home" className="hover:text-blue-650 dark:hover:text-blue-400 transition-colors duration-200 flex items-center gap-2 group">
+                    <span className="group-hover:translate-x-1.5 transition-transform duration-200">🏠</span> Home
+                  </a>
+                </li>
+                <li>
+                  <a href="#about" className="hover:text-blue-650 dark:hover:text-blue-400 transition-colors duration-200 flex items-center gap-2 group">
+                    <span className="group-hover:translate-x-1.5 transition-transform duration-200">ℹ️</span> About
+                  </a>
+                </li>
+                <li>
+                  <a href="#features" className="hover:text-blue-650 dark:hover:text-blue-400 transition-colors duration-200 flex items-center gap-2 group">
+                    <span className="group-hover:translate-x-1.5 transition-transform duration-200">✨</span> Features
+                  </a>
+                </li>
+                <li>
+                  <a href="#how" className="hover:text-blue-650 dark:hover:text-blue-400 transition-colors duration-200 flex items-center gap-2 group">
+                    <span className="group-hover:translate-x-1.5 transition-transform duration-200">⚙️</span> How It Works
+                  </a>
+                </li>
+                <li>
+                  <a href="#contact" className="hover:text-blue-650 dark:hover:text-blue-400 transition-colors duration-200 flex items-center gap-2 group">
+                    <span className="group-hover:translate-x-1.5 transition-transform duration-200">✉️</span> Contact
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: Supported Platforms */}
+            <div className="space-y-6">
+              <h3 className="text-black dark:text-white font-bold text-lg tracking-wider flex items-center gap-2">
+                <span>🎯</span> Coding Platforms
+              </h3>
+              <ul className="space-y-3.5 text-sm">
+                <li>
+                  <a href="https://leetcode.com" target="_blank" rel="noreferrer" className="hover:text-yellow-600 dark:hover:text-yellow-500 transition-colors duration-200 flex items-center gap-2 group">
+                    <span className="group-hover:rotate-12 transition duration-200">🚀</span> LeetCode
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.geeksforgeeks.org" target="_blank" rel="noreferrer" className="hover:text-green-600 dark:hover:text-green-500 transition-colors duration-200 flex items-center gap-2 group">
+                    <span className="group-hover:rotate-12 transition duration-200">🟢</span> GeeksforGeeks
+                  </a>
+                </li>
+                <li>
+                  <a href="https://codeforces.com" target="_blank" rel="noreferrer" className="hover:text-blue-650 dark:hover:text-blue-400 transition-colors duration-200 flex items-center gap-2 group">
+                    <span className="group-hover:rotate-12 transition duration-200">🔵</span> Codeforces
+                  </a>
+                </li>
+                <li>
+                  <a href="https://codechef.com" target="_blank" rel="noreferrer" className="hover:text-amber-700 dark:hover:text-amber-500 transition-colors duration-200 flex items-center gap-2 group">
+                    <span className="group-hover:rotate-12 transition duration-200">🌶️</span> CodeChef
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 4: Development / Stack */}
+            <div className="space-y-6">
+              <h3 className="text-black dark:text-white font-bold text-lg tracking-wider flex items-center gap-2">
+                <span>🛠️</span> Tech Stack & Specs
+              </h3>
+              <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+                PrepTrack is built on the robust MERN stack using React ⚛️, Node.js 🟢, Express.js 🚀, and MongoDB 🍃.
+              </p>
+              <div className="space-y-2.5 pt-2">
+                <div className="flex items-center gap-2 text-xs text-green-600 dark:text-green-400 font-semibold select-none">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                  </span>
+                  <span>🟢 All Systems Operational</span>
+                </div>
+                <div className="text-xs text-gray-450 dark:text-gray-500 font-medium">
+                  ⚡ Version 2.2.0 (Stable)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Copyright Section */}
+          <div
+            className="
+              border-t
+              border-gray-200
+              dark:border-gray-900
+              max-w-7xl
+              mx-auto
+              mt-12
+              pt-6
+              flex
+              flex-col
+              md:flex-row
+              justify-between
+              items-center
+              gap-4
+              text-sm
+              text-gray-500
+              dark:text-gray-500
+              relative
+              z-10
+            "
+          >
+            <div>
+              © {new Date().getFullYear()} PrepTrack. All rights reserved.
+            </div>
+            
+            <div className="flex items-center gap-5 flex-wrap justify-center">
+              <div className="flex items-center gap-1.5">
+                Built with <span className="text-red-500 animate-pulse text-base">💖</span> in India by{" "}
+                <a
+                  href="https://github.com/nitishkpathak"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-semibold transition"
+                >
+                  Nitish Kumar Pathak
+                </a>
+              </div>
+              
+              <button
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-850 transition-all duration-300 cursor-pointer"
+              >
+                Back to Top ↑
+              </button>
+            </div>
+          </div>
         </footer>
 
     </div>
