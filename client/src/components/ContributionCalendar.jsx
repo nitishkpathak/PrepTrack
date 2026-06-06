@@ -127,10 +127,10 @@ function ContributionCalendar({ questions = [] }) {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-2">
         <div>
           <h2 className="text-xl font-bold text-black dark:text-white flex items-center gap-2">
-            📊 Coding Contribution Calendar
+            📊 Submissions
           </h2>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            {totalSolvedLastYear} question{totalSolvedLastYear === 1 ? "" : "s"} solved in the last year
+            {totalSolvedLastYear} submission{totalSolvedLastYear === 1 ? "" : "s"} in the past year
           </p>
         </div>
 
