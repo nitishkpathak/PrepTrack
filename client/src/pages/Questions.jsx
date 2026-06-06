@@ -326,6 +326,7 @@ function Questions() {
           p-4
           md:p-6
           md:ml-[260px]
+          min-w-0
         "
       >
         {/* Sticky Header */}
