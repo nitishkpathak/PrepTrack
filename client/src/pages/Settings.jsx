@@ -533,7 +533,7 @@ function Settings() {
             {emailStep === 1 && (
               <div className="space-y-4 text-center">
                 <p className="text-sm text-gray-650 dark:text-gray-400">
-                  Identity verify karne ke liye aapke registered email <span className="font-semibold text-black dark:text-white">{userEmail}</span> par ek OTP code bheja jayega.
+                  To verify your identity, a verification OTP code will be sent to your registered email <span className="font-semibold text-black dark:text-white">{userEmail}</span>.
                 </p>
                 <button
                   onClick={async () => {
