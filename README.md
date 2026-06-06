@@ -13,12 +13,14 @@ PrepTrack is a full-stack (MERN) web application designed for students and devel
 
 *   **User Authentication (Register/Login)**: Fast, instant registration without OTP constraints.
 *   **Modular Dashboard & Questions**: Refactored layouts using modular components (`QuestionForm` and `QuestionList`) for high readability.
+*   **Progressive Web App (PWA)**: Desktop and mobile installable application with a custom web manifest and service worker caching.
+*   **Submissions Heatmap Calendar**: Visual calendar representation of daily problem-solving submissions over the past year (split by months).
 *   **Enhanced DSA Form**: Support for manual DSA entries and automated scraper fetching to parse problem descriptions directly from LeetCode, GFG, Codeforces, etc.
 *   **Study Target Preferences**: Customize your daily practice target (questions/day) and preferred platform from the Settings panel.
 *   **Daily Goal Tracker**: Monitor today's practice progress vs. daily goal directly inside the Streak Card with visual percentage indicators.
 *   **Quick Practice Shortcut**: One-click launcher button dynamically rendered in the Dashboard header pointing to your preferred practice platform.
 *   **Dedicated Profile Page**: A sleek, full-page workspace linked from the sidebar to view details and modify avatars, names, roles, and bios.
-*   **Security & Data Control**: Secure change password form and database wipe options under Settings.
+*   **Security & Data Control**: Secure change password form, password-protected database reset, and a secure two-step account deletion process (requiring OTP and password verification).
 *   **Optimized Performance**: Replaced sequential blocking API calls with concurrent `Promise.all` requests and smooth skeleton loading indicators for faster page loads.
 *   **Dark/Light Theme Toggle**: Native theme switching integrated directly inside the sidebar footer.
 *   **Contact Form Integration**: Fully functional landing page contact form using EmailJS.
@@ -139,7 +141,6 @@ npm run dev
 
 ## 🔮 Future Improvements
 
-*   **Heatmap Calendar**: GitHub-style activity contribution graph to track consistency.
 *   **Notes Feature**: In-app code editor or markdown pad for question notes.
 *   **Weekly Progress Graphs**: Visual representation of weekly solve history.
 *   **Profile Image Upload**: Native support or Cloudinary integration for custom profile images.
