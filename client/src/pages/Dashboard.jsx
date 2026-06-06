@@ -506,51 +506,12 @@ const handleFavorite =
         {/* Main Content */}
         <div className="flex-1 md:ml-[260px] min-w-0">
 
-        {/* Mobile Topbar */}
-        <div
-          className="
-            fixed
-            top-0
-            left-0
-            right-0
-            h-16
-            border-b
-            bg-white
-            dark:bg-gray-950
-            border-gray-300
-            dark:border-gray-800
-            flex
-            items-center
-            px-4
-            z-30
-            md:hidden
-          "
-        >
-
-          {/* Menu Button */}
-          <button
-            aria-label="Open Sidebar"
-            onClick={() => setOpen(true)}
-            className="
-              bg-blue-600
-              hover:bg-blue-700
-              p-2
-              rounded-lg
-            "
-          >
-            <Menu size={22} />
-          </button>
-
-        </div>
-
         {/* Content */}
         <div
           className="
             p-4
             sm:p-6
             md:p-8
-            pt-24
-            md:pt-8
           "
         >
 
@@ -558,9 +519,8 @@ const handleFavorite =
           <div
             className="
               sticky
-              top-16
-              md:top-0
-              z-10
+              top-0
+              z-20
 
               bg-white
               dark:bg-gray-950
@@ -583,7 +543,23 @@ const handleFavorite =
             "
           >
 
-            <h1
+            <div className="flex items-center gap-4">
+              <button
+                aria-label="Open Sidebar"
+                onClick={() => setOpen(true)}
+                className="
+                  md:hidden
+                  p-2
+                  bg-blue-600
+                  text-white
+                  rounded-lg
+                  cursor-pointer
+                "
+              >
+                <Menu size={20} />
+              </button>
+
+              <h1
                 className="
                   text-2xl
                   md:text-3xl
@@ -599,6 +575,7 @@ const handleFavorite =
                 <LayoutDashboard size={24} className="text-blue-500" />
                 PrepTrack Dashboard
               </h1>
+            </div>
 
             {/* Quick Practice Shortcut */}
             {preferredPlatformLink && (
