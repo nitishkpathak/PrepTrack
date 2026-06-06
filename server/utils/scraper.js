@@ -73,9 +73,14 @@ const scrapeProblemDescription = async (link) => {
         },
         body: JSON.stringify({
           query: `
-            query questionContent($titleSlug: String!) {
+            query questionData($titleSlug: String!) {
               question(titleSlug: $titleSlug) {
                 content
+                topicTags {
+                  name
+                }
+                hints
+                similarQuestions
               }
             }
           `,
@@ -83,9 +88,46 @@ const scrapeProblemDescription = async (link) => {
         })
       });
       const data = await response.json();
-      const content = data.data?.question?.content;
+      const question = data.data?.question;
+      const content = question?.content;
       if (content) {
         description = cleanHtml(content, link);
+
+        // 1. Topic Tags
+        if (question.topicTags && question.topicTags.length > 0) {
+          const tagsHtml = question.topicTags
+            .map(tag => `<span style="background-color: #f3f4f6; color: #374151; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-right: 5px; display: inline-block; font-weight: 500;">#${tag.name}</span>`)
+            .join("");
+          description += `<div style="margin-top: 20px; border-top: 1px dashed #e5e7eb; padding-top: 12px;"><strong>Topic Tags:</strong><div style="margin-top: 6px;">${tagsHtml}</div></div>`;
+        }
+
+        // 2. Similar Questions
+        if (question.similarQuestions) {
+          try {
+            const similar = JSON.parse(question.similarQuestions);
+            if (similar && similar.length > 0) {
+              const linksHtml = similar
+                .map(q => `<li style="margin-bottom: 5px;"><a href="https://leetcode.com/problems/${q.titleSlug}" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 500;">${q.title}</a> <span style="font-size: 11px; font-weight: 600; color: ${q.difficulty === 'Easy' ? '#10b981' : q.difficulty === 'Medium' ? '#f59e0b' : '#ef4444'}">(${q.difficulty})</span></li>`)
+                .join("");
+              description += `<div style="margin-top: 15px;"><strong>Similar Questions:</strong><ul style="margin-top: 6px; list-style-type: disc; padding-left: 20px;">${linksHtml}</ul></div>`;
+            }
+          } catch (e) {
+            console.error("Error parsing similar questions:", e);
+          }
+        }
+
+        // 3. Hints (Collapsible details element)
+        if (question.hints && question.hints.length > 0) {
+          const hintsHtml = question.hints
+            .map((hint, idx) => `
+              <details style="margin-top: 8px; border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px; background-color: #fafafa; cursor: pointer;">
+                <summary style="font-weight: 650; font-size: 12px; color: #4b5563; outline: none;">💡 Hint ${idx + 1}</summary>
+                <p style="margin-top: 6px; font-size: 12.5px; color: #1f2937; line-height: 1.5; cursor: text;">${hint}</p>
+              </details>
+            `)
+            .join("");
+          description += `<div style="margin-top: 15px; margin-bottom: 10px;"><strong>Hints:</strong>${hintsHtml}</div>`;
+        }
       }
     }
   }
