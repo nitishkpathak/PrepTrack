@@ -58,29 +58,47 @@ function ContributionCalendar({ questions = [] }) {
       tempDate.setDate(tempDate.getDate() + 1);
     }
 
-    // 3. Group days into weeks of 7
+    // 3. Group days into weeks of 7, breaking on month boundary
     const groupedWeeks = [];
-    for (let i = 0; i < days.length; i += 7) {
-      groupedWeeks.push(days.slice(i, i + 7));
+    let currentWeek = Array(7).fill(null);
+    let lastMonthIndex = null;
+
+    days.forEach((day) => {
+      const dayOfWeek = day.dayOfWeek;
+      const monthIndex = day.monthIndex;
+
+      const isNewMonth = lastMonthIndex !== null && monthIndex !== lastMonthIndex;
+      const isNewCalendarWeek = dayOfWeek === 0 || currentWeek[dayOfWeek] !== null;
+      const isCurrentWeekEmpty = currentWeek.every(val => val === null);
+
+      if ((isNewMonth || isNewCalendarWeek) && !isCurrentWeekEmpty) {
+        groupedWeeks.push(currentWeek);
+        currentWeek = Array(7).fill(null);
+      }
+
+      currentWeek[dayOfWeek] = day;
+      lastMonthIndex = monthIndex;
+    });
+
+    if (currentWeek.some(day => day !== null)) {
+      groupedWeeks.push(currentWeek);
     }
 
     // 4. Calculate month labels start week indices
     const rawLabels = [];
     let lastMonthName = "";
     groupedWeeks.forEach((week, wIdx) => {
-      const firstDay = week[0];
-      // Check if the month starts in this week (day of the month is 1)
-      const hasMonthStart = week.some(day => {
-        const dayNum = parseInt(day.dateStr.split("-")[2], 10);
-        return dayNum === 1;
-      });
+      const firstDay = week.find(day => day !== null);
+      const hasMonthStart = week.some(day => day !== null && parseInt(day.dateStr.split("-")[2], 10) === 1);
 
       let monthNameToShow = "";
-      if (wIdx === 0) {
+      if (wIdx === 0 && firstDay) {
         monthNameToShow = firstDay.monthName;
       } else if (hasMonthStart) {
-        const startDay = week.find(day => parseInt(day.dateStr.split("-")[2], 10) === 1);
-        monthNameToShow = startDay.monthName;
+        const startDay = week.find(day => day !== null && parseInt(day.dateStr.split("-")[2], 10) === 1);
+        if (startDay) {
+          monthNameToShow = startDay.monthName;
+        }
       }
 
       if (monthNameToShow && monthNameToShow !== lastMonthName) {
@@ -147,7 +165,7 @@ function ContributionCalendar({ questions = [] }) {
       </div>
 
       <div className="overflow-x-auto pb-2 custom-scrollbar">
-        <div className="min-w-[960px] w-fit mx-auto flex items-start">
+        <div className="w-max mx-auto flex items-start">
           {/* Days labels */}
           <div className="flex flex-col gap-[4px] text-[9px] font-bold text-gray-500 dark:text-gray-500 pr-2 select-none w-8 pt-[22px]">
             <div className="h-[12px] flex items-center justify-end">Sun</div>
@@ -178,7 +196,15 @@ function ContributionCalendar({ questions = [] }) {
             <div className="flex gap-[4px]">
               {weeks.map((week, wIdx) => (
                 <div key={wIdx} className="flex flex-col gap-[4px]">
-                  {week.map((day) => {
+                  {week.map((day, dIdx) => {
+                    if (!day) {
+                      return (
+                        <div
+                          key={`empty-${wIdx}-${dIdx}`}
+                          className="w-[12px] h-[12px] bg-transparent pointer-events-none select-none"
+                        />
+                      );
+                    }
                     const count = solveMap[day.dateStr] || 0;
                     const colorClass = getColorClass(count);
                     return (
