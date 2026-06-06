@@ -55,7 +55,6 @@ function Stats() {
         className="
           w-full
           min-h-screen
-          overflow-x-hidden
 
           bg-white
           dark:bg-black
