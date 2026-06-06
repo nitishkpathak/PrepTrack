@@ -504,7 +504,7 @@ const handleFavorite =
       />
 
       {/* Main Content */}
-      <div className="flex-1 md:ml-[260px]">
+      <div className="flex-1 md:ml-[260px] min-w-0">
 
         {/* Mobile Topbar */}
         <div
