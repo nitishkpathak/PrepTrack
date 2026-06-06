@@ -277,7 +277,7 @@ function Profile() {
                 </div>
                 <div className="text-center">
                   <span className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Longest Streak</span>
-                  <span className="block text-2xl md:text-3xl font-extrabold text-yellow-550 dark:text-yellow-500 mt-1">🏆 {profile.longestStreak}</span>
+                  <span className="block text-2xl md:text-3xl font-extrabold text-yellow-600 dark:text-yellow-500 mt-1">🏆 {profile.longestStreak}</span>
                 </div>
               </div>
 
