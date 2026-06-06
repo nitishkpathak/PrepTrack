@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Menu } from "lucide-react";
+import { Menu, BookOpen } from "lucide-react";
 import toast from "react-hot-toast";
 
 import Sidebar from "../components/Sidebar";
@@ -374,8 +374,12 @@ function Questions() {
                 font-bold
                 text-black
                 dark:text-white
+                flex
+                items-center
+                gap-2
               "
             >
+              <BookOpen size={24} className="text-blue-500" />
               Questions
             </h1>
           </div>

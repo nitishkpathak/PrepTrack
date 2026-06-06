@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Menu } from "lucide-react";
+import { Menu, BarChart3 } from "lucide-react";
 
 import Sidebar from "../components/Sidebar";
 import StatsCards from "../components/StatsCards";
@@ -134,11 +134,13 @@ function Stats() {
 
                   text-black
                   dark:text-white
+                  flex
+                  items-center
+                  gap-2
                 "
               >
-
+                <BarChart3 size={24} className="text-blue-500" />
                 Stats
-
               </h1>
 
             </div>

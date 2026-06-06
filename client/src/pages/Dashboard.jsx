@@ -1,6 +1,6 @@
 import {useEffect, useState, useMemo} from "react";
 import {useNavigate,} from "react-router-dom";
-import {Menu,} from "lucide-react";
+import {Menu, LayoutDashboard} from "lucide-react";
 import toast from "react-hot-toast";
 
 import Sidebar from "../components/Sidebar";
@@ -591,8 +591,12 @@ const handleFavorite =
 
                   text-black
                   dark:text-white
+                  flex
+                  items-center
+                  gap-2
                 "
               >
+                <LayoutDashboard size={24} className="text-blue-500" />
                 PrepTrack Dashboard
               </h1>
 
