@@ -1,0 +1,18 @@
+{
+  "short_name": "PrepTrack",
+  "name": "PrepTrack - Track Your DSA Journey",
+  "description": "PrepTrack helps students track DSA, LeetCode and coding interview preparation progress.",
+  "icons": [
+    {
+      "src": "/preptrack.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#030712",
+  "theme_color": "#2563eb",
+  "display": "standalone",
+  "orientation": "portrait"
+}
