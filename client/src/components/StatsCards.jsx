@@ -1,4 +1,4 @@
-function StatsCards({ questions }) {
+function StatsCards({ questions, gridColsClass = "grid-cols-1 md:grid-cols-4" }) {
 
   // Total
   const totalQuestions =
@@ -41,13 +41,12 @@ function StatsCards({ questions }) {
   return (
 
     <div
-      className="
+      className={`
         grid
-        grid-cols-1
-        md:grid-cols-4
         gap-6
         mb-8
-      "
+        ${gridColsClass}
+      `}
     >
 
       {/* Total */}
