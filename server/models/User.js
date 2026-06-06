@@ -89,6 +89,16 @@ const userSchema =
         default: null,
       },
 
+      deleteAccountOtp: {
+        type: String,
+        default: null,
+      },
+
+      deleteAccountOtpExpires: {
+        type: Date,
+        default: null,
+      },
+
       tempNewEmail: {
         type: String,
         default: "",

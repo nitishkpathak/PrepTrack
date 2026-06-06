@@ -449,6 +449,82 @@ const verifyChangeEmailNew = async (req, res) => {
 };
 
 // ============================
+// ACCOUNT DELETION STEP 1: REQUEST OTP
+// ============================
+const requestDeleteAccount = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.deleteAccountOtp = otp;
+    user.deleteAccountOtpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    await user.save();
+
+    // Send OTP to user email
+    const { sendOtpEmail } = require("../utils/emailSender");
+    await sendOtpEmail({
+      email: user.email,
+      subject: "PrepTrack Account Deletion Request - OTP Verification ⚠️",
+      otp: otp,
+      title: "Verify Your Account Deletion",
+    });
+
+    res.status(200).json({ message: "Verification OTP sent to your registered email! 📩" });
+  } catch (error) {
+    console.error("Request account delete failed:", error);
+    res.status(500).json({ message: error.message || "Server Error" });
+  }
+};
+
+// ============================
+// ACCOUNT DELETION STEP 2: CONFIRM OTP & PASSWORD & DELETE
+// ============================
+const confirmDeleteAccount = async (req, res) => {
+  try {
+    const { otp, password } = req.body;
+    if (!otp || !password) {
+      return res.status(400).json({ message: "OTP and password are required ❌" });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found ❌" });
+    }
+
+    // 1. Verify OTP
+    if (!user.deleteAccountOtp || user.deleteAccountOtp !== otp) {
+      return res.status(400).json({ message: "Invalid verification OTP code ❌" });
+    }
+
+    if (new Date() > user.deleteAccountOtpExpires) {
+      return res.status(400).json({ message: "Verification OTP code has expired ❌" });
+    }
+
+    // 2. Verify Password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect password! Deletion cancelled ❌" });
+    }
+
+    // 3. Delete user data (questions)
+    const Question = require("../models/Question");
+    await Question.deleteMany({ user: user._id });
+
+    // 4. Delete user account
+    await User.findByIdAndDelete(user._id);
+
+    res.status(200).json({ message: "Account and associated data deleted successfully! 🧹" });
+  } catch (error) {
+    console.error("Confirm account delete failed:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// ============================
 // EXPORTS
 // ============================
 
@@ -461,4 +537,6 @@ module.exports = {
   verifyChangeEmailCurrent,
   requestChangeEmailNew,
   verifyChangeEmailNew,
+  requestDeleteAccount,
+  confirmDeleteAccount,
 };

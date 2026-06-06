@@ -163,4 +163,23 @@ export const verifyChangeEmailNew = async (otp) => {
     headers: { Authorization: `Bearer ${token}` }
   });
   return response.data;
+};
+
+// REQUEST ACCOUNT DELETION
+export const requestDeleteAccount = async () => {
+  const token = localStorage.getItem("token");
+  const response = await axios.post(`${API}/delete/request`, {}, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+// CONFIRM ACCOUNT DELETION
+export const confirmDeleteAccount = async (otp, password) => {
+  const token = localStorage.getItem("token");
+  const response = await axios.delete(`${API}/delete/confirm`, {
+    headers: { Authorization: `Bearer ${token}` },
+    data: { otp, password }
+  });
+  return response.data;
 };

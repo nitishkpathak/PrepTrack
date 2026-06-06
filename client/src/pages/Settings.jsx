@@ -3,7 +3,7 @@ import { Menu, Lock, Settings as SettingsIcon, AlertTriangle } from "lucide-reac
 import toast from "react-hot-toast";
 
 import Sidebar from "../components/Sidebar";
-import { getProfile, updatePreferences, changePassword, requestChangeEmailCurrent, verifyChangeEmailCurrent, requestChangeEmailNew, verifyChangeEmailNew } from "../services/userService";
+import { getProfile, updatePreferences, changePassword, requestChangeEmailCurrent, verifyChangeEmailCurrent, requestChangeEmailNew, verifyChangeEmailNew, requestDeleteAccount, confirmDeleteAccount } from "../services/userService";
 import { resetAllQuestions } from "../services/questionService";
 import { forgotPassword, resetPassword } from "../services/authService";
 
@@ -16,6 +16,13 @@ function Settings() {
   // Reset Data confirmation states
   const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
   const [resetPasswordInput, setResetPasswordInput] = useState("");
+
+  // Account Deletion states
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteStep, setDeleteStep] = useState(1);
+  const [deleteOtp, setDeleteOtp] = useState("");
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // Forgot password flow states
   const [showResetModal, setShowResetModal] = useState(false);
@@ -353,6 +360,8 @@ function Settings() {
               <AlertTriangle size={20} />
               Danger Zone
             </h2>
+
+            {/* Reset Data */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <h3 className="font-semibold text-lg text-black dark:text-white">
@@ -368,6 +377,27 @@ function Settings() {
                 className="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-3 rounded-lg transition disabled:opacity-50 self-start md:self-center cursor-pointer whitespace-nowrap"
               >
                 {loadingReset ? "Resetting..." : "Reset All Data"}
+              </button>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-red-500/20 my-6" />
+
+            {/* Delete Account */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h3 className="font-semibold text-lg text-black dark:text-white">
+                  Delete Account
+                </h3>
+                <p className="text-sm text-gray-500 mt-1 max-w-xl">
+                  Permanently delete your PrepTrack account and all its associated data. This action is irreversible.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-3 rounded-lg transition self-start md:self-center cursor-pointer whitespace-nowrap"
+              >
+                Delete Account
               </button>
             </div>
           </div>
@@ -758,6 +788,135 @@ function Settings() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Account Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="bg-gray-200 dark:bg-gray-900 border border-gray-300 dark:border-gray-800 rounded-2xl p-6 w-full max-w-md shadow-2xl relative animate-scale-up">
+            <button
+              onClick={() => {
+                setShowDeleteModal(false);
+                setDeleteStep(1);
+                setDeleteOtp("");
+                setDeletePassword("");
+              }}
+              className="absolute top-4 right-4 text-gray-500 hover:text-black dark:hover:text-white text-xl font-bold cursor-pointer"
+            >
+              &times;
+            </button>
+
+            <h2 className="text-xl font-bold mb-2 text-red-600 dark:text-red-500 text-center flex items-center justify-center gap-2">
+              <AlertTriangle size={24} />
+              Delete Account ⚠️
+            </h2>
+            <p className="text-xs text-gray-600 dark:text-gray-400 text-center mb-6">
+              {deleteStep === 1 && "Step 1: Request verification OTP code"}
+              {deleteStep === 2 && "Step 2: Enter OTP & Login Password to confirm"}
+            </p>
+
+            {deleteStep === 1 && (
+              <div className="space-y-4 text-center">
+                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                  To ensure safety, a verification code (OTP) will be sent to your registered email. Once verified, your account and all questions will be permanently deleted.
+                </p>
+                <button
+                  onClick={async () => {
+                    setDeleteLoading(true);
+                    try {
+                      const res = await requestDeleteAccount();
+                      toast.success(res.message || "OTP sent successfully! 📩");
+                      setDeleteStep(2);
+                    } catch (err) {
+                      toast.error(err.response?.data?.message || "Failed to send OTP ❌");
+                    } finally {
+                      setDeleteLoading(false);
+                    }
+                  }}
+                  disabled={deleteLoading}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold p-3 rounded-lg transition disabled:opacity-50 cursor-pointer"
+                >
+                  {deleteLoading ? "Sending OTP..." : "Send Verification OTP"}
+                </button>
+              </div>
+            )}
+
+            {deleteStep === 2 && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    6-Digit OTP Code
+                  </label>
+                  <input
+                    type="text"
+                    maxLength="6"
+                    placeholder="000000"
+                    value={deleteOtp}
+                    onChange={(e) => setDeleteOtp(e.target.value)}
+                    className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white text-center tracking-widest text-xl font-bold border border-gray-300 dark:border-gray-700 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    Login Password
+                  </label>
+                  <input
+                    type="password"
+                    placeholder="Enter your current password"
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                    className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-700 outline-none text-sm"
+                  />
+                </div>
+
+                <div className="flex gap-4 pt-2">
+                  <button
+                    onClick={() => {
+                      setDeleteStep(1);
+                      setDeleteOtp("");
+                      setDeletePassword("");
+                    }}
+                    className="flex-1 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-black dark:text-white font-semibold p-3 rounded-lg transition cursor-pointer text-sm"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (!deleteOtp || deleteOtp.length !== 6) {
+                        return toast.error("Please enter a valid 6-digit OTP code ❌");
+                      }
+                      if (!deletePassword) {
+                        return toast.error("Please enter your login password ❌");
+                      }
+
+                      const doubleConfirm = window.confirm("FINAL WARNING: Are you absolutely sure you want to permanently delete your account? This action cannot be undone.");
+                      if (!doubleConfirm) return;
+
+                      setDeleteLoading(true);
+                      try {
+                        const res = await confirmDeleteAccount(deleteOtp, deletePassword);
+                        toast.success(res.message || "Account deleted successfully. 🧹");
+                        
+                        localStorage.removeItem("token");
+                        localStorage.removeItem("user");
+                        window.location.href = "/login";
+                      } catch (err) {
+                        toast.error(err.response?.data?.message || "Verification failed ❌");
+                      } finally {
+                        setDeleteLoading(false);
+                      }
+                    }}
+                    disabled={deleteLoading || !deleteOtp || !deletePassword}
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold p-3 rounded-lg transition disabled:opacity-50 cursor-pointer text-sm"
+                  >
+                    {deleteLoading ? "Deleting..." : "Confirm Delete"}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -13,6 +13,8 @@ const {
   verifyChangeEmailCurrent,
   requestChangeEmailNew,
   verifyChangeEmailNew,
+  requestDeleteAccount,
+  confirmDeleteAccount,
 } = require(
   "../controllers/userController"
 );
@@ -80,6 +82,20 @@ router.post(
   "/change-email/verify-new",
   protect,
   verifyChangeEmailNew
+);
+
+// ============================
+// ACCOUNT DELETION (TWO-STEP OTP + PW)
+// ============================
+router.post(
+  "/delete/request",
+  protect,
+  requestDeleteAccount
+);
+router.delete(
+  "/delete/confirm",
+  protect,
+  confirmDeleteAccount
 );
 
 module.exports =
