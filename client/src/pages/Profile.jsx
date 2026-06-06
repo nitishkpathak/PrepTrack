@@ -298,7 +298,7 @@ function Profile() {
                     <FileText size={16} className="text-blue-500 mt-1" />
                     <div className="flex-1">
                       <span className="font-semibold text-gray-600 dark:text-gray-400 block mb-1">About Me:</span>
-                      <p className="bg-white dark:bg-gray-850 p-4 rounded-xl border border-gray-300 dark:border-gray-800/80 leading-relaxed italic text-sm">
+                      <p className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-300 dark:border-gray-800/80 leading-relaxed italic text-sm">
                         {profile.bio}
                       </p>
                     </div>

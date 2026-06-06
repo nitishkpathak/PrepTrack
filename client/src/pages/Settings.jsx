@@ -234,7 +234,7 @@ function Settings() {
                   type="email"
                   value={userEmail}
                   disabled
-                  className="w-full p-3 rounded-lg bg-white dark:bg-gray-850 text-gray-500 dark:text-gray-400 border border-gray-300 dark:border-gray-750 outline-none text-sm cursor-not-allowed"
+                  className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-300 dark:border-gray-700 outline-none text-sm cursor-not-allowed"
                 />
               </div>
 
@@ -521,13 +521,13 @@ function Settings() {
             
             {/* Step Indicators */}
             <div className="flex flex-wrap items-center justify-center gap-2 mb-6 text-[10px] uppercase font-bold tracking-wider text-gray-500">
-              <span className={`px-2 py-0.5 rounded ${emailStep === 1 ? "bg-blue-600 text-white" : "bg-gray-300 dark:bg-gray-850"}`}>1. Req Current</span>
+              <span className={`px-2 py-0.5 rounded ${emailStep === 1 ? "bg-blue-600 text-white" : "bg-gray-300 dark:bg-gray-800"}`}>1. Req Current</span>
               <span className="text-gray-400">→</span>
-              <span className={`px-2 py-0.5 rounded ${emailStep === 2 ? "bg-blue-600 text-white" : "bg-gray-300 dark:bg-gray-850"}`}>2. Verify Current</span>
+              <span className={`px-2 py-0.5 rounded ${emailStep === 2 ? "bg-blue-600 text-white" : "bg-gray-300 dark:bg-gray-800"}`}>2. Verify Current</span>
               <span className="text-gray-400">→</span>
-              <span className={`px-2 py-0.5 rounded ${emailStep === 3 ? "bg-blue-600 text-white" : "bg-gray-300 dark:bg-gray-850"}`}>3. Req New</span>
+              <span className={`px-2 py-0.5 rounded ${emailStep === 3 ? "bg-blue-600 text-white" : "bg-gray-300 dark:bg-gray-800"}`}>3. Req New</span>
               <span className="text-gray-400">→</span>
-              <span className={`px-2 py-0.5 rounded ${emailStep === 4 ? "bg-blue-600 text-white" : "bg-gray-300 dark:bg-gray-850"}`}>4. Verify New</span>
+              <span className={`px-2 py-0.5 rounded ${emailStep === 4 ? "bg-blue-600 text-white" : "bg-gray-300 dark:bg-gray-800"}`}>4. Verify New</span>
             </div>
 
             {/* Step 1: Request OTP on current email */}
