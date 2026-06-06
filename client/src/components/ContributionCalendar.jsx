@@ -75,7 +75,7 @@ function ContributionCalendar({ questions = [] }) {
 
   // Determine background color based on solve count
   const getColorClass = (count) => {
-    if (count === 0) return "bg-gray-300 dark:bg-gray-800 hover:bg-gray-400 dark:hover:bg-gray-700";
+    if (count === 0) return "bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700";
     if (count === 1) return "bg-green-200 dark:bg-green-900/60 text-green-800 border border-green-300/30";
     if (count === 2) return "bg-green-400 dark:bg-green-700/80 text-white";
     if (count === 3) return "bg-green-600 dark:bg-green-500 text-white";
@@ -83,7 +83,7 @@ function ContributionCalendar({ questions = [] }) {
   };
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-950 p-6 rounded-2xl border border-gray-300 dark:border-gray-800 shadow-md transition duration-300">
+    <div className="bg-white dark:bg-gray-950 p-6 rounded-2xl border border-gray-300 dark:border-gray-800 shadow-md transition duration-300">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-2">
         <div>
           <h2 className="text-xl font-bold text-black dark:text-white flex items-center gap-2">
@@ -97,7 +97,7 @@ function ContributionCalendar({ questions = [] }) {
         {/* Legend */}
         <div className="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400 select-none">
           <span>Less</span>
-          <div className="w-3 h-3 rounded-sm bg-gray-300 dark:bg-gray-800" />
+          <div className="w-3 h-3 rounded-sm bg-gray-200 dark:bg-gray-800" />
           <div className="w-3 h-3 rounded-sm bg-green-200 dark:bg-green-900/60" />
           <div className="w-3 h-3 rounded-sm bg-green-400 dark:bg-green-700/80" />
           <div className="w-3 h-3 rounded-sm bg-green-600 dark:bg-green-500" />
@@ -107,7 +107,7 @@ function ContributionCalendar({ questions = [] }) {
       </div>
 
       <div className="overflow-x-auto pb-2 custom-scrollbar">
-        <div className="min-w-[720px] flex flex-col">
+        <div className="min-w-[860px] flex flex-col">
           {/* Months Header */}
           <div className="flex pl-8 mb-1.5 text-[10px] font-semibold text-gray-500 dark:text-gray-400 h-4 relative select-none">
             {weeks.map((week, wIdx) => {
@@ -117,7 +117,7 @@ function ContributionCalendar({ questions = [] }) {
               const showLabel = !prevWeek || firstDay.monthIndex !== prevWeek[0].monthIndex;
               if (showLabel) {
                 return (
-                  <div key={wIdx} className="absolute" style={{ left: `${wIdx * 14.5 + 32}px` }}>
+                  <div key={wIdx} className="absolute" style={{ left: `${wIdx * 16 + 36}px` }}>
                     {firstDay.monthName}
                   </div>
                 );
@@ -128,24 +128,27 @@ function ContributionCalendar({ questions = [] }) {
 
           <div className="flex items-start">
             {/* Days labels */}
-            <div className="flex flex-col justify-between text-[9px] font-bold text-gray-400 dark:text-gray-500 h-[98px] pr-3 pt-[2px] select-none w-8">
-              <span>Sun</span>
-              <span>Tue</span>
-              <span>Thu</span>
-              <span>Sat</span>
+            <div className="flex flex-col gap-[4px] text-[9px] font-bold text-gray-400 dark:text-gray-500 pr-2 select-none w-8 pt-[1px]">
+              <div className="h-[12px] flex items-center justify-end">Sun</div>
+              <div className="h-[12px] flex items-center justify-end"></div>
+              <div className="h-[12px] flex items-center justify-end">Tue</div>
+              <div className="h-[12px] flex items-center justify-end"></div>
+              <div className="h-[12px] flex items-center justify-end">Thu</div>
+              <div className="h-[12px] flex items-center justify-end"></div>
+              <div className="h-[12px] flex items-center justify-end">Sat</div>
             </div>
 
             {/* Weeks Grid */}
-            <div className="flex gap-[2.5px]">
+            <div className="flex gap-[4px]">
               {weeks.map((week, wIdx) => (
-                <div key={wIdx} className="flex flex-col gap-[2.5px]">
+                <div key={wIdx} className="flex flex-col gap-[4px]">
                   {week.map((day) => {
                     const count = solveMap[day.dateStr] || 0;
                     const colorClass = getColorClass(count);
                     return (
                       <div
                         key={day.dateStr}
-                        className={`w-[11.5px] h-[11.5px] rounded-[2px] ${colorClass} cursor-pointer hover:ring-2 hover:ring-blue-500 dark:hover:ring-blue-400 transition-all duration-150`}
+                        className={`w-[12px] h-[12px] rounded-[2px] ${colorClass} cursor-pointer hover:ring-2 hover:ring-blue-500 dark:hover:ring-blue-400 transition-all duration-150`}
                         title={`${count} solved on ${day.formattedDate}`}
                       />
                     );
