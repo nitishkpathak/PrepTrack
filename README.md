@@ -152,6 +152,6 @@ npm run dev
 
 **Nitish Kumar Pathak**
 *   **GitHub**: [https://github.com/nitishkpathak](https://github.com/nitishkpathak)
-*   **LinkedIn**: [https://www.linkedin.com/in/nitishkpathak](https://www.linkedin.com/in/nitishkpathak) *(Replace with your actual handle link if different)*
+*   **LinkedIn**: [https://www.linkedin.com/in/nitishkpathak](https://www.linkedin.com/in/nitishkpathak) 
 
 ⭐ **If you like this project, consider giving it a star!**
