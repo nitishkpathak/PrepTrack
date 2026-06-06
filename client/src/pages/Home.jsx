@@ -16,6 +16,27 @@ function Home() {
     message: "",
     });
 
+  const [openFaq, setOpenFaq] = useState(null);
+
+  const faqs = [
+    {
+      q: "How does the automatic platform scraper work? ☁️",
+      a: "When adding a new question, simply paste the LeetCode or GeeksforGeeks problem link in the input field. PrepTrack will fetch the title, difficulty level, and primary description details automatically to save you typing! ⚡"
+    },
+    {
+      q: "What is a DSA streak and how is it calculated? 🔥",
+      a: "Your streak represents the number of consecutive days you have solved at least one question. PrepTrack displays a GitHub-like contribution calendar so you can visualize your daily consistency, build coding habits, and stay motivated! 📅"
+    },
+    {
+      q: "Can I access my dashboard offline? 📱",
+      a: "Yes! PrepTrack is built as a Progressive Web App (PWA). Once you visit the website, it caches pages so you can open the app and view your dashboard, calendar, and past questions even when you are offline or have a poor connection. 📶"
+    },
+    {
+      q: "How secure is my data, and can I delete it? 🔐",
+      a: "Your security is our priority. All account data is securely stored. If you ever wish to clear your logs, you can reset all data or permanently delete your account securely using email-based OTP and password verification from the Settings dashboard. 🛡️"
+    }
+  ];
+
     const handleChange = (e) => {
         setFormData({
         ...formData,
@@ -1600,6 +1621,152 @@ function Home() {
 
         </div>
 
+        </section>
+
+{/* PWA App Installation Guide */}
+        <section
+        id="pwa-install"
+        className="
+            py-24
+            px-6
+            bg-white
+            dark:bg-gray-950
+            border-t
+            border-gray-200
+            dark:border-gray-900
+        "
+        >
+        <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+                <div className="inline-block px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-xs font-semibold text-blue-600 dark:text-blue-400 mb-4 select-none">
+                    📱 Progressive Web App (PWA)
+                </div>
+                <h2 className="text-4xl md:text-5xl font-extrabold text-black dark:text-white tracking-tight font-sans">
+                    Install PrepTrack on Your Device
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400 mt-4 max-w-2xl mx-auto text-base">
+                    Access your DSA tracking dashboard directly from your home screen with offline support, fast loading, and native app features.
+                </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+                {/* Android */}
+                <div className="bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-800 p-8 rounded-3xl hover:scale-[1.03] transition duration-300 shadow-md">
+                    <div className="text-4xl mb-4">🤖</div>
+                    <h3 className="text-xl font-bold mb-3 text-black dark:text-white flex items-center gap-2">
+                        Android (Chrome)
+                    </h3>
+                    <ul className="space-y-2.5 text-sm text-gray-500 dark:text-gray-400">
+                        <li className="flex items-start gap-2">
+                            <span className="text-blue-500 font-bold">1.</span> Open PrepTrack in Google Chrome.
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-blue-500 font-bold">2.</span> Look for the install banner at the bottom or click the browser settings menu (three dots).
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-blue-500 font-bold">3.</span> Tap <span className="font-semibold text-black dark:text-white">"Install app"</span> or <span className="font-semibold text-black dark:text-white">"Add to Home screen"</span>.
+                        </li>
+                    </ul>
+                </div>
+
+                {/* iOS */}
+                <div className="bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-800 p-8 rounded-3xl hover:scale-[1.03] transition duration-300 shadow-md">
+                    <div className="text-4xl mb-4">🍏</div>
+                    <h3 className="text-xl font-bold mb-3 text-black dark:text-white flex items-center gap-2">
+                        iOS / iPhone (Safari)
+                    </h3>
+                    <ul className="space-y-2.5 text-sm text-gray-500 dark:text-gray-400">
+                        <li className="flex items-start gap-2">
+                            <span className="text-blue-500 font-bold">1.</span> Open PrepTrack in Safari.
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-blue-500 font-bold">2.</span> Tap the browser's <span className="font-semibold text-black dark:text-white">"Share"</span> button (box with an up arrow 📤) at the bottom.
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-blue-500 font-bold">3.</span> Scroll down and tap <span className="font-semibold text-black dark:text-white">"Add to Home Screen"</span> ➕.
+                        </li>
+                    </ul>
+                </div>
+
+                {/* Desktop */}
+                <div className="bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-800 p-8 rounded-3xl hover:scale-[1.03] transition duration-300 shadow-md">
+                    <div className="text-4xl mb-4">💻</div>
+                    <h3 className="text-xl font-bold mb-3 text-black dark:text-white flex items-center gap-2">
+                        Desktop (Chrome/Edge)
+                    </h3>
+                    <ul className="space-y-2.5 text-sm text-gray-500 dark:text-gray-400">
+                        <li className="flex items-start gap-2">
+                            <span className="text-blue-500 font-bold">1.</span> Visit PrepTrack on your laptop or desktop browser.
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-blue-500 font-bold">2.</span> Click the install icon (monitor with down arrow) in the right side of the address bar.
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-blue-500 font-bold">3.</span> Confirm by clicking <span className="font-semibold text-black dark:text-white">"Install"</span> to launch the desktop app.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </section>
+
+{/* Interactive FAQs Accordion */}
+        <section
+        id="faqs"
+        className="
+            py-24
+            px-6
+            bg-gray-50
+            dark:bg-gray-900
+            border-t
+            border-gray-200
+            dark:border-gray-800
+        "
+        >
+        <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+                <div className="inline-block px-4 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 text-xs font-semibold text-purple-600 dark:text-purple-400 mb-4 select-none">
+                    ❓ Learn More
+                </div>
+                <h2 className="text-4xl md:text-5xl font-extrabold text-black dark:text-white tracking-tight font-sans">
+                    Frequently Asked Questions
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400 mt-4 text-base">
+                    Find quick answers to common queries about streaks, scraping, and platform functionalities.
+                </p>
+            </div>
+
+            <div className="space-y-4">
+                {faqs.map((faq, index) => {
+                    const isOpen = openFaq === index;
+                    return (
+                        <div
+                            key={index}
+                            className="bg-white dark:bg-gray-800/60 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden transition-all duration-300 shadow-sm"
+                        >
+                            <button
+                                onClick={() => setOpenFaq(isOpen ? null : index)}
+                                className="w-full flex items-center justify-between p-6 text-left font-semibold text-base sm:text-lg text-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800/80 transition cursor-pointer select-none"
+                            >
+                                <span>{faq.q}</span>
+                                <span className={`text-xl text-blue-500 transform transition-transform duration-300 ${isOpen ? "rotate-45" : "rotate-0"}`}>
+                                    ➕
+                                </span>
+                            </button>
+                            <div
+                                className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                                    isOpen ? "max-h-60 border-t border-gray-200 dark:border-gray-800" : "max-h-0"
+                                }`}
+                            >
+                                <p className="p-6 text-sm sm:text-base text-gray-500 dark:text-gray-400 leading-relaxed">
+                                    {faq.a}
+                                </p>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
         </section>
 
 {/* Contact */}
