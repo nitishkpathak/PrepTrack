@@ -2,6 +2,44 @@ import React from "react";
 import toast from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 
+// Helper to render notes dynamically as HTML or plain text
+const renderNotes = (notes, isExpanded) => {
+  if (!notes) return "";
+  
+  // Check if notes contains HTML tags (like <p>, <div>, <strong>, <img>)
+  const hasHtml = /<\/?[a-z][\s\S]*>/i.test(notes);
+  
+  if (hasHtml) {
+    return (
+      <div 
+        dangerouslySetInnerHTML={{ __html: notes }} 
+        className={`
+          prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 text-sm leading-relaxed
+          [&_pre]:bg-gray-150 [&_pre]:dark:bg-gray-950 [&_pre]:p-3 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:border [&_pre]:border-gray-300 [&_pre]:dark:border-gray-900 [&_pre]:font-mono [&_pre]:text-xs [&_pre]:my-2
+          [&_code]:bg-gray-150 [&_code]:dark:bg-gray-900 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:font-mono [&_code]:text-xs [&_code]:text-red-500 [&_code]:dark:text-red-400
+          [&_img]:max-w-full [&_img]:h-auto [&_img]:my-3 [&_img]:rounded-lg [&_img]:shadow-md [&_img]:border [&_img]:border-gray-300 [&_img]:dark:border-gray-800
+          [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-2
+          [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-2
+          [&_a]:text-blue-500 [&_a]:hover:underline [&_a]:font-medium
+          [&_strong]:font-semibold [&_strong]:text-black [&_strong]:dark:text-white
+          ${isExpanded ? "" : "line-clamp-3 overflow-hidden"}
+        `}
+      />
+    );
+  } else {
+    return (
+      <div 
+        className={`
+          text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-7 text-sm
+          ${isExpanded ? "" : "line-clamp-3 overflow-hidden"}
+        `}
+      >
+        {notes}
+      </div>
+    );
+  }
+};
+
 function QuestionList({
   fetching,
   filteredQuestions,
@@ -131,17 +169,7 @@ function QuestionList({
 
               {/* Notes */}
               <div className="mt-2">
-                <p
-                  className={`
-                    text-gray-700
-                    dark:text-gray-300
-                    whitespace-pre-wrap
-                    leading-7
-                    ${expandedQuestion === question._id ? "" : "line-clamp-3"}
-                  `}
-                >
-                  {question.notes}
-                </p>
+                {renderNotes(question.notes, expandedQuestion === question._id)}
 
                 {question.notes && question.notes.length > 150 && (
                   <button

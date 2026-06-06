@@ -7,52 +7,41 @@
 
 /**
  * HTML cleaning function:
- * HTML tags (p, div, br, strong, code, etc.) ko clean readable plain text / markdown tags me convert karta hai.
+ * Script aur style tags ko remove karta hai, aur relative links ko absolute URLs me convert karta hai.
  * 
  * @param {string} html - Scraped page se mila raw HTML string.
- * @returns {string} - Clean kiya hua markdown-like text.
+ * @param {string} link - Original problem link (LeetCode / GeeksforGeeks).
+ * @returns {string} - Clean kiya hua HTML text.
  */
-const cleanHtml = (html) => {
+const cleanHtml = (html, link) => {
   if (!html) return "";
   
   let text = html;
 
-  // 1. Block level HTML tags (p, div, br, li, header tags) ko newlines me replace karo
-  text = text.replace(/<(p|div|br|li|h1|h2|h3|h4|h5|h6)[^>]*>/gi, "\n");
-  text = text.replace(/<\/p>|<\/div>|<\/li>/gi, "\n");
-  
-  // 2. Bold / Italic / Code inline styles ko markdown equivalents (** , * , `) me convert karo
-  text = text.replace(/<(strong|b)[^>]*>([\s\S]*?)<\/\1>/gi, "**$2**");
-  text = text.replace(/<(em|i)[^>]*>([\s\S]*?)<\/\1>/gi, "*$2*");
-  text = text.replace(/<code[^>]*>([\s\S]*?)<\/code>/gi, "`$1`");
+  // 1. Remove script and style tags to prevent code execution
+  text = text.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, "");
+  text = text.replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, "");
 
-  // 3. Baaki bache saare HTML tag wrappers ko strip/remove karo
-  text = text.replace(/<[^>]*>/g, "");
+  // 2. Rewrite relative src URLs to absolute URLs in img/iframe/source tags
+  text = text.replace(/src=["'](\/[^"']+)["']/gi, (match, path) => {
+    if (link && link.includes("leetcode.com")) {
+      return `src="https://leetcode.com${path}"`;
+    } else if (link && link.includes("geeksforgeeks.org")) {
+      return `src="https://www.geeksforgeeks.org${path}"`;
+    }
+    return match;
+  });
 
-  // 4. HTML entity codes (&nbsp;, &lt;, &gt;, etc.) ko clean kar ke simple readability text me parse karo
-  const entities = {
-    "&nbsp;": " ",
-    "&lt;": "<",
-    "&gt;": ">",
-    "&amp;": "&",
-    "&quot;": '"',
-    "&apos;": "'",
-    "&middot;": "·",
-    "&ndash;": "–",
-    "&mdash;": "—",
-    "&#39;": "'",
-    "&le;": "≤",
-    "&ge;": "≥",
-    "&lt;=": "≤",
-    "&gt;=": "≥",
-  };
-  for (const [entity, value] of Object.entries(entities)) {
-    text = text.replaceAll(entity, value);
-  }
+  // 3. Rewrite relative href URLs to absolute URLs in anchor tags
+  text = text.replace(/href=["'](\/[^"']+)["']/gi, (match, path) => {
+    if (link && link.includes("leetcode.com")) {
+      return `href="https://leetcode.com${path}"`;
+    } else if (link && link.includes("geeksforgeeks.org")) {
+      return `href="https://www.geeksforgeeks.org${path}"`;
+    }
+    return match;
+  });
 
-  // 5. Continuous multi-line newlines ko collapse karke strictly double newlines (\n\n) use karo
-  text = text.replace(/\n\s*\n\s*\n+/g, "\n\n");
-  
   return text.trim();
 };
 
@@ -96,7 +85,7 @@ const scrapeProblemDescription = async (link) => {
       const data = await response.json();
       const content = data.data?.question?.content;
       if (content) {
-        description = cleanHtml(content);
+        description = cleanHtml(content, link);
       }
     }
   }
@@ -108,7 +97,7 @@ const scrapeProblemDescription = async (link) => {
       }
     });
     const html = await response.text();
-
+ 
     // 1. Pehle page ke SSR component state script script id="__NEXT_DATA__" ko search aur parse karo
     const scriptMatch = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
     if (scriptMatch) {
@@ -116,18 +105,18 @@ const scrapeProblemDescription = async (link) => {
         const data = JSON.parse(scriptMatch[1]);
         const probData = data.props?.pageProps?.initialState?.problemData?.allData?.probData;
         if (probData && probData.problem_question) {
-          description = cleanHtml(probData.problem_question);
+          description = cleanHtml(probData.problem_question, link);
         }
       } catch (e) {
         console.error("Error parsing __NEXT_DATA__ GFG script:", e);
       }
     }
-
+ 
     // 2. Fallback check: Agar client-side rendering structure badal gaya hai, HTML class problem-statement scrape karo
     if (!description) {
       const match = html.match(/<div class="problem-statement">([\s\S]*?)<\/div>/);
       if (match && match[1]) {
-        description = cleanHtml(match[1]);
+        description = cleanHtml(match[1], link);
       }
     }
   }
