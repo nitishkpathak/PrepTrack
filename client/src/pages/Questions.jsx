@@ -347,42 +347,40 @@ function Questions() {
             transition
             duration-300
             flex
-            flex-col
+            items-center
             gap-4
           "
         >
-          <div className="flex items-center gap-4 justify-between md:justify-start">
-            <button
-              aria-label="Open Sidebar"
-              onClick={() => setSidebarOpen(true)}
-              className="
-                md:hidden
-                p-2
-                bg-blue-600
-                text-white
-                rounded-lg
-                cursor-pointer
-              "
-            >
-              <Menu size={20} />
-            </button>
+          <button
+            aria-label="Open Sidebar"
+            onClick={() => setSidebarOpen(true)}
+            className="
+              md:hidden
+              p-2
+              bg-blue-600
+              text-white
+              rounded-lg
+              cursor-pointer
+            "
+          >
+            <Menu size={20} />
+          </button>
 
-            <h1
-              className="
-                text-2xl
-                md:text-3xl
-                font-bold
-                text-black
-                dark:text-white
-                flex
-                items-center
-                gap-2
-              "
-            >
-              <BookOpen size={24} className="text-blue-500" />
-              Questions
-            </h1>
-          </div>
+          <h1
+            className="
+              text-2xl
+              md:text-3xl
+              font-bold
+              text-black
+              dark:text-white
+              flex
+              items-center
+              gap-2
+            "
+          >
+            <BookOpen size={24} className="text-blue-500" />
+            Questions
+          </h1>
         </div>
 
         {/* Filter bar */}

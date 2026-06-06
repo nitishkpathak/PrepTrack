@@ -573,7 +573,7 @@ const handleFavorite =
                 "
               >
                 <LayoutDashboard size={24} className="text-blue-500" />
-                PrepTrack Dashboard
+                Dashboard
               </h1>
             </div>
 

@@ -98,6 +98,9 @@ function Stats() {
 
                 transition
                 duration-300
+                flex
+                items-center
+                gap-4
               "
             >
 
@@ -112,7 +115,6 @@ function Stats() {
                   md:hidden
 
                   p-2
-                  mb-4
 
                   bg-blue-600
                   text-white
