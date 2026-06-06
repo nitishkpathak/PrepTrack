@@ -608,15 +608,14 @@ const handleFavorite =
 
           {location.pathname ===
             "/dashboard" && ( 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          {/* Right/Stats Column (First in source to stay at the top on mobile, moves to right on desktop) */}
-          <div className="lg:col-span-1 lg:order-2 space-y-6">
-            <StatsCards questions={questions} gridColsClass="grid-cols-1 sm:grid-cols-2 lg:grid-cols-1" />
+        <>
+          <StatsCards questions={questions} />
+
+          <div className="mb-8">
             <ContributionCalendar questions={questions} />
           </div>
 
-          {/* Left/Questions Column (Second in source to stay below stats on mobile, moves to left on desktop) */}
-          <div className="lg:col-span-2 lg:order-1 space-y-6">
+          <div className="space-y-6">
             <FilterBar
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
@@ -685,7 +684,7 @@ const handleFavorite =
               handleDelete={handleDelete}
             />
           </div>
-        </div>
+        </>
         )}
 
         {/* Questions Section */}
