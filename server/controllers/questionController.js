@@ -15,6 +15,8 @@ const addQuestion = async (req, res) => {
       link,
     } = req.body;
 
+    const solvedAt = status === "Solved" ? new Date() : null;
+
     const question = await Question.create({
       title,
       topic,
@@ -22,6 +24,7 @@ const addQuestion = async (req, res) => {
       status,
       notes,
       link,
+      solvedAt,
       user: req.user._id,
     });
 
@@ -124,6 +127,10 @@ const updateQuestion = async (req, res) => {
 
         await user.save();
       }
+
+      req.body.solvedAt = new Date();
+    } else if (newStatus && newStatus !== "Solved") {
+      req.body.solvedAt = null;
     }
 
     // ============================

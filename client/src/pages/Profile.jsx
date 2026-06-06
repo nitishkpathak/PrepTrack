@@ -5,12 +5,14 @@ import toast from "react-hot-toast";
 import Sidebar from "../components/Sidebar";
 import { getProfile, updateProfile } from "../services/userService";
 import { getQuestions } from "../services/questionService";
+import ContributionCalendar from "../components/ContributionCalendar";
 
 function Profile() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [solvedCount, setSolvedCount] = useState(0);
+  const [questions, setQuestions] = useState([]);
 
   const savedUserJson = localStorage.getItem("user");
   const initialUser = savedUserJson ? JSON.parse(savedUserJson) : {};
@@ -56,6 +58,7 @@ function Profile() {
   const fetchSolvedCount = async () => {
     try {
       const questionsData = await getQuestions();
+      setQuestions(questionsData);
       const solved = questionsData.filter((q) => q.status === "Solved").length;
       setSolvedCount(solved);
     } catch (error) {
@@ -244,8 +247,9 @@ function Profile() {
               </form>
             </div>
           ) : (
-            /* Viewing Card */
-            <div className="bg-gray-200 dark:bg-gray-900 p-8 md:p-10 rounded-2xl border border-gray-300 dark:border-gray-800 text-center shadow-lg transition duration-300">
+            /* Viewing Card & Coding Calendar */
+            <div className="space-y-8">
+              <div className="bg-gray-200 dark:bg-gray-900 p-8 md:p-10 rounded-2xl border border-gray-300 dark:border-gray-800 text-center shadow-lg transition duration-300">
               <img
                 src={profile.profilePic || "/default-profile.png"}
                 alt="Profile Avatar"
@@ -309,6 +313,9 @@ function Profile() {
                 Edit Profile
               </button>
             </div>
+
+            <ContributionCalendar questions={questions} />
+          </div>
           )}
         </div>
       </div>

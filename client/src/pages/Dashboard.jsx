@@ -10,6 +10,7 @@ import ProgressChart from "../components/ProgressChart";
 import DifficultyChart from "../components/DifficultyChart";
 import QuestionForm from "../components/QuestionForm";
 import QuestionList from "../components/QuestionList";
+import ContributionCalendar from "../components/ContributionCalendar";
 
 import {addQuestion, getQuestions, deleteQuestion, updateQuestion, scrapeDescription} from "../services/questionService";
 import { getProfile } from "../services/userService";
@@ -628,6 +629,11 @@ const handleFavorite =
         <>
 
           <StatsCards questions={questions} />
+
+          <div className="mb-8">
+            <ContributionCalendar questions={questions} />
+          </div>
+
           <FilterBar
 
             searchTerm={searchTerm}

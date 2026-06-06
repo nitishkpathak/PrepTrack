@@ -37,6 +37,11 @@ const questionSchema = new mongoose.Schema(
       default: false,
     },
 
+    solvedAt: {
+      type: Date,
+      default: null,
+    },
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
