@@ -494,6 +494,7 @@ const handleFavorite =
         className="
           min-h-screen
           w-full
+          overflow-x-hidden
           bg-white
           dark:bg-gray-950
           text-black

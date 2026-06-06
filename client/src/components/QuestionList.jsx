@@ -83,6 +83,8 @@ function QuestionList({
               key={question._id}
               id={question._id}
               className="
+                w-full
+                min-w-0
                 p-4
                 rounded-xl
                 border
@@ -251,7 +253,7 @@ function QuestionList({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3 w-full">
                 {/* Favorite Button */}
                 <button
                   aria-label="Mark as Favorite"
