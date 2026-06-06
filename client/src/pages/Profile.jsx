@@ -129,7 +129,7 @@ function Profile() {
   };
 
   return (
-    <div className="flex min-h-screen bg-white dark:bg-black text-black dark:text-white transition duration-300">
+    <div className="flex w-full min-h-screen bg-white dark:bg-black text-black dark:text-white transition duration-300">
       {/* Sidebar */}
       <Sidebar open={sidebarOpen} closeSidebar={() => setSidebarOpen(false)} />
 

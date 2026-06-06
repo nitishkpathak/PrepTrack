@@ -480,6 +480,7 @@ const handleFavorite =
     <div
       className="
         min-h-screen
+        w-full
         bg-white
         dark:bg-gray-950
         text-black
