@@ -66,3 +66,35 @@ export const completeSignup =
 
     return response.data;
   };
+
+// FORGOT PASSWORD
+export const forgotPassword =
+  async (userData) => {
+
+    const response =
+      await axios.post(
+
+        `${API}/forgot-password`,
+
+        userData
+
+      );
+
+    return response.data;
+  };
+
+// RESET PASSWORD
+export const resetPassword =
+  async (userData) => {
+
+    const response =
+      await axios.post(
+
+        `${API}/reset-password`,
+
+        userData
+
+      );
+
+    return response.data;
+  };
