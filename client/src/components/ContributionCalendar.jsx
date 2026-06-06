@@ -75,7 +75,7 @@ function ContributionCalendar({ questions = [] }) {
 
   // Determine background color based on solve count
   const getColorClass = (count) => {
-    if (count === 0) return "bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700";
+    if (count === 0) return "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700";
     if (count === 1) return "bg-green-200 dark:bg-green-900/60 text-green-800 border border-green-300/30";
     if (count === 2) return "bg-green-400 dark:bg-green-700/80 text-white";
     if (count === 3) return "bg-green-600 dark:bg-green-500 text-white";
@@ -83,7 +83,7 @@ function ContributionCalendar({ questions = [] }) {
   };
 
   return (
-    <div className="bg-gray-200 dark:bg-gray-900 p-6 rounded-2xl border border-gray-300 dark:border-gray-800 shadow-md transition duration-300">
+    <div className="bg-white dark:bg-gray-950 p-6 rounded-2xl border border-gray-300 dark:border-gray-800 shadow-md transition duration-300">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-2">
         <div>
           <h2 className="text-xl font-bold text-black dark:text-white flex items-center gap-2">
@@ -97,7 +97,7 @@ function ContributionCalendar({ questions = [] }) {
         {/* Legend */}
         <div className="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400 select-none">
           <span>Less</span>
-          <div className="w-3 h-3 rounded-sm bg-gray-200 dark:bg-gray-800" />
+          <div className="w-3 h-3 rounded-sm bg-gray-100 dark:bg-gray-800" />
           <div className="w-3 h-3 rounded-sm bg-green-200 dark:bg-green-900/60" />
           <div className="w-3 h-3 rounded-sm bg-green-400 dark:bg-green-700/80" />
           <div className="w-3 h-3 rounded-sm bg-green-600 dark:bg-green-500" />
