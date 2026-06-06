@@ -199,6 +199,7 @@ const completeSignup = async (req, res) => {
         createdAt: user.createdAt,
         isVerified: user.isVerified,
         streak: user.streak,
+        longestStreak: user.longestStreak || 0,
         lastSolvedDate: user.lastSolvedDate,
       },
     });
@@ -327,6 +328,9 @@ const loginUser =
 
           streak:
             user.streak,
+
+          longestStreak:
+            user.longestStreak || 0,
 
           lastSolvedDate:
             user.lastSolvedDate,

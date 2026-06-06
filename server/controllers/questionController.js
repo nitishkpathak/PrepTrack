@@ -114,8 +114,10 @@ const updateQuestion = async (req, res) => {
       if (
         lastSolved !== today
       ) {
-
         user.streak += 1;
+        if (user.streak > (user.longestStreak || 0)) {
+          user.longestStreak = user.streak;
+        }
 
         user.lastSolvedDate =
           new Date();
@@ -218,6 +220,7 @@ const resetQuestions = async (req, res) => {
     const user = await User.findById(req.user._id);
     if (user) {
       user.streak = 0;
+      user.longestStreak = 0;
       user.lastSolvedDate = null;
       await user.save();
     }
@@ -233,6 +236,7 @@ const resetQuestions = async (req, res) => {
         profilePic: user.profilePic || "",
         createdAt: user.createdAt,
         streak: user.streak,
+        longestStreak: user.longestStreak,
         lastSolvedDate: user.lastSolvedDate,
       }
     });

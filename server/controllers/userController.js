@@ -60,6 +60,9 @@ const getProfile =
          streak: 
             user.streak,
             
+          longestStreak:
+            user.longestStreak || 0,
+
           lastSolvedDate: 
             user.lastSolvedDate,
 
@@ -174,6 +177,9 @@ const updateProfile =
         streak:
           user.streak,
 
+        longestStreak:
+          user.longestStreak || 0,
+
         lastSolvedDate:
           user.lastSolvedDate,
 
@@ -222,6 +228,7 @@ const updatePreferences = async (req, res) => {
         profilePic: user.profilePic || "",
         createdAt: user.createdAt,
         streak: user.streak,
+        longestStreak: user.longestStreak || 0,
         lastSolvedDate: user.lastSolvedDate,
         dailyGoal: user.dailyGoal,
         preferredPlatform: user.preferredPlatform,

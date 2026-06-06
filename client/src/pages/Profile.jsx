@@ -4,11 +4,13 @@ import toast from "react-hot-toast";
 
 import Sidebar from "../components/Sidebar";
 import { getProfile, updateProfile } from "../services/userService";
+import { getQuestions } from "../services/questionService";
 
 function Profile() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [solvedCount, setSolvedCount] = useState(0);
 
   const savedUserJson = localStorage.getItem("user");
   const initialUser = savedUserJson ? JSON.parse(savedUserJson) : {};
@@ -19,6 +21,8 @@ function Profile() {
     role: initialUser.role || "",
     bio: initialUser.bio || "",
     profilePic: initialUser.profilePic || "",
+    streak: initialUser.streak || 0,
+    longestStreak: initialUser.longestStreak || 0,
     joined: initialUser.createdAt
       ? new Date(initialUser.createdAt).toLocaleDateString()
       : "",
@@ -34,6 +38,8 @@ function Profile() {
           role: data.user.role || "",
           bio: data.user.bio || "",
           profilePic: data.user.profilePic || "",
+          streak: data.user.streak || 0,
+          longestStreak: data.user.longestStreak || 0,
           joined: data.user.createdAt
             ? new Date(data.user.createdAt).toLocaleDateString()
             : "",
@@ -47,8 +53,19 @@ function Profile() {
     }
   };
 
+  const fetchSolvedCount = async () => {
+    try {
+      const questionsData = await getQuestions();
+      const solved = questionsData.filter((q) => q.status === "Solved").length;
+      setSolvedCount(solved);
+    } catch (error) {
+      console.error("Failed to fetch questions solved count:", error);
+    }
+  };
+
   useEffect(() => {
     fetchProfile();
+    fetchSolvedCount();
   }, []);
 
   const handleChange = (e) => {
@@ -243,6 +260,22 @@ function Profile() {
                 <Briefcase size={16} />
                 {profile.role || "DSA Enthusiast"}
               </p>
+
+              {/* Stats Bar */}
+              <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto mb-8 bg-gray-100 dark:bg-gray-950 p-5 rounded-2xl border border-gray-300 dark:border-gray-800/80 shadow-inner">
+                <div className="text-center">
+                  <span className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Solved</span>
+                  <span className="block text-2xl md:text-3xl font-extrabold text-green-600 dark:text-green-500 mt-1">{solvedCount}</span>
+                </div>
+                <div className="text-center border-x border-gray-300 dark:border-gray-800">
+                  <span className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Current Streak</span>
+                  <span className="block text-2xl md:text-3xl font-extrabold text-orange-500 mt-1">🔥 {profile.streak}</span>
+                </div>
+                <div className="text-center">
+                  <span className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Longest Streak</span>
+                  <span className="block text-2xl md:text-3xl font-extrabold text-yellow-550 dark:text-yellow-500 mt-1">🏆 {profile.longestStreak}</span>
+                </div>
+              </div>
 
               <div className="max-w-2xl mx-auto space-y-4 text-left text-sm text-gray-700 dark:text-gray-300 border-t border-b border-gray-300 dark:border-gray-800 py-6 my-6">
                 <div className="flex items-center gap-3">

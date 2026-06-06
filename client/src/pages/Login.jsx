@@ -81,6 +81,9 @@ function Login() {
       streak: 
        data.user.streak,
 
+      longestStreak:
+       data.user.longestStreak || 0,
+
       lastSolvedDate: 
         data.user.lastSolvedDate,
 
