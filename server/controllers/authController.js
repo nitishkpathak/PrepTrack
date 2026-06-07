@@ -476,6 +476,66 @@ const resetPassword = async (req, res) => {
 };
 
 // ============================
+// GOOGLE LOGIN (NEW)
+// ============================
+const googleLogin = async (req, res) => {
+  try {
+    const { email, name, profilePic } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create a new verified user via Google
+      user = await User.create({
+        email,
+        name: name || email.split("@")[0],
+        profilePic: profilePic || "",
+        isVerified: true,
+      });
+    } else {
+      // If user exists, ensure they are verified
+      user.isVerified = true;
+      if (profilePic && !user.profilePic) {
+        user.profilePic = profilePic;
+      }
+      if (name && !user.name) {
+        user.name = name;
+      }
+      await user.save();
+    }
+
+    // Generate token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "30d",
+    });
+
+    res.status(200).json({
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        bio: user.bio,
+        profilePic: user.profilePic || "",
+        createdAt: user.createdAt,
+        isVerified: user.isVerified,
+        streak: user.streak,
+        longestStreak: user.longestStreak || 0,
+        lastSolvedDate: user.lastSolvedDate,
+      },
+    });
+  } catch (error) {
+    console.error("Google login failed:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// ============================
 // EXPORTS
 // ============================
 
@@ -486,4 +546,5 @@ module.exports = {
   completeSignup,
   forgotPassword,
   resetPassword,
+  googleLogin,
 };

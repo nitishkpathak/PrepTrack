@@ -98,3 +98,14 @@ export const resetPassword =
 
     return response.data;
   };
+
+// GOOGLE LOGIN
+export const googleLogin =
+  async (userData) => {
+    const response =
+      await axios.post(
+        `${API}/google-login`,
+        userData
+      );
+    return response.data;
+  };

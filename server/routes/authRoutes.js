@@ -11,6 +11,7 @@ const {
   completeSignup,
   forgotPassword,
   resetPassword,
+  googleLogin,
 } = require("../controllers/authController");
 
 // ============================
@@ -27,6 +28,11 @@ router.post("/complete-signup", completeSignup);
 // LOGIN
 // ============================
 router.post("/login", loginUser);
+
+// ============================
+// GOOGLE LOGIN
+// ============================
+router.post("/google-login", googleLogin);
 
 // ============================
 // VERIFY OTP
