@@ -640,88 +640,94 @@ const handleFavorite =
 
           {location.pathname ===
             "/dashboard" && ( 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          <div className="space-y-8">
             
-            {/* Left Column: FilterBar, QuestionForm, QuestionList */}
-            <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
-              <FilterBar
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-                difficultyFilter={difficultyFilter}
-                setDifficultyFilter={setDifficultyFilter}
-                statusFilter={statusFilter}
-                setStatusFilter={setStatusFilter}
-              />
-
-              <div>
-                <button
-                  aria-label="Toggle Favorites Filter"
-                  onClick={() =>
-                    setFavoriteFilter(
-                      !favoriteFilter
-                    )
-                  }
-                  className={`
-                    px-4
-                    py-2
-                    rounded-lg
-                    cursor-pointer
-                    transition-all
-                    text-sm
-                    font-semibold
-                    ${
-                      favoriteFilter
-                        ? "bg-yellow-500 text-black"
-                        : "bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-black dark:text-white"
-                    }
-                  `}
-                >
-                  {
-                    favoriteFilter
-                      ? "⭐ Showing Favorites"
-                      : "☆ Show Favorites"
-                  }
-                </button>
-              </div>
-
-              {/* Add Question */}
-              {searchTerm === "" && (
-                <QuestionForm
-                  editId={editId}
-                  formData={formData}
-                  setFormData={setFormData}
-                  addMode={addMode}
-                  setAddMode={setAddMode}
-                  linkInput={linkInput}
-                  setLinkInput={setLinkInput}
-                  scraping={scraping}
-                  loading={loading}
-                  handleParseLink={handleParseLink}
-                  handleChange={handleChange}
-                  handleSubmit={handleSubmit}
-                />
-              )}
-
-              {/* Questions */}
-              <QuestionList
-                fetching={fetching}
-                filteredQuestions={filteredQuestions}
-                expandedQuestion={expandedQuestion}
-                setExpandedQuestion={setExpandedQuestion}
-                handleStatusChange={handleStatusChange}
-                handleFavorite={handleFavorite}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-              />
+            {/* Full Width Contribution Calendar */}
+            <div className="w-full">
+              <ContributionCalendar questions={questions} />
             </div>
 
-            {/* Right Column: StatsCards, FocusTimer, ContributionCalendar */}
-            <div className="lg:col-span-1 space-y-8 order-1 lg:order-2">
-              <StatsCards questions={questions} gridColsClass="grid-cols-1 sm:grid-cols-2 lg:grid-cols-1" />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
               
-              <FocusTimer />
-              
-              <ContributionCalendar questions={questions} />
+              {/* Left Column: FilterBar, QuestionForm, QuestionList */}
+              <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
+                <FilterBar
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  difficultyFilter={difficultyFilter}
+                  setDifficultyFilter={setDifficultyFilter}
+                  statusFilter={statusFilter}
+                  setStatusFilter={setStatusFilter}
+                />
+
+                <div>
+                  <button
+                    aria-label="Toggle Favorites Filter"
+                    onClick={() =>
+                      setFavoriteFilter(
+                        !favoriteFilter
+                      )
+                    }
+                    className={`
+                      px-4
+                      py-2
+                      rounded-lg
+                      cursor-pointer
+                      transition-all
+                      text-sm
+                      font-semibold
+                      ${
+                        favoriteFilter
+                          ? "bg-yellow-500 text-black"
+                          : "bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-black dark:text-white"
+                      }
+                    `}
+                  >
+                    {
+                      favoriteFilter
+                        ? "⭐ Showing Favorites"
+                        : "☆ Show Favorites"
+                    }
+                  </button>
+                </div>
+
+                {/* Add Question */}
+                {searchTerm === "" && (
+                  <QuestionForm
+                    editId={editId}
+                    formData={formData}
+                    setFormData={setFormData}
+                    addMode={addMode}
+                    setAddMode={setAddMode}
+                    linkInput={linkInput}
+                    setLinkInput={setLinkInput}
+                    scraping={scraping}
+                    loading={loading}
+                    handleParseLink={handleParseLink}
+                    handleChange={handleChange}
+                    handleSubmit={handleSubmit}
+                  />
+                )}
+
+                {/* Questions */}
+                <QuestionList
+                  fetching={fetching}
+                  filteredQuestions={filteredQuestions}
+                  expandedQuestion={expandedQuestion}
+                  setExpandedQuestion={setExpandedQuestion}
+                  handleStatusChange={handleStatusChange}
+                  handleFavorite={handleFavorite}
+                  handleEdit={handleEdit}
+                  handleDelete={handleDelete}
+                />
+              </div>
+
+              {/* Right Column: StatsCards, FocusTimer */}
+              <div className="lg:col-span-1 space-y-8 order-1 lg:order-2">
+                <StatsCards questions={questions} gridColsClass="grid-cols-1 sm:grid-cols-2 lg:grid-cols-1" />
+                
+                <FocusTimer />
+              </div>
             </div>
           </div>
           )}
