@@ -1,6 +1,17 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 
 function ContributionCalendar({ questions = [] }) {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const scrollContainerRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const { weeks, monthLabels, solveMap, totalSolvedLastYear } = useMemo(() => {
     // 1. Gather all solves and map to local YYYY-MM-DD
     const map = {};
@@ -130,6 +141,26 @@ function ContributionCalendar({ questions = [] }) {
     };
   }, [questions]);
 
+  // Slicing parameters for mobile responsive view (show last 16 weeks ~ 4 months)
+  const startIndex = isMobile ? Math.max(0, weeks.length - 16) : 0;
+  const displayedWeeks = useMemo(() => weeks.slice(startIndex), [weeks, startIndex]);
+
+  const displayedLabels = useMemo(() => {
+    return monthLabels
+      .map((ml) => ({
+        ...ml,
+        adjustedIndex: ml.weekIndex - startIndex,
+      }))
+      .filter((ml) => ml.adjustedIndex >= 0);
+  }, [monthLabels, startIndex]);
+
+  // Auto-scroll to the rightmost side (current day/month) on mount or layout change
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft = scrollContainerRef.current.scrollWidth;
+    }
+  }, [displayedWeeks]);
+
   // Determine background color based on solve count
   const getColorClass = (count) => {
     if (count === 0) return "bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700";
@@ -164,7 +195,7 @@ function ContributionCalendar({ questions = [] }) {
         </div>
       </div>
 
-      <div className="overflow-x-auto pb-2 custom-scrollbar">
+      <div ref={scrollContainerRef} className="overflow-x-auto pb-2 custom-scrollbar">
         <div className="w-max mx-auto flex items-start">
           {/* Days labels */}
           <div className="flex flex-col gap-[4px] text-[9px] font-bold text-gray-500 dark:text-gray-500 pr-2 select-none w-8 pt-[22px]">
@@ -181,10 +212,10 @@ function ContributionCalendar({ questions = [] }) {
           <div className="flex flex-col flex-1">
             {/* Month Labels Row */}
             <div className="relative h-4 mb-1.5 select-none w-full">
-              {monthLabels.map((ml, idx) => (
+              {displayedLabels.map((ml, idx) => (
                 <div
                   key={idx}
-                  style={{ left: `${ml.weekIndex * 16}px` }}
+                  style={{ left: `${ml.adjustedIndex * 16}px` }}
                   className="absolute text-[10px] font-bold text-gray-500 dark:text-gray-400 text-left pl-[2px] whitespace-nowrap overflow-visible"
                 >
                   {ml.name}
@@ -194,7 +225,7 @@ function ContributionCalendar({ questions = [] }) {
 
             {/* Weeks Grid */}
             <div className="flex gap-[4px]">
-              {weeks.map((week, wIdx) => (
+              {displayedWeeks.map((week, wIdx) => (
                 <div key={wIdx} className="flex flex-col gap-[4px]">
                   {week.map((day, dIdx) => {
                     if (!day) {
