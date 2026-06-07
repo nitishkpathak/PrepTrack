@@ -141,25 +141,15 @@ function ContributionCalendar({ questions = [] }) {
     };
   }, [questions]);
 
-  // Slicing parameters for mobile responsive view (show last 16 weeks ~ 4 months)
-  const startIndex = isMobile ? Math.max(0, weeks.length - 16) : 0;
-  const displayedWeeks = useMemo(() => weeks.slice(startIndex), [weeks, startIndex]);
-
-  const displayedLabels = useMemo(() => {
-    return monthLabels
-      .map((ml) => ({
-        ...ml,
-        adjustedIndex: ml.weekIndex - startIndex,
-      }))
-      .filter((ml) => ml.adjustedIndex >= 0);
-  }, [monthLabels, startIndex]);
-
   // Auto-scroll to the rightmost side (current day/month) on mount or layout change
   useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollLeft = scrollContainerRef.current.scrollWidth;
-    }
-  }, [displayedWeeks]);
+    const timer = setTimeout(() => {
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollLeft = scrollContainerRef.current.scrollWidth;
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [weeks]);
 
   // Determine background color based on solve count
   const getColorClass = (count) => {
@@ -212,10 +202,10 @@ function ContributionCalendar({ questions = [] }) {
           <div className="flex flex-col flex-1">
             {/* Month Labels Row */}
             <div className="relative h-4 mb-1.5 select-none w-full">
-              {displayedLabels.map((ml, idx) => (
+              {monthLabels.map((ml, idx) => (
                 <div
                   key={idx}
-                  style={{ left: `${ml.adjustedIndex * 16}px` }}
+                  style={{ left: `${ml.weekIndex * 16}px` }}
                   className="absolute text-[10px] font-bold text-gray-500 dark:text-gray-400 text-left pl-[2px] whitespace-nowrap overflow-visible"
                 >
                   {ml.name}
@@ -225,7 +215,7 @@ function ContributionCalendar({ questions = [] }) {
 
             {/* Weeks Grid */}
             <div className="flex gap-[4px]">
-              {displayedWeeks.map((week, wIdx) => (
+              {weeks.map((week, wIdx) => (
                 <div key={wIdx} className="flex flex-col gap-[4px]">
                   {week.map((day, dIdx) => {
                     if (!day) {
