@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ExternalLink, Trash2, Plus, Loader2, Check, Star, CheckCircle, BookOpen, Award, TrendingUp, Users } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import ThemeToggle from "../components/ThemeToggle";
 
@@ -17,6 +17,91 @@ function Home() {
     });
 
   const [openFaq, setOpenFaq] = useState(null);
+
+  // Custom Alert state
+  const [alertMessage, setAlertMessage] = useState(null);
+  const showAlert = (text, type = "error", onClose = null) => {
+    setAlertMessage({ text, type, onClose });
+  };
+
+  // Playground state
+  const [playgroundLink, setPlaygroundLink] = useState("");
+  const [playgroundTitle, setPlaygroundTitle] = useState("");
+  const [playgroundPlatform, setPlaygroundPlatform] = useState("LeetCode");
+  const [playgroundDifficulty, setPlaygroundDifficulty] = useState("Medium");
+  const [playgroundScraping, setPlaygroundScraping] = useState(false);
+  const [playgroundList, setPlaygroundList] = useState([
+    {
+      id: 1,
+      title: "Two Sum",
+      platform: "LeetCode",
+      difficulty: "Easy",
+      link: "https://leetcode.com/problems/two-sum/",
+      solved: true,
+    },
+    {
+      id: 2,
+      title: "Reverse a Linked List",
+      platform: "GeeksforGeeks",
+      difficulty: "Medium",
+      link: "https://practice.geeksforgeeks.org/problems/reverse-a-linked-list/1",
+      solved: false,
+    },
+    {
+      id: 3,
+      title: "Watermelon",
+      platform: "Codeforces",
+      difficulty: "Easy",
+      link: "https://codeforces.com/problemset/problem/4/A",
+      solved: false,
+    }
+  ]);
+
+  // Selected Sheet state for modal
+  const [selectedSheet, setSelectedSheet] = useState(null);
+
+  const sheets = [
+    {
+      id: "striver",
+      name: "Striver's SDE Sheet",
+      curator: "Raj Vikramaditya (Striver)",
+      questionsCount: 180,
+      solvedCount: 65,
+      description: "Carefully curated list of most frequently asked coding interview questions. Highly recommended for top tier companies.",
+      difficulty: { easy: 45, medium: 95, hard: 40 },
+      topics: ["Arrays", "Linked List", "Greedy", "Recursion", "Binary Trees", "Dynamic Programming", "Graphs"]
+    },
+    {
+      id: "neetcode",
+      name: "NeetCode 150",
+      curator: "Navdeep Sandhu (NeetCode)",
+      questionsCount: 150,
+      solvedCount: 110,
+      description: "A comprehensive roadmap to master data structures and algorithms, organized by difficulty and topics.",
+      difficulty: { easy: 30, medium: 85, hard: 35 },
+      topics: ["Arrays & Hashing", "Two Pointers", "Sliding Window", "Trees", "Binary Search", "Graphs", "DP"]
+    },
+    {
+      id: "love-babbar",
+      name: "Love Babbar 450",
+      curator: "Love Babbar",
+      questionsCount: 450,
+      solvedCount: 220,
+      description: "A complete preparation guide containing 450 questions covering every DSA pattern from basics to advanced.",
+      difficulty: { easy: 120, medium: 250, hard: 80 },
+      topics: ["Arrays", "Matrix", "Strings", "Searching & Sorting", "Binary Trees", "Heaps", "DP", "Trie"]
+    },
+    {
+      id: "blind-75",
+      name: "Blind 75",
+      curator: "Yangshun Tay (Meta)",
+      questionsCount: 75,
+      solvedCount: 55,
+      description: "The classic collection of 75 essential LeetCode questions for coding interview preparation.",
+      difficulty: { easy: 20, medium: 45, hard: 10 },
+      topics: ["Array", "Binary", "DP", "Graph", "Interval", "Linked List", "Matrix", "String", "Tree"]
+    }
+  ];
 
   const faqs = [
     {
@@ -64,7 +149,7 @@ function Home() {
         "t0hko6qmXDfjVglF2"
         );
 
-        alert("Message sent successfully 🚀");
+        showAlert("Message sent successfully 🚀", "success");
 
         setFormData({
         name: "",
@@ -75,8 +160,131 @@ function Home() {
 
     } catch (error) {
         console.error(error);
-        alert("Failed to send message");
+        showAlert("Failed to send message", "error");
     }
+    };
+
+    // Auto-detect coding platform from entered link
+    useEffect(() => {
+      if (!playgroundLink) return;
+      const lower = playgroundLink.toLowerCase();
+      if (lower.includes("leetcode")) {
+        setPlaygroundPlatform("LeetCode");
+      } else if (lower.includes("geeksforgeeks")) {
+        setPlaygroundPlatform("GeeksforGeeks");
+      } else if (lower.includes("codeforces")) {
+        setPlaygroundPlatform("Codeforces");
+      } else if (lower.includes("codechef")) {
+        setPlaygroundPlatform("CodeChef");
+      }
+    }, [playgroundLink]);
+
+    // Mock platform scraper simulation
+    const handleScrape = () => {
+      if (!playgroundLink) {
+        showAlert("Please enter a link to scrape! 🔗", "error");
+        return;
+      }
+      setPlaygroundScraping(true);
+      setTimeout(() => {
+        setPlaygroundScraping(false);
+        const lower = playgroundLink.toLowerCase();
+        let detectedTitle = "Binary Tree Maximum Path Sum";
+        let detectedDifficulty = "Hard";
+        let detectedPlatform = "LeetCode";
+
+        if (lower.includes("leetcode")) {
+          detectedPlatform = "LeetCode";
+          if (lower.includes("two-sum")) {
+            detectedTitle = "Two Sum";
+            detectedDifficulty = "Easy";
+          } else if (lower.includes("reverse-linked-list")) {
+            detectedTitle = "Reverse Linked List";
+            detectedDifficulty = "Easy";
+          } else if (lower.includes("longest-substring")) {
+            detectedTitle = "Longest Substring Without Repeating Characters";
+            detectedDifficulty = "Medium";
+          } else if (lower.includes("median-of-two")) {
+            detectedTitle = "Median of Two Sorted Arrays";
+            detectedDifficulty = "Hard";
+          } else {
+            detectedTitle = "Product of Array Except Self";
+            detectedDifficulty = "Medium";
+          }
+        } else if (lower.includes("geeksforgeeks")) {
+          detectedPlatform = "GeeksforGeeks";
+          if (lower.includes("subarray-with-given-sum")) {
+            detectedTitle = "Subarray with given sum";
+            detectedDifficulty = "Medium";
+          } else if (lower.includes("kadane")) {
+            detectedTitle = "Kadane's Algorithm";
+            detectedDifficulty = "Medium";
+          } else {
+            detectedTitle = "Missing number in array";
+            detectedDifficulty = "Easy";
+          }
+        } else if (lower.includes("codeforces")) {
+          detectedPlatform = "Codeforces";
+          if (lower.includes("watermelon") || lower.includes("4/a")) {
+            detectedTitle = "Watermelon";
+            detectedDifficulty = "Easy";
+          } else {
+            detectedTitle = "Way Too Long Words";
+            detectedDifficulty = "Easy";
+          }
+        } else if (lower.includes("codechef")) {
+          detectedPlatform = "CodeChef";
+          detectedTitle = "ATM Machine";
+          detectedDifficulty = "Easy";
+        } else {
+          detectedPlatform = "Other";
+          detectedTitle = "Custom DSA Problem";
+          detectedDifficulty = "Medium";
+        }
+
+        setPlaygroundTitle(detectedTitle);
+        setPlaygroundPlatform(detectedPlatform);
+        setPlaygroundDifficulty(detectedDifficulty);
+        showAlert("Mock scraper extracted details successfully! ⚡ Details populated below.", "success");
+      }, 1200);
+    };
+
+    // Add problem to playground local list
+    const handleAddToPlayground = (e) => {
+      e.preventDefault();
+      if (!playgroundTitle) {
+        showAlert("Please enter or scrape a question title!", "error");
+        return;
+      }
+      const newQuestion = {
+        id: Date.now(),
+        title: playgroundTitle,
+        platform: playgroundPlatform,
+        difficulty: playgroundDifficulty,
+        link: playgroundLink || "#",
+        solved: false,
+      };
+      setPlaygroundList([newQuestion, ...playgroundList]);
+      setPlaygroundLink("");
+      setPlaygroundTitle("");
+      setPlaygroundPlatform("LeetCode");
+      setPlaygroundDifficulty("Medium");
+      showAlert("Question added to your live demo list! 🚀", "success");
+    };
+
+    // Toggle problem solved status in playground
+    const toggleSolvedPlayground = (id) => {
+      setPlaygroundList(
+        playgroundList.map((item) =>
+          item.id === id ? { ...item, solved: !item.solved } : item
+        )
+      );
+    };
+
+    // Delete problem from playground
+    const handleDeletePlayground = (id) => {
+      setPlaygroundList(playgroundList.filter((item) => item.id !== id));
+      showAlert("Question removed from playground.", "success");
     };
 
     useEffect(() => {
@@ -185,33 +393,44 @@ function Home() {
             <div
             className="
                 hidden
-                md:flex
+                lg:flex
 
                 items-center
 
-                gap-8
+                gap-6
             "
             >
-            <a href="#home">
+            <a href="#home" className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium text-sm">
                 Home
             </a>
             
-            <a href="#about">
+            <a href="#about" className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium text-sm">
                 About
             </a>            
 
-            <a href="#features">
+            <a href="#playground" className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium text-sm">
+                Playground
+            </a>
+
+            <a href="#features" className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium text-sm">
                 Features
             </a>
 
-            <a href="#how">
+            <a href="#sheets" className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium text-sm">
+                Cheat Sheets
+            </a>
+
+            <a href="#how" className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium text-sm">
                 How It Works
             </a>
 
-            <a href="#contact">
-                Contact
+            <a href="#testimonials" className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium text-sm">
+                Testimonials
             </a>
 
+            <a href="#contact" className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium text-sm">
+                Contact
+            </a>
 
             </div>
 
@@ -336,23 +555,35 @@ function Home() {
                 "
                 >
 
-                <a href="#home" onClick={() => setMenuOpen(false)}>
+                <a href="#home" onClick={() => setMenuOpen(false)} className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
                     Home
                 </a>
 
-                <a href="#about" onClick={() => setMenuOpen(false)}>
+                <a href="#about" onClick={() => setMenuOpen(false)} className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
                     About
                 </a>
 
-                <a href="#features" onClick={() => setMenuOpen(false)}>
+                <a href="#playground" onClick={() => setMenuOpen(false)} className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
+                    Playground
+                </a>
+
+                <a href="#features" onClick={() => setMenuOpen(false)} className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
                     Features
                 </a>
 
-                <a href="#how" onClick={() => setMenuOpen(false)}>
+                <a href="#sheets" onClick={() => setMenuOpen(false)} className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
+                    Cheat Sheets
+                </a>
+
+                <a href="#how" onClick={() => setMenuOpen(false)} className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
                     How It Works
                 </a>
 
-                <a href="#contact" onClick={() => setMenuOpen(false)}>
+                <a href="#testimonials" onClick={() => setMenuOpen(false)} className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
+                    Testimonials
+                </a>
+
+                <a href="#contact" onClick={() => setMenuOpen(false)} className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
                     Contact
                 </a>
 
@@ -919,6 +1150,267 @@ function Home() {
 
         </section>
 
+{/* Interactive Playground Section */}
+        <section
+        id="playground"
+        className="
+            py-24
+            px-6
+            bg-gray-55
+            dark:bg-gray-900/60
+            border-t
+            border-b
+            border-gray-200
+            dark:border-gray-800
+        "
+        >
+          <div className="max-w-7xl mx-auto">
+            
+            <div className="text-center mb-16">
+              <div className="inline-block px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-xs font-semibold text-blue-600 dark:text-blue-400 mb-4 select-none">
+                🎮 Try It Live
+              </div>
+              <h2 className="text-4xl md:text-5xl font-extrabold text-black dark:text-white tracking-tight font-sans">
+                Interactive Playground Demo
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400 mt-4 max-w-2xl mx-auto text-base">
+                No account required! Test our automatic coding platform link scraper and track mock DSA questions in local memory.
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-12 gap-8 items-start">
+              
+              {/* Form Block */}
+              <div className="lg:col-span-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-800 rounded-3xl p-8 shadow-xl">
+                <h3 className="text-xl font-bold text-black dark:text-white mb-6 flex items-center gap-2">
+                  <span>⚡</span> Scraper & Quick Add
+                </h3>
+                
+                <form onSubmit={handleAddToPlayground} className="space-y-5">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-750 dark:text-gray-300 mb-2">
+                      Question Link 🔗
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        value={playgroundLink}
+                        onChange={(e) => setPlaygroundLink(e.target.value)}
+                        placeholder="e.g. https://leetcode.com/problems/two-sum/"
+                        className="flex-1 p-3.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition duration-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleScrape}
+                        disabled={playgroundScraping}
+                        className="px-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 transition disabled:opacity-50 cursor-pointer shadow-md"
+                      >
+                        {playgroundScraping ? (
+                          <Loader2 size={16} className="animate-spin" />
+                        ) : (
+                          "Scrape"
+                        )}
+                      </button>
+                    </div>
+                    <span className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 block">
+                      Supports auto-detection for LeetCode, GFG, and Codeforces.
+                    </span>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-750 dark:text-gray-300 mb-2">
+                      Question Title 📝
+                    </label>
+                    <input
+                      type="text"
+                      value={playgroundTitle}
+                      onChange={(e) => setPlaygroundTitle(e.target.value)}
+                      placeholder="e.g. Two Sum"
+                      required
+                      className="w-full p-3.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition duration-200"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-750 dark:text-gray-300 mb-2">
+                        Platform 🎯
+                      </label>
+                      <select
+                        value={playgroundPlatform}
+                        onChange={(e) => setPlaygroundPlatform(e.target.value)}
+                        className="w-full p-3.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition duration-200"
+                      >
+                        <option value="LeetCode">LeetCode</option>
+                        <option value="GeeksforGeeks">GeeksforGeeks</option>
+                        <option value="Codeforces">Codeforces</option>
+                        <option value="CodeChef">CodeChef</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-750 dark:text-gray-300 mb-2">
+                        Difficulty 🔥
+                      </label>
+                      <select
+                        value={playgroundDifficulty}
+                        onChange={(e) => setPlaygroundDifficulty(e.target.value)}
+                        className="w-full p-3.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition duration-200"
+                      >
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition duration-300 hover:scale-[1.01] cursor-pointer shadow-lg mt-6"
+                  >
+                    <Plus size={20} />
+                    Add Question to Demo List
+                  </button>
+                </form>
+              </div>
+
+              {/* List Block */}
+              <div className="lg:col-span-7 bg-white dark:bg-gray-805 border border-gray-200 dark:border-gray-800 rounded-3xl p-8 shadow-xl">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
+                  <div>
+                    <h3 className="text-xl font-bold text-black dark:text-white flex items-center gap-2">
+                      <span>📋</span> Live Demo List
+                    </h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-405 mt-1">
+                      Toggle checkboxes or click problem names to open links.
+                    </p>
+                  </div>
+                  
+                  {/* Progress Stats */}
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-semibold text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-900 px-3 py-1.5 rounded-full select-none">
+                      🎯 {playgroundList.filter(q => q.solved).length} / {playgroundList.length} Solved
+                    </span>
+                    <div className="w-24 bg-gray-100 dark:bg-gray-900 h-2.5 rounded-full overflow-hidden hidden sm:block">
+                      <div
+                        className="bg-green-500 h-2.5 rounded-full transition-all duration-300"
+                        style={{
+                          width: `${playgroundList.length ? (playgroundList.filter(q => q.solved).length / playgroundList.length) * 100 : 0}%`
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+                  {playgroundList.length === 0 ? (
+                    <div className="text-center py-16 text-gray-500 dark:text-gray-400">
+                      <p className="text-lg">No questions in your demo list. 🍃</p>
+                      <p className="text-xs mt-1 text-gray-405 dark:text-gray-500">
+                        Add one using the form on the left!
+                      </p>
+                    </div>
+                  ) : (
+                    playgroundList.map((item) => {
+                      // Platform Badge Color
+                      let platformBadge = "bg-gray-100 text-gray-750 dark:bg-gray-900 dark:text-gray-305";
+                      if (item.platform === "LeetCode") platformBadge = "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-900/40";
+                      else if (item.platform === "GeeksforGeeks") platformBadge = "bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 border border-green-200 dark:border-green-900/40";
+                      else if (item.platform === "Codeforces") platformBadge = "bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-305 border border-blue-200 dark:border-blue-900/40";
+                      else if (item.platform === "CodeChef") platformBadge = "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300 border border-red-200 dark:border-red-900/40";
+
+                      // Difficulty Badge Color
+                      let diffBadge = "bg-gray-100 text-gray-750 dark:bg-gray-900 dark:text-gray-305";
+                      if (item.difficulty === "Easy") diffBadge = "bg-emerald-100 text-emerald-850 dark:bg-emerald-950/40 dark:text-emerald-450 border border-emerald-200 dark:border-emerald-900/20";
+                      else if (item.difficulty === "Medium") diffBadge = "bg-yellow-100 text-yellow-850 dark:bg-yellow-950/40 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-900/20";
+                      else if (item.difficulty === "Hard") diffBadge = "bg-rose-100 text-rose-850 dark:bg-rose-950/40 dark:text-rose-455 border border-rose-200 dark:border-rose-900/20";
+
+                      return (
+                        <div
+                          key={item.id}
+                          className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/30 border border-gray-150 dark:border-gray-800 rounded-2xl hover:bg-gray-100/50 dark:hover:bg-gray-850/30 transition duration-200"
+                        >
+                          <div className="flex items-center gap-3.5 min-w-0">
+                            {/* Checkbox */}
+                            <label className="relative flex items-center cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={item.solved}
+                                onChange={() => toggleSolvedPlayground(item.id)}
+                                className="sr-only peer"
+                              />
+                              <div className="w-6 h-6 border-2 border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center transition-all peer-checked:bg-green-500 peer-checked:border-green-500">
+                                {item.solved && <Check size={14} className="text-white font-bold" />}
+                              </div>
+                            </label>
+
+                            {/* Title & Badges */}
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <a
+                                  href={item.link}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className={`text-sm sm:text-base font-bold truncate hover:underline hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1.5 text-black dark:text-white ${
+                                    item.solved ? "line-through opacity-55 text-gray-505 dark:text-gray-400" : ""
+                                  }`}
+                                >
+                                  {item.title}
+                                  <ExternalLink size={12} className="opacity-50 shrink-0" />
+                                </a>
+                              </div>
+                              <div className="flex gap-2 mt-1.5 flex-wrap">
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full select-none ${platformBadge}`}>
+                                  {item.platform}
+                                </span>
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full select-none ${diffBadge}`}>
+                                  {item.difficulty}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Delete Action */}
+                          <button
+                            onClick={() => handleDeletePlayground(item.id)}
+                            className="p-2 text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 transition cursor-pointer shrink-0"
+                            title="Remove problem"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+
+                {/* Playground Save CTA */}
+                <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 text-center">
+                  <p className="text-sm text-gray-550 dark:text-gray-400 mb-4">
+                    Ready to track your coding goals permanently and unlock features like streaks & graphs? 📈
+                  </p>
+                  <div className="flex justify-center gap-3">
+                    <Link to="/register">
+                      <button className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition hover:scale-105 cursor-pointer">
+                        Sign Up Now 🚀
+                      </button>
+                    </Link>
+                    <Link to="/login">
+                      <button className="px-5 py-2.5 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-black dark:text-white font-semibold rounded-xl text-xs sm:text-sm transition hover:scale-105 cursor-pointer">
+                        Login
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
 {/* Features */}
         <section
         id="features"
@@ -1250,6 +1742,95 @@ function Home() {
 
         </div>
 
+        </section>
+
+{/* DSA Cheat Sheets Section */}
+        <section
+        id="sheets"
+        className="
+            py-24
+            px-6
+            bg-white
+            dark:bg-gray-950
+            border-b
+            border-gray-200
+            dark:border-gray-800
+        "
+        >
+          <div className="max-w-7xl mx-auto">
+            
+            <div className="text-center mb-16">
+              <div className="inline-block px-4 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 text-xs font-semibold text-purple-600 dark:text-purple-400 mb-4 select-none">
+                🏆 Study Roadmaps
+              </div>
+              <h2 className="text-4xl md:text-5xl font-extrabold text-black dark:text-white tracking-tight font-sans">
+                DSA Cheat Sheets
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400 mt-4 max-w-2xl mx-auto text-base">
+                Track industry-standard placement sheets curated by top educators and engineers. Check off items as you go!
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {sheets.map((sheet) => {
+                const percentage = Math.round((sheet.solvedCount / sheet.questionsCount) * 100);
+                return (
+                  <div
+                    key={sheet.id}
+                    className="flex flex-col bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-md hover:-translate-y-2 hover:shadow-xl hover:border-purple-500/30 transition-all duration-300"
+                  >
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 rounded-2xl flex items-center justify-center text-2xl font-bold">
+                        {sheet.id === "striver" ? "🚀" : sheet.id === "neetcode" ? "⚡" : sheet.id === "love-babbar" ? "🔥" : "🎯"}
+                      </div>
+                      <span className="text-xs font-bold px-2.5 py-1 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-full border border-gray-150 dark:border-gray-700">
+                        {sheet.questionsCount} Qs
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl font-bold text-black dark:text-white mb-1">
+                      {sheet.name}
+                    </h3>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 mb-3 block font-semibold">
+                      Curated by {sheet.curator}
+                    </span>
+
+                    <p className="text-sm text-gray-550 dark:text-gray-400 leading-relaxed mb-6 flex-1">
+                      {sheet.description}
+                    </p>
+
+                    {/* Progress */}
+                    <div className="space-y-2 mb-6">
+                      <div className="flex justify-between text-xs font-bold text-gray-600 dark:text-gray-400">
+                        <span>Interactive Demo Progress</span>
+                        <span>{percentage}%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-850 h-2.5 rounded-full overflow-hidden">
+                        <div
+                          className="bg-purple-650 h-2.5 rounded-full transition-all duration-500"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-[10px] text-gray-400 dark:text-gray-500 pt-1 font-semibold">
+                        <span>Solved: {sheet.solvedCount}</span>
+                        <span>Total: {sheet.questionsCount}</span>
+                      </div>
+                    </div>
+
+                    {/* Button */}
+                    <button
+                      onClick={() => setSelectedSheet(sheet)}
+                      className="w-full py-3 bg-white dark:bg-gray-850 hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white border border-gray-200 dark:border-gray-700 font-bold rounded-xl text-sm transition duration-205 hover:scale-[1.01] cursor-pointer shadow-sm"
+                    >
+                      Track Sheet Details →
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+          </div>
         </section>
 
 {/* About */}
@@ -1769,6 +2350,121 @@ function Home() {
         </div>
         </section>
 
+{/* Testimonials/Success Stories Section */}
+        <section
+        id="testimonials"
+        className="
+            py-24
+            px-6
+            bg-gray-50
+            dark:bg-gray-900/60
+            border-b
+            border-gray-200
+            dark:border-gray-800
+        "
+        >
+          <div className="max-w-7xl mx-auto">
+            
+            <div className="text-center mb-16">
+              <div className="inline-block px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-4 select-none">
+                💬 Community Reviews
+              </div>
+              <h2 className="text-4xl md:text-5xl font-extrabold text-black dark:text-white tracking-tight font-sans">
+                Cracking Interviews with PrepTrack
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400 mt-4 max-w-2xl mx-auto text-base">
+                Read how students improved their coding consistency, organised questions, and cracked engineering roles.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              
+              {/* Testimonial 1 */}
+              <div className="flex flex-col bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-800 p-8 rounded-3xl shadow-lg hover:-translate-y-2 hover:shadow-2xl hover:border-emerald-500/30 transition-all duration-300 relative group">
+                <div className="absolute top-6 right-8 text-5xl text-emerald-100 dark:text-emerald-950/40 select-none group-hover:scale-110 transition duration-300">
+                  “
+                </div>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-400 to-teal-500 flex items-center justify-center text-white font-extrabold text-lg shadow-md">
+                    AR
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-black dark:text-white">Anjali Roy</h4>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 font-semibold">SDE-1 @ Amazon</span>
+                  </div>
+                </div>
+                
+                {/* Stars */}
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed italic flex-1">
+                  "PrepTrack's daily contribution calendar completely transformed my routine! I went from practicing once a week to maintaining a 100-day coding streak. It made me accountable and ready to crack the interview rounds."
+                </p>
+              </div>
+
+              {/* Testimonial 2 */}
+              <div className="flex flex-col bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-800 p-8 rounded-3xl shadow-lg hover:-translate-y-2 hover:shadow-2xl hover:border-emerald-500/30 transition-all duration-300 relative group">
+                <div className="absolute top-6 right-8 text-5xl text-emerald-100 dark:text-emerald-950/40 select-none group-hover:scale-110 transition duration-300">
+                  “
+                </div>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-400 to-indigo-500 flex items-center justify-center text-white font-extrabold text-lg shadow-md">
+                    PS
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-black dark:text-white">Pratham Sharma</h4>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 font-semibold">Software Engineer @ Microsoft</span>
+                  </div>
+                </div>
+                
+                {/* Stars */}
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed italic flex-1">
+                  "The automatic link scraper is an absolute lifesaver. Being able to paste a LeetCode link and instantly have the title and difficulty populate saved me hours. The search and filter options are also incredibly clean."
+                </p>
+              </div>
+
+              {/* Testimonial 3 */}
+              <div className="flex flex-col bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-800 p-8 rounded-3xl shadow-lg hover:-translate-y-2 hover:shadow-2xl hover:border-emerald-500/30 transition-all duration-300 relative group">
+                <div className="absolute top-6 right-8 text-5xl text-emerald-100 dark:text-emerald-950/40 select-none group-hover:scale-110 transition duration-300">
+                  “
+                </div>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-400 to-pink-500 flex items-center justify-center text-white font-extrabold text-lg shadow-md">
+                    SP
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-black dark:text-white">Sneha Patel</h4>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 font-semibold">Analyst @ Goldman Sachs</span>
+                  </div>
+                </div>
+                
+                {/* Stars */}
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed italic flex-1">
+                  "Having visual sheets like NeetCode 150 and Striver SDE sheet combined with custom notes was incredibly helpful. I always knew exactly what was pending. I recommend PrepTrack to everyone prepping for tech roles."
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
 {/* Contact */}
         <section
         id="contact"
@@ -2225,6 +2921,121 @@ function Home() {
             </div>
           </div>
         </footer>
+
+        {/* Selected Sheet Overview Modal */}
+        {selectedSheet && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl p-8 w-full max-w-lg shadow-2xl text-left transform scale-100 transition-all duration-300 max-h-[90vh] overflow-y-auto">
+              
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h3 className="text-2xl font-bold text-black dark:text-white">
+                    {selectedSheet.name}
+                  </h3>
+                  <span className="text-xs text-gray-400 dark:text-gray-500 mt-1 block font-semibold">
+                    Curated by {selectedSheet.curator}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setSelectedSheet(null)}
+                  className="p-1 rounded-lg hover:bg-gray-105 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition cursor-pointer"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                    Sheet Description
+                  </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed bg-gray-50 dark:bg-gray-950 p-4 rounded-2xl border border-gray-150 dark:border-gray-800">
+                    {selectedSheet.description}
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                    Topics Covered
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedSheet.topics.map((topic, i) => (
+                      <span key={i} className="text-xs font-semibold px-3 py-1.5 rounded-full bg-purple-50 dark:bg-purple-955/40 text-purple-650 dark:text-purple-400 border border-purple-100 dark:border-purple-900/30 select-none">
+                        📚 {topic}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                    Difficulty Distribution
+                  </h4>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-100 dark:border-emerald-900/30 p-3 rounded-2xl text-center">
+                      <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold block">Easy</span>
+                      <span className="text-lg font-extrabold text-black dark:text-white">{selectedSheet.difficulty.easy} Qs</span>
+                    </div>
+                    <div className="bg-yellow-50/50 dark:bg-yellow-950/10 border border-yellow-100 dark:border-yellow-900/30 p-3 rounded-2xl text-center">
+                      <span className="text-xs text-yellow-600 dark:text-yellow-450 font-bold block">Medium</span>
+                      <span className="text-lg font-extrabold text-black dark:text-white">{selectedSheet.difficulty.medium} Qs</span>
+                    </div>
+                    <div className="bg-rose-50/50 dark:bg-rose-950/10 border border-rose-100 dark:border-rose-900/30 p-3 rounded-2xl text-center">
+                      <span className="text-xs text-rose-600 dark:text-rose-400 font-bold block">Hard</span>
+                      <span className="text-lg font-extrabold text-black dark:text-white">{selectedSheet.difficulty.hard} Qs</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-150 dark:border-gray-800 text-center">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 font-semibold">
+                    Sign up or log in to enable live tracking and check off problems for this sheet in your personal dashboard!
+                  </p>
+                  <div className="flex gap-3 justify-center">
+                    <Link to="/register" onClick={() => setSelectedSheet(null)} className="flex-1">
+                      <button className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-650 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl text-sm transition duration-200 cursor-pointer shadow-md">
+                        Register Now
+                      </button>
+                    </Link>
+                    <Link to="/login" onClick={() => setSelectedSheet(null)} className="flex-1">
+                      <button className="w-full py-3 border border-gray-300 dark:border-gray-700 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 font-bold rounded-xl text-sm transition duration-200 cursor-pointer">
+                        Log In
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* Custom Alert Modal Popup */}
+        {alertMessage && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl text-center transform scale-100 transition-all duration-300">
+              <div className="text-4xl mb-4">
+                {alertMessage.type === "success" ? "🚀" : "❌"}
+              </div>
+              <h3 className="text-lg font-bold text-black dark:text-white mb-2">
+                {alertMessage.type === "success" ? "Success" : "Error"}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">
+                {alertMessage.text}
+              </p>
+              <button
+                onClick={() => {
+                  const action = alertMessage.onClose;
+                  setAlertMessage(null);
+                  if (action) action();
+                }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold p-3 rounded-lg transition cursor-pointer"
+              >
+                Okay
+              </button>
+            </div>
+          </div>
+        )}
 
     </div>
   );
