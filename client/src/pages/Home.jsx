@@ -639,18 +639,22 @@ function Home() {
 {/* Hero */}
         <section
         className="
-            bg-gradient-to-r
-            from-blue-600
-            via-purple-600
-            to-indigo-700
+            bg-gradient-to-b
+            from-purple-50/50
+            via-white
+            to-gray-50/50
 
-            dark:from-slate-900
-            dark:via-gray-900
+            dark:from-slate-950
+            dark:via-gray-950
             dark:to-black
 
-            text-white
+            text-black
+            dark:text-white
 
             overflow-hidden
+            border-b
+            border-gray-150
+            dark:border-gray-900
         "
         >
 
@@ -697,11 +701,17 @@ function Home() {
 
                 rounded-full
 
-                bg-white/20
+                bg-purple-100
+                dark:bg-purple-900/20
 
-                backdrop-blur-md
+                border
+                border-purple-200
+                dark:border-purple-800/40
 
                 text-sm
+                font-semibold
+                text-purple-700
+                dark:text-purple-400
 
                 mb-8
                 "
@@ -717,9 +727,18 @@ function Home() {
                 md:text-6xl
                 lg:text-7xl
 
-                font-bold
+                font-extrabold
 
                 leading-tight
+                bg-gradient-to-r
+                from-slate-900
+                via-indigo-950
+                to-purple-900
+                dark:from-white
+                dark:via-indigo-200
+                dark:to-purple-300
+                bg-clip-text
+                text-transparent
                 "
             >
                 Track Your DSA
@@ -736,7 +755,8 @@ function Home() {
                 sm:text-lg
                 md:text-xl
 
-                text-white/90
+                text-gray-600
+                dark:text-gray-400
 
                 max-w-2xl
 
@@ -775,8 +795,10 @@ function Home() {
 
                     rounded-2xl
 
-                    bg-white
-                    text-blue-600
+                    bg-gradient-to-r
+                    from-indigo-600
+                    to-purple-600
+                    text-white
 
                     font-semibold
 
@@ -784,6 +806,10 @@ function Home() {
 
                     transition
                     duration-300
+                    shadow-md
+                    shadow-indigo-100
+                    dark:shadow-none
+                    cursor-pointer
                     "
                 >
                     Start Tracking Free
@@ -800,12 +826,19 @@ function Home() {
                 rounded-2xl
 
                 border
-                border-white
+                border-gray-300
+                dark:border-gray-700
 
-                hover:bg-white/10
+                text-black
+                dark:text-white
+
+                hover:bg-gray-100
+                dark:hover:bg-gray-800
 
                 transition
                 duration-300
+                hover:scale-105
+                cursor-pointer
                 "
             >
                 Login
@@ -828,12 +861,14 @@ function Home() {
 
             <div
                 className="
-                bg-white/10
+                bg-white/80
+                dark:bg-gray-900/60
 
                 backdrop-blur-xl
 
                 border
-                border-white/20
+                border-gray-200
+                dark:border-gray-800
 
                 rounded-3xl
 
@@ -847,6 +882,8 @@ function Home() {
                 className="
                     text-xl
                     font-bold
+                    text-black
+                    dark:text-white
 
                     mb-6
                 "
@@ -865,7 +902,11 @@ function Home() {
 
                 <div
                     className="
-                    bg-white/10
+                    bg-gray-50
+                    dark:bg-white/5
+                    border
+                    border-gray-100
+                    dark:border-white/5
 
                     rounded-xl
 
@@ -875,7 +916,8 @@ function Home() {
                     <p
                     className="
                         text-sm
-                        text-white/70
+                        text-gray-500
+                        dark:text-white/70
                     "
                     >
                     Total Questions
@@ -885,6 +927,8 @@ function Home() {
                     className="
                         text-2xl
                         font-bold
+                        text-black
+                        dark:text-white
                     "
                     >
                     120
@@ -893,7 +937,11 @@ function Home() {
 
                 <div
                     className="
-                    bg-white/10
+                    bg-gray-50
+                    dark:bg-white/5
+                    border
+                    border-gray-100
+                    dark:border-white/5
 
                     rounded-xl
 
@@ -903,7 +951,8 @@ function Home() {
                     <p
                     className="
                         text-sm
-                        text-white/70
+                        text-gray-500
+                        dark:text-white/70
                     "
                     >
                     Solved
@@ -913,6 +962,8 @@ function Home() {
                     className="
                         text-2xl
                         font-bold
+                        text-black
+                        dark:text-white
                     "
                     >
                     90
@@ -921,7 +972,11 @@ function Home() {
 
                 <div
                     className="
-                    bg-white/10
+                    bg-gray-50
+                    dark:bg-white/5
+                    border
+                    border-gray-100
+                    dark:border-white/5
 
                     rounded-xl
 
@@ -931,7 +986,8 @@ function Home() {
                     <p
                     className="
                         text-sm
-                        text-white/70
+                        text-gray-500
+                        dark:text-white/70
                     "
                     >
                     Pending
@@ -941,6 +997,8 @@ function Home() {
                     className="
                         text-2xl
                         font-bold
+                        text-black
+                        dark:text-white
                     "
                     >
                     20
@@ -949,7 +1007,11 @@ function Home() {
 
                 <div
                     className="
-                    bg-white/10
+                    bg-gray-50
+                    dark:bg-white/5
+                    border
+                    border-gray-100
+                    dark:border-white/5
 
                     rounded-xl
 
@@ -959,7 +1021,8 @@ function Home() {
                     <p
                     className="
                         text-sm
-                        text-white/70
+                        text-gray-500
+                        dark:text-white/70
                     "
                     >
                     Revision
@@ -969,6 +1032,8 @@ function Home() {
                     className="
                         text-2xl
                         font-bold
+                        text-black
+                        dark:text-white
                     "
                     >
                     10
@@ -980,16 +1045,21 @@ function Home() {
                 <div className="grid grid-cols-2 gap-4 mt-6">
                   <div
                     className="
-                      bg-orange-500/20
+                      bg-orange-500/10
+                      dark:bg-orange-500/20
                       border
-                      border-orange-400/30
+                      border-orange-200
+                      dark:border-orange-400/30
                       rounded-xl
                       p-4
                     "
                   >
                     <p
                       className="
-                      text-orange-200
+                      text-orange-600
+                      dark:text-orange-300
+                      text-sm
+                      font-semibold
                       "
                     >
                       🔥 Current Streak
@@ -999,6 +1069,8 @@ function Home() {
                       className="
                       text-3xl
                       font-bold
+                      text-orange-800
+                      dark:text-orange-100
                       "
                     >
                       30 Days
@@ -1007,9 +1079,11 @@ function Home() {
 
                   <div
                     className="
-                      bg-green-500/20
+                      bg-green-500/10
+                      dark:bg-green-500/20
                       border
-                      border-green-400/30
+                      border-green-200
+                      dark:border-green-400/30
                       rounded-xl
                       p-4
                       flex
@@ -1020,15 +1094,18 @@ function Home() {
                     <div>
                       <p
                         className="
-                        text-green-200
+                        text-green-600
+                        dark:text-green-300
+                        text-sm
+                        font-semibold
                         "
                       >
                         🎯 Today's Target
                       </p>
-                      <h3 className="text-2xl font-bold">3 / 4 Solved</h3>
+                      <h3 className="text-2xl font-bold text-green-800 dark:text-green-100">3 / 4 Solved</h3>
                     </div>
-                    <div className="w-full bg-white/20 rounded-full h-2 mt-2">
-                      <div className="bg-green-400 h-2 rounded-full" style={{ width: "75%" }}></div>
+                    <div className="w-full bg-gray-200 dark:bg-white/20 rounded-full h-2 mt-2">
+                      <div className="bg-green-600 dark:bg-green-400 h-2 rounded-full" style={{ width: "75%" }}></div>
                     </div>
                   </div>
                 </div>
@@ -2597,12 +2674,21 @@ function Home() {
             py-24
             px-6
 
-            bg-gradient-to-r
-            from-blue-600
-            via-purple-600
-            to-indigo-700
+            bg-gradient-to-b
+            from-gray-50/50
+            via-white
+            to-purple-50/50
 
-            text-white
+            dark:from-slate-950
+            dark:via-gray-950
+            dark:to-black
+
+            text-black
+            dark:text-white
+            border-t
+            border-b
+            border-gray-150
+            dark:border-gray-900
         "
         >
 
@@ -2620,9 +2706,18 @@ function Home() {
                 text-4xl
                 md:text-5xl
 
-                font-bold
+                font-extrabold
 
                 mb-6
+                bg-gradient-to-r
+                from-slate-900
+                via-indigo-950
+                to-purple-900
+                dark:from-white
+                dark:via-indigo-200
+                dark:to-purple-300
+                bg-clip-text
+                text-transparent
             "
             >
             Ready To Level Up
@@ -2634,7 +2729,8 @@ function Home() {
                 text-lg
                 md:text-xl
 
-                text-gray-200
+                text-gray-600
+                dark:text-gray-400
 
                 mb-10
             "
@@ -2665,15 +2761,21 @@ function Home() {
 
                     rounded-2xl
 
-                    bg-white
-
-                    text-blue-600
+                    bg-gradient-to-r
+                    from-indigo-600
+                    to-purple-600
+                    text-white
 
                     font-semibold
 
                     hover:scale-105
 
                     transition
+                    duration-300
+                    shadow-md
+                    shadow-indigo-100
+                    dark:shadow-none
+                    cursor-pointer
                 "
                 >
                 Start Tracking Free 🚀
@@ -2691,11 +2793,18 @@ function Home() {
                     rounded-2xl
 
                     border
-                    border-white
+                    border-gray-300
+                    dark:border-gray-700
 
-                    hover:bg-white/10
+                    text-black
+                    dark:text-white
+
+                    hover:bg-gray-100
+                    dark:hover:bg-gray-800
 
                     transition
+                    hover:scale-105
+                    cursor-pointer
                 "
                 >
                 Login
