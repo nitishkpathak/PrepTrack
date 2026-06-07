@@ -1,5 +1,5 @@
 import {useEffect, useState, useMemo} from "react";
-import {useNavigate,} from "react-router-dom";
+import {useNavigate, useLocation} from "react-router-dom";
 import {Menu, LayoutDashboard} from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -11,6 +11,7 @@ import DifficultyChart from "../components/DifficultyChart";
 import QuestionForm from "../components/QuestionForm";
 import QuestionList from "../components/QuestionList";
 import ContributionCalendar from "../components/ContributionCalendar";
+import FocusTimer from "../components/FocusTimer";
 
 import {addQuestion, getQuestions, deleteQuestion, updateQuestion, scrapeDescription} from "../services/questionService";
 import { getProfile } from "../services/userService";
@@ -18,9 +19,33 @@ import { getProfile } from "../services/userService";
 function Dashboard() {
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Sidebar state
   const [open, setOpen] = useState(false);
+
+  // Offline mode state
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOffline(false);
+      toast.success("Back online! Syncing data... 📶✨");
+      fetchQuestions();
+    };
+    const handleOffline = () => {
+      setIsOffline(true);
+      toast.error("You are offline. Showing cached tracking data! 📶");
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   // Preferred Platform link helper
   const savedUser = JSON.parse(localStorage.getItem("user")) || {};
@@ -606,86 +631,100 @@ const handleFavorite =
 
           </div>
 
+          {/* Offline indicator banner */}
+          {isOffline && (
+            <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 rounded-2xl text-center text-sm font-semibold flex items-center justify-center gap-2 select-none animate-pulse">
+              <span>📶 Offline Mode: Dashboard caching is active. Any edits will sync when you are back online!</span>
+            </div>
+          )}
+
           {location.pathname ===
             "/dashboard" && ( 
-        <>
-          <StatsCards questions={questions} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            
+            {/* Left Column: FilterBar, QuestionForm, QuestionList */}
+            <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
+              <FilterBar
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                difficultyFilter={difficultyFilter}
+                setDifficultyFilter={setDifficultyFilter}
+                statusFilter={statusFilter}
+                setStatusFilter={setStatusFilter}
+              />
 
-          <div className="mb-8">
-            <ContributionCalendar questions={questions} />
-          </div>
-
-          <div className="space-y-6">
-            <FilterBar
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              difficultyFilter={difficultyFilter}
-              setDifficultyFilter={setDifficultyFilter}
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
-            />
-
-            <div>
-              <button
-                aria-label="Toggle Favorites Filter"
-                onClick={() =>
-                  setFavoriteFilter(
-                    !favoriteFilter
-                  )
-                }
-                className={`
-                  px-4
-                  py-2
-                  rounded-lg
-                  cursor-pointer
-                  transition-all
-                  ${
-                    favoriteFilter
-                      ? "bg-yellow-500 text-black"
-                      : "bg-gray-300 dark:bg-gray-700 text-black dark:text-white"
+              <div>
+                <button
+                  aria-label="Toggle Favorites Filter"
+                  onClick={() =>
+                    setFavoriteFilter(
+                      !favoriteFilter
+                    )
                   }
-                `}
-              >
-                {
-                  favoriteFilter
-                    ? "⭐ Showing Favorites"
-                    : "☆ Show Favorites"
-                }
-              </button>
+                  className={`
+                    px-4
+                    py-2
+                    rounded-lg
+                    cursor-pointer
+                    transition-all
+                    text-sm
+                    font-semibold
+                    ${
+                      favoriteFilter
+                        ? "bg-yellow-500 text-black"
+                        : "bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-black dark:text-white"
+                    }
+                  `}
+                >
+                  {
+                    favoriteFilter
+                      ? "⭐ Showing Favorites"
+                      : "☆ Show Favorites"
+                  }
+                </button>
+              </div>
+
+              {/* Add Question */}
+              {searchTerm === "" && (
+                <QuestionForm
+                  editId={editId}
+                  formData={formData}
+                  setFormData={setFormData}
+                  addMode={addMode}
+                  setAddMode={setAddMode}
+                  linkInput={linkInput}
+                  setLinkInput={setLinkInput}
+                  scraping={scraping}
+                  loading={loading}
+                  handleParseLink={handleParseLink}
+                  handleChange={handleChange}
+                  handleSubmit={handleSubmit}
+                />
+              )}
+
+              {/* Questions */}
+              <QuestionList
+                fetching={fetching}
+                filteredQuestions={filteredQuestions}
+                expandedQuestion={expandedQuestion}
+                setExpandedQuestion={setExpandedQuestion}
+                handleStatusChange={handleStatusChange}
+                handleFavorite={handleFavorite}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+              />
             </div>
 
-            {/* Add Question */}
-            {searchTerm === "" && (
-              <QuestionForm
-                editId={editId}
-                formData={formData}
-                setFormData={setFormData}
-                addMode={addMode}
-                setAddMode={setAddMode}
-                linkInput={linkInput}
-                setLinkInput={setLinkInput}
-                scraping={scraping}
-                loading={loading}
-                handleParseLink={handleParseLink}
-                handleChange={handleChange}
-                handleSubmit={handleSubmit}
-              />
-            )}
-
-            {/* Questions */}
-            <QuestionList
-              fetching={fetching}
-              filteredQuestions={filteredQuestions}
-              expandedQuestion={expandedQuestion}
-              setExpandedQuestion={setExpandedQuestion}
-              handleStatusChange={handleStatusChange}
-              handleFavorite={handleFavorite}
-              handleEdit={handleEdit}
-              handleDelete={handleDelete}
-            />
+            {/* Right Column: StatsCards, FocusTimer, ContributionCalendar */}
+            <div className="lg:col-span-1 space-y-8 order-1 lg:order-2">
+              <StatsCards questions={questions} gridColsClass="grid-cols-1 sm:grid-cols-2 lg:grid-cols-1" />
+              
+              <FocusTimer />
+              
+              <ContributionCalendar questions={questions} />
+            </div>
           </div>
-        </>
-        )}
+          )}
 
         {/* Questions Section */}
         {activeSection === "questions" && (
