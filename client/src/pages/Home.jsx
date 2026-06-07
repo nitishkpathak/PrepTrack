@@ -1156,7 +1156,7 @@ function Home() {
         className="
             py-24
             px-6
-            bg-gray-55
+            bg-gray-50
             dark:bg-gray-900/60
             border-t
             border-b
@@ -1188,7 +1188,7 @@ function Home() {
                 
                 <form onSubmit={handleAddToPlayground} className="space-y-5">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-750 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                       Question Link 🔗
                     </label>
                     <div className="flex gap-2">
@@ -1218,7 +1218,7 @@ function Home() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-750 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                       Question Title 📝
                     </label>
                     <input
@@ -1233,7 +1233,7 @@ function Home() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-750 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                         Platform 🎯
                       </label>
                       <select
@@ -1250,7 +1250,7 @@ function Home() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-750 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                         Difficulty 🔥
                       </label>
                       <select
@@ -1276,13 +1276,13 @@ function Home() {
               </div>
 
               {/* List Block */}
-              <div className="lg:col-span-7 bg-white dark:bg-gray-805 border border-gray-200 dark:border-gray-800 rounded-3xl p-8 shadow-xl">
+              <div className="lg:col-span-7 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-800 rounded-3xl p-8 shadow-xl">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
                   <div>
                     <h3 className="text-xl font-bold text-black dark:text-white flex items-center gap-2">
                       <span>📋</span> Live Demo List
                     </h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-405 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       Toggle checkboxes or click problem names to open links.
                     </p>
                   </div>
@@ -1307,29 +1307,29 @@ function Home() {
                   {playgroundList.length === 0 ? (
                     <div className="text-center py-16 text-gray-500 dark:text-gray-400">
                       <p className="text-lg">No questions in your demo list. 🍃</p>
-                      <p className="text-xs mt-1 text-gray-405 dark:text-gray-500">
+                      <p className="text-xs mt-1 text-gray-400 dark:text-gray-500">
                         Add one using the form on the left!
                       </p>
                     </div>
                   ) : (
                     playgroundList.map((item) => {
                       // Platform Badge Color
-                      let platformBadge = "bg-gray-100 text-gray-750 dark:bg-gray-900 dark:text-gray-305";
+                      let platformBadge = "bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300";
                       if (item.platform === "LeetCode") platformBadge = "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-900/40";
                       else if (item.platform === "GeeksforGeeks") platformBadge = "bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 border border-green-200 dark:border-green-900/40";
-                      else if (item.platform === "Codeforces") platformBadge = "bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-305 border border-blue-200 dark:border-blue-900/40";
+                      else if (item.platform === "Codeforces") platformBadge = "bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-900/40";
                       else if (item.platform === "CodeChef") platformBadge = "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300 border border-red-200 dark:border-red-900/40";
 
                       // Difficulty Badge Color
-                      let diffBadge = "bg-gray-100 text-gray-750 dark:bg-gray-900 dark:text-gray-305";
-                      if (item.difficulty === "Easy") diffBadge = "bg-emerald-100 text-emerald-850 dark:bg-emerald-950/40 dark:text-emerald-450 border border-emerald-200 dark:border-emerald-900/20";
-                      else if (item.difficulty === "Medium") diffBadge = "bg-yellow-100 text-yellow-850 dark:bg-yellow-950/40 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-900/20";
-                      else if (item.difficulty === "Hard") diffBadge = "bg-rose-100 text-rose-850 dark:bg-rose-950/40 dark:text-rose-455 border border-rose-200 dark:border-rose-900/20";
+                      let diffBadge = "bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300";
+                      if (item.difficulty === "Easy") diffBadge = "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/20";
+                      else if (item.difficulty === "Medium") diffBadge = "bg-yellow-100 text-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-900/20";
+                      else if (item.difficulty === "Hard") diffBadge = "bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200 dark:border-rose-900/20";
 
                       return (
                         <div
                           key={item.id}
-                          className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/30 border border-gray-150 dark:border-gray-800 rounded-2xl hover:bg-gray-100/50 dark:hover:bg-gray-850/30 transition duration-200"
+                          className="flex items-center justify-between p-4 bg-gray-55 dark:bg-gray-900/30 border border-gray-150 dark:border-gray-800 rounded-2xl hover:bg-gray-100/50 dark:hover:bg-gray-850/30 transition duration-200"
                         >
                           <div className="flex items-center gap-3.5 min-w-0">
                             {/* Checkbox */}
@@ -1353,7 +1353,7 @@ function Home() {
                                   target="_blank"
                                   rel="noreferrer"
                                   className={`text-sm sm:text-base font-bold truncate hover:underline hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1.5 text-black dark:text-white ${
-                                    item.solved ? "line-through opacity-55 text-gray-505 dark:text-gray-400" : ""
+                                    item.solved ? "line-through opacity-55 text-gray-500 dark:text-gray-400" : ""
                                   }`}
                                 >
                                   {item.title}
@@ -1387,7 +1387,7 @@ function Home() {
 
                 {/* Playground Save CTA */}
                 <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 text-center">
-                  <p className="text-sm text-gray-550 dark:text-gray-400 mb-4">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                     Ready to track your coding goals permanently and unlock features like streaks & graphs? 📈
                   </p>
                   <div className="flex justify-center gap-3">
@@ -1784,7 +1784,7 @@ function Home() {
                       <div className="w-12 h-12 bg-purple-100 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 rounded-2xl flex items-center justify-center text-2xl font-bold">
                         {sheet.id === "striver" ? "🚀" : sheet.id === "neetcode" ? "⚡" : sheet.id === "love-babbar" ? "🔥" : "🎯"}
                       </div>
-                      <span className="text-xs font-bold px-2.5 py-1 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-full border border-gray-150 dark:border-gray-700">
+                      <span className="text-xs font-bold px-2.5 py-1 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-full border border-gray-200 dark:border-gray-700">
                         {sheet.questionsCount} Qs
                       </span>
                     </div>
@@ -1796,7 +1796,7 @@ function Home() {
                       Curated by {sheet.curator}
                     </span>
 
-                    <p className="text-sm text-gray-550 dark:text-gray-400 leading-relaxed mb-6 flex-1">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-6 flex-1">
                       {sheet.description}
                     </p>
 
@@ -1806,9 +1806,9 @@ function Home() {
                         <span>Interactive Demo Progress</span>
                         <span>{percentage}%</span>
                       </div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-850 h-2.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-gray-200 dark:bg-gray-800 h-2.5 rounded-full overflow-hidden">
                         <div
-                          className="bg-purple-650 h-2.5 rounded-full transition-all duration-500"
+                          className="bg-purple-600 h-2.5 rounded-full transition-all duration-500"
                           style={{ width: `${percentage}%` }}
                         />
                       </div>
@@ -1821,7 +1821,7 @@ function Home() {
                     {/* Button */}
                     <button
                       onClick={() => setSelectedSheet(sheet)}
-                      className="w-full py-3 bg-white dark:bg-gray-850 hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white border border-gray-200 dark:border-gray-700 font-bold rounded-xl text-sm transition duration-205 hover:scale-[1.01] cursor-pointer shadow-sm"
+                      className="w-full py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white border border-gray-200 dark:border-gray-700 font-bold rounded-xl text-sm transition duration-200 hover:scale-[1.01] cursor-pointer shadow-sm"
                     >
                       Track Sheet Details →
                     </button>
@@ -2938,7 +2938,7 @@ function Home() {
                 </div>
                 <button
                   onClick={() => setSelectedSheet(null)}
-                  className="p-1 rounded-lg hover:bg-gray-105 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition cursor-pointer"
+                  className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition cursor-pointer"
                 >
                   <X size={20} />
                 </button>
@@ -2949,7 +2949,7 @@ function Home() {
                   <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                     Sheet Description
                   </h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed bg-gray-50 dark:bg-gray-950 p-4 rounded-2xl border border-gray-150 dark:border-gray-800">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed bg-gray-50 dark:bg-gray-950 p-4 rounded-2xl border border-gray-200 dark:border-gray-800">
                     {selectedSheet.description}
                   </p>
                 </div>
@@ -2960,7 +2960,7 @@ function Home() {
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedSheet.topics.map((topic, i) => (
-                      <span key={i} className="text-xs font-semibold px-3 py-1.5 rounded-full bg-purple-50 dark:bg-purple-955/40 text-purple-650 dark:text-purple-400 border border-purple-100 dark:border-purple-900/30 select-none">
+                      <span key={i} className="text-xs font-semibold px-3 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-900/30 select-none">
                         📚 {topic}
                       </span>
                     ))}
@@ -2977,7 +2977,7 @@ function Home() {
                       <span className="text-lg font-extrabold text-black dark:text-white">{selectedSheet.difficulty.easy} Qs</span>
                     </div>
                     <div className="bg-yellow-50/50 dark:bg-yellow-950/10 border border-yellow-100 dark:border-yellow-900/30 p-3 rounded-2xl text-center">
-                      <span className="text-xs text-yellow-600 dark:text-yellow-450 font-bold block">Medium</span>
+                      <span className="text-xs text-yellow-600 dark:text-yellow-400 font-bold block">Medium</span>
                       <span className="text-lg font-extrabold text-black dark:text-white">{selectedSheet.difficulty.medium} Qs</span>
                     </div>
                     <div className="bg-rose-50/50 dark:bg-rose-950/10 border border-rose-100 dark:border-rose-900/30 p-3 rounded-2xl text-center">
@@ -2987,13 +2987,13 @@ function Home() {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-gray-150 dark:border-gray-800 text-center">
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-800 text-center">
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 font-semibold">
                     Sign up or log in to enable live tracking and check off problems for this sheet in your personal dashboard!
                   </p>
                   <div className="flex gap-3 justify-center">
                     <Link to="/register" onClick={() => setSelectedSheet(null)} className="flex-1">
-                      <button className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-650 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl text-sm transition duration-200 cursor-pointer shadow-md">
+                      <button className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl text-sm transition duration-200 cursor-pointer shadow-md">
                         Register Now
                       </button>
                     </Link>
