@@ -40,39 +40,22 @@ const sendOtpEmail = async ({ email, subject, otp, title }) => {
 };
 
 const sendWelcomeEmail = async ({ email, name }) => {
+  const userName = name || "Developer";
+
+  // Crisp 5-line welcome message
+  const welcomeText = `🎉 Welcome to PrepTrack, ${userName}! Your account has been created successfully.
+🚀 PrepTrack helps you track your daily DSA problem-solving streak and build strong coding habits.
+⚡ Easily auto-scrape problem details directly from LeetCode & GeeksforGeeks links.
+📊 Access curated DSA Cheat Sheets, topic roadmaps, and real-time visual progress analytics.
+🔥 Start your prep journey today at https://preptrack.vercel.app and level up your coding skills!`;
+
   const welcomeHtml = `
-    <div style="font-family: Arial, sans-serif; padding: 25px; border: 1px solid #e5e7eb; border-radius: 12px; max-width: 650px; background-color: #ffffff; color: #1f2937; margin: 0 auto;">
-      <div style="text-align: center; margin-bottom: 25px;">
-        <h1 style="color: #2563eb; margin: 0; font-size: 28px; font-weight: bold;">PrepTrack 🚀</h1>
-        <p style="color: #6b7280; font-size: 14px; margin-top: 5px;">Track your DSA & Coding Progress Like a Professional</p>
-      </div>
-
-      <h2 style="color: #111827; font-size: 20px;">Welcome aboard, ${name || "Developer"}! 🎉</h2>
-      <p style="font-size: 15px; line-height: 1.6; color: #374151;">
-        Your PrepTrack account has been successfully created! We are thrilled to welcome you to a platform built to empower your Data Structures, Algorithms, and Coding Interview Preparation.
-      </p>
-
-      <div style="background-color: #f8fafc; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; margin: 25px 0;">
-        <h3 style="color: #2563eb; margin-top: 0; font-size: 16px;">💡 Key Features & Platform Benefits:</h3>
-        <ul style="padding-left: 20px; font-size: 14px; line-height: 1.8; color: #374151; margin-bottom: 0;">
-          <li><strong>🔥 Daily Practice Streaks:</strong> Build unbroken problem-solving habits with live streak tracking & calendar heatmaps.</li>
-          <li><strong>⚡ Auto Link Scraper:</strong> Auto-extract question title, difficulty, and notes directly from LeetCode & GeeksforGeeks links.</li>
-          <li><strong>📊 Interactive Analytics & Charts:</strong> Visual progress metrics broken down by Easy, Medium, and Hard difficulties.</li>
-          <li><strong>📚 Curated DSA Cheat Sheets:</strong> Access Striver SDE sheet, Blind 75, and topic-wise DSA study roadmaps right inside your dashboard.</li>
-          <li><strong>📲 Progressive Web App (PWA):</strong> Access your preparation dashboard seamlessly on Mobile and Desktop with offline support.</li>
-        </ul>
-      </div>
-
-      <div style="margin: 25px 0; text-align: center;">
-        <p style="font-size: 14px; color: #4b5563; margin-bottom: 15px;">Ready to add your first question and start your streak?</p>
-        <a href="https://preptrack.vercel.app" style="background-color: #2563eb; color: #ffffff; padding: 12px 28px; text-decoration: none; font-weight: bold; border-radius: 8px; display: inline-block;">Go to PrepTrack Dashboard 🚀</a>
-      </div>
-
-      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;" />
-      <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">
-        Happy Coding! <br/>
-        <strong>The PrepTrack Team</strong>
-      </p>
+    <div style="font-family: Arial, sans-serif; padding: 20px; line-height: 1.8; color: #1f2937;">
+      <h2 style="color: #2563eb; margin-bottom: 15px;">🎉 Welcome to PrepTrack, ${userName}!</h2>
+      <p style="font-size: 15px; margin-bottom: 10px;">🚀 <strong>PrepTrack</strong> helps you track your daily DSA problem-solving streak and build strong coding habits.</p>
+      <p style="font-size: 15px; margin-bottom: 10px;">⚡ Easily auto-scrape problem details directly from LeetCode & GeeksforGeeks links.</p>
+      <p style="font-size: 15px; margin-bottom: 10px;">📊 Access curated DSA Cheat Sheets, topic roadmaps, and real-time visual progress analytics.</p>
+      <p style="font-size: 15px; margin-top: 15px;">🔥 Start your prep journey today at <a href="https://preptrack.vercel.app" style="color: #2563eb; font-weight: bold;">https://preptrack.vercel.app</a> and level up your coding skills!</p>
     </div>
   `;
 
@@ -82,7 +65,8 @@ const sendWelcomeEmail = async ({ email, name }) => {
         email: email,
         subject: "Welcome to PrepTrack! 🚀 Your DSA Journey Begins",
         otp: "WELCOME",
-        html: welcomeHtml,
+        message: welcomeText,
+        html: welcomeText,
       });
       return;
     } else {
@@ -94,6 +78,7 @@ const sendWelcomeEmail = async ({ email, name }) => {
       await sendEmail({
         email: email,
         subject: "Welcome to PrepTrack! 🚀 Your DSA Journey Begins",
+        text: welcomeText,
         html: welcomeHtml,
       });
     } catch (smtpError) {

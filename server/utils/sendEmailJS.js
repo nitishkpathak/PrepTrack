@@ -16,7 +16,7 @@ const sendEmailJS = async (options) => {
       to_email: options.email,
       email: options.email,
       subject: options.subject,
-      message: options.html, // html/text message
+      message: options.message || options.html, // text message fallback
       otp: options.otp || "", // 6-digit OTP code
     },
   };
