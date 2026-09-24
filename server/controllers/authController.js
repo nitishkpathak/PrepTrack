@@ -363,9 +363,9 @@ const forgotPassword = async (req, res) => {
       return res.status(400).json({ message: "Email is required" });
     }
 
-    // Check if user exists and is verified
+    // Check if user exists
     const user = await User.findOne({ email });
-    if (!user || !user.password) {
+    if (!user) {
       return res.status(404).json({ message: "User account not found" });
     }
 

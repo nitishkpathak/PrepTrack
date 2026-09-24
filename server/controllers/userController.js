@@ -252,10 +252,15 @@ const changePassword = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check current password
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Incorrect current password" });
+    // Check current password only if user already has a password set
+    if (user.password) {
+      if (!currentPassword) {
+        return res.status(400).json({ message: "Current password is required" });
+      }
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Incorrect current password" });
+      }
     }
 
     // Hash & save new password
@@ -486,8 +491,8 @@ const requestDeleteAccount = async (req, res) => {
 const confirmDeleteAccount = async (req, res) => {
   try {
     const { otp, password } = req.body;
-    if (!otp || !password) {
-      return res.status(400).json({ message: "OTP and password are required ❌" });
+    if (!otp) {
+      return res.status(400).json({ message: "Verification OTP code is required ❌" });
     }
 
     const user = await User.findById(req.user.id);
@@ -504,10 +509,15 @@ const confirmDeleteAccount = async (req, res) => {
       return res.status(400).json({ message: "Verification OTP code has expired ❌" });
     }
 
-    // 2. Verify Password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Incorrect password! Deletion cancelled ❌" });
+    // 2. Verify Password only if user has a password set
+    if (user.password) {
+      if (!password) {
+        return res.status(400).json({ message: "Login password is required to confirm deletion ❌" });
+      }
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Incorrect password! Deletion cancelled ❌" });
+      }
     }
 
     // 3. Delete user data (questions)

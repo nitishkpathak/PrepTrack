@@ -223,19 +223,21 @@ const scrapeDescription = async (req, res) => {
 const resetQuestions = async (req, res) => {
   try {
     const { password } = req.body;
-    if (!password) {
-      return res.status(400).json({ message: "Password is required to reset data ❌" });
-    }
 
     const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ message: "User not found ❌" });
     }
 
-    // Verify password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Incorrect password! Reset cancelled ❌" });
+    // Verify password only if user has set a password
+    if (user.password) {
+      if (!password) {
+        return res.status(400).json({ message: "Password is required to reset data ❌" });
+      }
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Incorrect password! Reset cancelled ❌" });
+      }
     }
 
     await Question.deleteMany({ user: req.user._id });

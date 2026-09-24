@@ -140,10 +140,6 @@ function Settings() {
   };
 
   const handleConfirmResetData = async () => {
-    if (!resetPasswordInput) {
-      toast.error("Please enter your password ❌");
-      return;
-    }
     setLoadingReset(true);
     try {
       const res = await resetAllQuestions(resetPasswordInput);
@@ -758,11 +754,11 @@ function Settings() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                  Enter Login Password
+                  Enter Login Password <span className="text-xs font-normal text-gray-500">(Optional for Google sign-in)</span>
                 </label>
                 <input
                   type="password"
-                  placeholder="Enter password to verify identity"
+                  placeholder="Enter password (leave blank if Google sign-in)"
                   value={resetPasswordInput}
                   onChange={(e) => setResetPasswordInput(e.target.value)}
                   className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-700 outline-none text-sm"
@@ -781,7 +777,7 @@ function Settings() {
                 </button>
                 <button
                   onClick={handleConfirmResetData}
-                  disabled={loadingReset || !resetPasswordInput}
+                  disabled={loadingReset}
                   className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold p-3 rounded-lg transition disabled:opacity-50 cursor-pointer"
                 >
                   {loadingReset ? "Resetting..." : "Reset All Data"}
@@ -861,11 +857,11 @@ function Settings() {
 
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                    Login Password
+                    Login Password <span className="text-xs font-normal text-gray-500">(Optional for Google sign-in)</span>
                   </label>
                   <input
                     type="password"
-                    placeholder="Enter your current password"
+                    placeholder="Enter password (leave blank if Google sign-in)"
                     value={deletePassword}
                     onChange={(e) => setDeletePassword(e.target.value)}
                     className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-700 outline-none text-sm"
@@ -888,9 +884,6 @@ function Settings() {
                       if (!deleteOtp || deleteOtp.length !== 6) {
                         return toast.error("Please enter a valid 6-digit OTP code ❌");
                       }
-                      if (!deletePassword) {
-                        return toast.error("Please enter your login password ❌");
-                      }
 
                       const doubleConfirm = window.confirm("FINAL WARNING: Are you absolutely sure you want to permanently delete your account? This action cannot be undone.");
                       if (!doubleConfirm) return;
@@ -909,7 +902,7 @@ function Settings() {
                         setDeleteLoading(false);
                       }
                     }}
-                    disabled={deleteLoading || !deleteOtp || !deletePassword}
+                    disabled={deleteLoading || !deleteOtp}
                     className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold p-3 rounded-lg transition disabled:opacity-50 cursor-pointer text-sm"
                   >
                     {deleteLoading ? "Deleting..." : "Confirm Delete"}
