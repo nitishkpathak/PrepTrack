@@ -86,9 +86,8 @@ function Login() {
 
       localStorage.setItem("user", JSON.stringify(optimizedUser));
 
-      showAlert("Login Successful 🚀", "success", () => {
-        navigate("/dashboard");
-      });
+      // Instant navigation to dashboard
+      navigate("/dashboard");
 
     } catch (error) {
       console.log(error);
@@ -129,9 +128,8 @@ function Login() {
 
       localStorage.setItem("user", JSON.stringify(optimizedUser));
 
-      showAlert("Google Login Successful! 🚀", "success", () => {
-        navigate("/dashboard");
-      });
+      // Instant navigation to dashboard
+      navigate("/dashboard");
 
     } catch (error) {
       console.error(error);
@@ -339,17 +337,16 @@ function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="
+            className={`
               w-full
               bg-blue-600
-              hover:bg-blue-700
               text-white
               p-3
               rounded-lg
               transition
               duration-300
-              cursor-pointer
-            "
+              ${loading ? "opacity-50 cursor-not-allowed pointer-events-none" : "hover:bg-blue-700 cursor-pointer"}
+            `}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
@@ -368,12 +365,16 @@ function Login() {
         {/* Google Login Button */}
         <button
           type="button"
+          disabled={loading}
           onClick={() => {
+            if (loading) return;
             setShowGoogleModal(true);
             setCustomGoogleEmail("");
             setCustomGoogleName("");
           }}
-          className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg p-3 text-black font-semibold transition duration-300 shadow-sm cursor-pointer"
+          className={`w-full flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-lg p-3 text-black font-semibold transition duration-300 shadow-sm ${
+            loading ? "opacity-50 cursor-not-allowed pointer-events-none" : "hover:bg-gray-50 cursor-pointer"
+          }`}
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path

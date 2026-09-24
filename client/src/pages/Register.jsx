@@ -477,7 +477,7 @@ function Register() {
             className={`
               w-full
               bg-green-600
-              ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700 cursor-pointer"}
+              ${loading ? "opacity-50 cursor-not-allowed pointer-events-none" : "hover:bg-green-700 cursor-pointer"}
               text-white
               p-3
               rounded-lg
@@ -502,12 +502,16 @@ function Register() {
         {/* Google Register Button */}
         <button
           type="button"
+          disabled={loading}
           onClick={() => {
+            if (loading) return;
             setShowGoogleModal(true);
             setCustomGoogleEmail("");
             setCustomGoogleName("");
           }}
-          className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg p-3 text-black font-semibold transition duration-300 shadow-sm cursor-pointer"
+          className={`w-full flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-lg p-3 text-black font-semibold transition duration-300 shadow-sm ${
+            loading ? "opacity-50 cursor-not-allowed pointer-events-none" : "hover:bg-gray-50 cursor-pointer"
+          }`}
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
