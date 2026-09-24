@@ -504,7 +504,6 @@ function Register() {
           type="button"
           onClick={() => {
             setShowGoogleModal(true);
-            setGoogleStep(1);
             setCustomGoogleEmail("");
             setCustomGoogleName("");
           }}
@@ -594,99 +593,57 @@ function Register() {
                 Sign in with Google
               </h2>
               <p className="text-xs text-gray-500 mt-1">
-                to continue to PrepTrack
+                Enter your Google account email to continue to PrepTrack
               </p>
             </div>
 
-            {googleStep === 1 ? (
-              <div className="space-y-3">
-                {/* Account 1 */}
-                <button
-                  onClick={() => handleGoogleLoginSubmit("npathak.sp@gmail.com", "Nitish Kumar Pathak")}
-                  className="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 text-left transition duration-200 cursor-pointer"
-                >
-                  <img
-                    src="https://api.dicebear.com/7.x/adventurer/svg?seed=Nitish"
-                    alt="avatar"
-                    className="w-8 h-8 rounded-full bg-blue-100"
-                  />
-                  <div>
-                    <p className="text-sm font-semibold text-gray-855">Nitish Kumar Pathak</p>
-                    <p className="text-xs text-gray-500">npathak.sp@gmail.com</p>
-                  </div>
-                </button>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  Google Email Address
+                </label>
+                <input
+                  type="email"
+                  placeholder="your.email@gmail.com"
+                  value={customGoogleEmail}
+                  onChange={(e) => setCustomGoogleEmail(e.target.value)}
+                  className="w-full p-2.5 rounded-lg border border-gray-300 text-sm outline-none focus:border-blue-500 text-black bg-white"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  Full Name (Optional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Your Name"
+                  value={customGoogleName}
+                  onChange={(e) => setCustomGoogleName(e.target.value)}
+                  className="w-full p-2.5 rounded-lg border border-gray-300 text-sm outline-none focus:border-blue-500 text-black bg-white"
+                />
+              </div>
 
-                {/* Account 2 */}
+              <div className="flex gap-2 pt-2">
                 <button
-                  onClick={() => handleGoogleLoginSubmit("guest.preptrack@gmail.com", "Guest Coder")}
-                  className="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 text-left transition duration-200 cursor-pointer"
+                  type="button"
+                  onClick={() => setShowGoogleModal(false)}
+                  className="flex-1 border border-gray-300 p-2.5 rounded-lg text-sm font-semibold hover:bg-gray-50 text-gray-700 cursor-pointer"
                 >
-                  <img
-                    src="https://api.dicebear.com/7.x/adventurer/svg?seed=Guest"
-                    alt="avatar"
-                    className="w-8 h-8 rounded-full bg-green-100"
-                  />
-                  <div>
-                    <p className="text-sm font-semibold text-gray-855">Guest Coder</p>
-                    <p className="text-xs text-gray-500">guest.preptrack@gmail.com</p>
-                  </div>
+                  Cancel
                 </button>
-
-                {/* Use another account */}
                 <button
-                  onClick={() => setGoogleStep(2)}
-                  className="w-full flex items-center justify-center p-3 rounded-lg border border-dashed border-gray-300 hover:border-gray-400 text-sm font-medium text-blue-650 transition cursor-pointer"
+                  type="button"
+                  onClick={() => {
+                    if (!customGoogleEmail) return showAlert("Please enter your Google email address", "error");
+                    handleGoogleLoginSubmit(customGoogleEmail, customGoogleName || customGoogleEmail.split("@")[0]);
+                  }}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white p-2.5 rounded-lg text-sm font-semibold transition cursor-pointer"
                 >
-                  👤 Use another account
+                  Sign In
                 </button>
               </div>
-            ) : (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1">
-                    Google Email Address
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="name@gmail.com"
-                    value={customGoogleEmail}
-                    onChange={(e) => setCustomGoogleEmail(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-gray-300 text-sm outline-none focus:border-blue-500"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Your Name"
-                    value={customGoogleName}
-                    onChange={(e) => setCustomGoogleName(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-gray-300 text-sm outline-none focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="flex gap-2 pt-2">
-                  <button
-                    onClick={() => setGoogleStep(1)}
-                    className="flex-1 border border-gray-300 p-2 rounded-lg text-sm font-semibold hover:bg-gray-50 cursor-pointer"
-                  >
-                    Back
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (!customGoogleEmail) return showAlert("Please enter your email", "error");
-                      handleGoogleLoginSubmit(customGoogleEmail, customGoogleName || customGoogleEmail.split("@")[0]);
-                    }}
-                    className="flex-1 bg-blue-600 text-white p-2 rounded-lg text-sm font-semibold hover:bg-blue-700 cursor-pointer"
-                  >
-                    Sign In
-                  </button>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       )}
