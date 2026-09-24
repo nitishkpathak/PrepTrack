@@ -523,11 +523,17 @@ const confirmDeleteAccount = async (req, res) => {
       }
     }
 
-    // 3. Delete user data (questions)
+    // 3. Send Account Deleted Confirmation Email asynchronously
+    const { sendAccountDeletedEmail } = require("../utils/emailSender");
+    sendAccountDeletedEmail({ email: user.email, name: user.name }).catch((err) =>
+      console.error("Async delete account email error:", err.message)
+    );
+
+    // 4. Delete user data (questions)
     const Question = require("../models/Question");
     await Question.deleteMany({ user: user._id });
 
-    // 4. Delete user account
+    // 5. Delete user account
     await User.findByIdAndDelete(user._id);
 
     res.status(200).json({ message: "Account and associated data deleted successfully! 🧹" });

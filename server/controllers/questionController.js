@@ -248,6 +248,12 @@ const resetQuestions = async (req, res) => {
     user.lastSolvedDate = null;
     await user.save();
 
+    // Send Data Reset Confirmation Email asynchronously
+    const { sendDataResetEmail } = require("../utils/emailSender");
+    sendDataResetEmail({ email: user.email, name: user.name }).catch((err) =>
+      console.error("Async data reset email error:", err.message)
+    );
+
     res.status(200).json({
       message: "All questions and daily streak have been successfully reset.",
       user: {
