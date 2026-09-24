@@ -15,6 +15,11 @@ const {
 } = require("../controllers/authController");
 
 // ============================
+// PING (Pre-warming Backend)
+// ============================
+router.get("/ping", (req, res) => res.status(200).json({ status: "ok" }));
+
+// ============================
 // REGISTER (Phase 1: Send OTP)
 // ============================
 router.post("/register", registerUser);

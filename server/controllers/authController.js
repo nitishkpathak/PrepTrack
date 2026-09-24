@@ -35,14 +35,14 @@ const registerUser = async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes valid
 
-    // Send Verification Email with Name and Timing
-    await sendOtpEmail({
+    // Send Verification Email with Name and Timing asynchronously
+    sendOtpEmail({
       email: email,
       name: existingUser?.name || email.split("@")[0],
       subject: "PrepTrack Account Verification OTP 🔐",
       otp: otp,
       title: "Welcome to PrepTrack!",
-    });
+    }).catch((err) => console.error("Async verification OTP email error:", err.message));
 
     if (existingUser) {
       // Overwrite old OTP for unverified user
@@ -347,14 +347,14 @@ const forgotPassword = async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes valid
 
-    // Send Reset Password Email with Name and Timing
-    await sendOtpEmail({
+    // Send Reset Password Email with Name and Timing asynchronously
+    sendOtpEmail({
       email: email,
       name: user.name || email.split("@")[0],
       subject: "PrepTrack Password Reset OTP 🔐",
       otp: otp,
       title: "PrepTrack Password Reset Request",
-    });
+    }).catch((err) => console.error("Async forgot password OTP email error:", err.message));
 
     // Save OTP to DB
     user.otp = otp;

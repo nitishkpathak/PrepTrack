@@ -291,15 +291,15 @@ const requestChangeEmailCurrent = async (req, res) => {
     user.currentEmailVerifiedForChange = false; // Reset previous verification if any
     await user.save();
 
-    // Send OTP to current email
+    // Send OTP to current email asynchronously
     const { sendOtpEmail } = require("../utils/emailSender");
-    await sendOtpEmail({
+    sendOtpEmail({
       email: user.email,
       name: user.name,
       subject: "PrepTrack Email Change Request - Current Email OTP 🔐",
       otp: otp,
       title: "Confirm Your Email Change Request",
-    });
+    }).catch((err) => console.error("Async change email current OTP error:", err.message));
 
     res.status(200).json({ message: "Verification OTP sent to your current email! 📩" });
   } catch (error) {
@@ -378,15 +378,15 @@ const requestChangeEmailNew = async (req, res) => {
     user.tempNewEmail = newEmail.toLowerCase();
     await user.save();
 
-    // Send OTP to new email
+    // Send OTP to new email asynchronously
     const { sendOtpEmail } = require("../utils/emailSender");
-    await sendOtpEmail({
+    sendOtpEmail({
       email: newEmail,
       name: user.name,
       subject: "PrepTrack Email Change Request - New Email Verification OTP 🔐",
       otp: otp,
       title: "Verify Your New Email Address",
-    });
+    }).catch((err) => console.error("Async change email new OTP error:", err.message));
 
     res.status(200).json({ message: "Verification OTP sent to your new email! 📩" });
   } catch (error) {
@@ -471,15 +471,15 @@ const requestDeleteAccount = async (req, res) => {
     user.deleteAccountOtpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
     await user.save();
 
-    // Send OTP to user email
+    // Send OTP to user email asynchronously
     const { sendOtpEmail } = require("../utils/emailSender");
-    await sendOtpEmail({
+    sendOtpEmail({
       email: user.email,
       name: user.name,
       subject: "PrepTrack Account Deletion Request - OTP Verification ⚠️",
       otp: otp,
       title: "Verify Your Account Deletion",
-    });
+    }).catch((err) => console.error("Async delete account OTP email error:", err.message));
 
     res.status(200).json({ message: "Verification OTP sent to your registered email! 📩" });
   } catch (error) {

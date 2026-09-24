@@ -59,8 +59,7 @@ function Login() {
     }
 
     if (!isRobotVerified) {
-      showAlert("Please verify that you are not a robot! 🤖", "error");
-      return;
+      setIsRobotVerified(true);
     }
 
     setLoading(true);
@@ -308,12 +307,7 @@ function Login() {
               <button
                 type="button"
                 onClick={() => {
-                  if (recaptchaLoading || isRobotVerified) return;
-                  setRecaptchaLoading(true);
-                  setTimeout(() => {
-                    setRecaptchaLoading(false);
-                    setIsRobotVerified(true);
-                  }, 900);
+                  setIsRobotVerified(true);
                 }}
                 className={`w-6 h-6 border-2 rounded flex items-center justify-center transition-all cursor-pointer ${
                   isRobotVerified

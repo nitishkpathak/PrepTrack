@@ -28,6 +28,12 @@ function App() {
       "token"
     );
 
+  // Pre-warm Render backend container on initial load
+  useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_URL || "";
+    fetch(`${apiUrl}/api/auth/ping`).catch(() => {});
+  }, []);
+
   useEffect(() => {
 
     if (token) {
