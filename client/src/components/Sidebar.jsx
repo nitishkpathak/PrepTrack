@@ -130,6 +130,7 @@ useEffect(() => {
           flex
           flex-col
           justify-between
+          overflow-y-auto
 
           transition-transform
           duration-300
@@ -147,7 +148,7 @@ useEffect(() => {
       >
 
         {/* Top */}
-        <div>
+        <div className="flex-1 overflow-y-auto min-h-0">
 
           {/* Header */}
           <div
@@ -450,6 +451,7 @@ useEffect(() => {
         {/* Logout & Theme Toggle */}
         <div
           className="
+            shrink-0
             p-5
             border-t
             border-gray-300

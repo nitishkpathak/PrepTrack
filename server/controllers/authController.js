@@ -9,6 +9,7 @@ const User =
 
 const sendEmail = require("../utils/sendEmail");
 const sendEmailJS = require("../utils/sendEmailJS");
+const { sendWelcomeEmail } = require("../utils/emailSender");
 
 
 
@@ -180,6 +181,11 @@ const completeSignup = async (req, res) => {
     user.name = name;
     user.password = hashedPassword;
     await user.save();
+
+    // Send Welcome Email asynchronously
+    sendWelcomeEmail({ email: user.email, name: user.name }).catch((err) =>
+      console.error("Async welcome email error:", err.message)
+    );
 
     // Generate login JWT token directly
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -496,6 +502,11 @@ const googleLogin = async (req, res) => {
         profilePic: profilePic || "",
         isVerified: true,
       });
+
+      // Send Welcome Email asynchronously
+      sendWelcomeEmail({ email: user.email, name: user.name }).catch((err) =>
+        console.error("Async Google welcome email error:", err.message)
+      );
     } else {
       // If user exists, ensure they are verified
       user.isVerified = true;
