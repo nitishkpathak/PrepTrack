@@ -295,6 +295,7 @@ const requestChangeEmailCurrent = async (req, res) => {
     const { sendOtpEmail } = require("../utils/emailSender");
     await sendOtpEmail({
       email: user.email,
+      name: user.name,
       subject: "PrepTrack Email Change Request - Current Email OTP 🔐",
       otp: otp,
       title: "Confirm Your Email Change Request",
@@ -381,6 +382,7 @@ const requestChangeEmailNew = async (req, res) => {
     const { sendOtpEmail } = require("../utils/emailSender");
     await sendOtpEmail({
       email: newEmail,
+      name: user.name,
       subject: "PrepTrack Email Change Request - New Email Verification OTP 🔐",
       otp: otp,
       title: "Verify Your New Email Address",
@@ -473,6 +475,7 @@ const requestDeleteAccount = async (req, res) => {
     const { sendOtpEmail } = require("../utils/emailSender");
     await sendOtpEmail({
       email: user.email,
+      name: user.name,
       subject: "PrepTrack Account Deletion Request - OTP Verification ⚠️",
       otp: otp,
       title: "Verify Your Account Deletion",

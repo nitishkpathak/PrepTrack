@@ -9,7 +9,7 @@ const User =
 
 const sendEmail = require("../utils/sendEmail");
 const sendEmailJS = require("../utils/sendEmailJS");
-const { sendWelcomeEmail } = require("../utils/emailSender");
+const { sendOtpEmail, sendWelcomeEmail } = require("../utils/emailSender");
 
 
 
@@ -35,46 +35,14 @@ const registerUser = async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes valid
 
-    // Send Verification Email (Try EmailJS first to bypass Render SMTP block, fallback to Nodemailer SMTP)
-    try {
-      if (process.env.EMAILJS_SERVICE_ID && process.env.EMAILJS_PUBLIC_KEY) {
-        await sendEmailJS({
-          email: email,
-          subject: "PrepTrack Account Verification OTP 🔐",
-          otp: otp,
-          html: `
-            Your PrepTrack verification code is: ${otp}. It is valid for 10 minutes. Do not share it with anyone.
-          `,
-        });
-      } else {
-        throw new Error("EmailJS not configured. Falling back to SMTP.");
-      }
-    } catch (emailjsError) {
-      console.warn("EmailJS failed, falling back to Nodemailer SMTP:", emailjsError.message);
-      
-      try {
-        await sendEmail({
-          email: email,
-          subject: "PrepTrack Account Verification OTP 🔐",
-          otp: otp,
-          html: `
-            <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 600px;">
-              <h2 style="color: #863bff;">Welcome to PrepTrack! 🚀</h2>
-              <p>Please verify your email address by entering the following One-Time Password (OTP):</p>
-              <div style="font-size: 24px; font-weight: bold; color: #863bff; letter-spacing: 4px; padding: 15px; background-color: #f7f3ff; text-align: center; border-radius: 5px; margin: 20px 0;">
-                ${otp}
-              </div>
-              <p style="font-size: 12px; color: #666;">This OTP is valid for 10 minutes. Please do not share it with anyone.</p>
-            </div>
-          `,
-        });
-      } catch (smtpError) {
-        console.error("SMTP also failed:", smtpError.message);
-        return res.status(500).json({
-          message: `Email dispatch failed. EmailJS: ${emailjsError.message}. SMTP: ${smtpError.message}`
-        });
-      }
-    }
+    // Send Verification Email with Name and Timing
+    await sendOtpEmail({
+      email: email,
+      name: existingUser?.name || email.split("@")[0],
+      subject: "PrepTrack Account Verification OTP 🔐",
+      otp: otp,
+      title: "Welcome to PrepTrack!",
+    });
 
     if (existingUser) {
       // Overwrite old OTP for unverified user
@@ -379,39 +347,14 @@ const forgotPassword = async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes valid
 
-    // Send Reset Password Email (Try EmailJS first, fallback to SMTP)
-    try {
-      if (process.env.EMAILJS_SERVICE_ID && process.env.EMAILJS_PUBLIC_KEY) {
-        await sendEmailJS({
-          email: email,
-          subject: "PrepTrack Password Reset OTP 🔐",
-          otp: otp,
-          html: `
-            Your PrepTrack password reset verification code is: ${otp}. It is valid for 10 minutes.
-          `,
-        });
-      } else {
-        throw new Error("EmailJS not configured. Falling back to SMTP.");
-      }
-    } catch (emailjsError) {
-      console.warn("EmailJS failed, falling back to Nodemailer SMTP:", emailjsError.message);
-      
-      await sendEmail({
-        email: email,
-        subject: "PrepTrack Password Reset OTP 🔐",
-        otp: otp,
-        html: `
-          <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 600px;">
-            <h2 style="color: #863bff;">PrepTrack Password Reset request 🔐</h2>
-            <p>Please reset your password by entering the following One-Time Password (OTP):</p>
-            <div style="font-size: 24px; font-weight: bold; color: #863bff; letter-spacing: 4px; padding: 15px; background-color: #f7f3ff; text-align: center; border-radius: 5px; margin: 20px 0;">
-              ${otp}
-            </div>
-            <p style="font-size: 12px; color: #666;">This OTP is valid for 10 minutes. Please do not share it with anyone.</p>
-          </div>
-        `,
-      });
-    }
+    // Send Reset Password Email with Name and Timing
+    await sendOtpEmail({
+      email: email,
+      name: user.name || email.split("@")[0],
+      subject: "PrepTrack Password Reset OTP 🔐",
+      otp: otp,
+      title: "PrepTrack Password Reset Request",
+    });
 
     // Save OTP to DB
     user.otp = otp;

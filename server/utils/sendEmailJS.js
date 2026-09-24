@@ -15,9 +15,15 @@ const sendEmailJS = async (options) => {
     template_params: {
       to_email: options.email,
       email: options.email,
+      name: options.name || options.email.split("@")[0],
+      to_name: options.name || options.email.split("@")[0],
+      user_name: options.name || options.email.split("@")[0],
       subject: options.subject,
       message: options.message || options.html, // text message fallback
       otp: options.otp || "", // 6-digit OTP code
+      timing: options.timing || new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "full", timeStyle: "short" }),
+      date_time: options.timing || new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "full", timeStyle: "short" }),
+      timestamp: options.timing || new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "full", timeStyle: "short" }),
     },
   };
 
